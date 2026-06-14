@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuários · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+<style>
+  .u-wrap{max-width:920px;margin:0 auto;padding:28px 24px}
+  .u-head h1{font-size:26px;margin:0 0 4px}
+  .u-head .sub{color:#9a8d7d;font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+  .u-head p{color:#8a7d6d;font-size:14px;margin:0 0 22px}
+  .u-card{background:#fff;border:1px solid #e8e0d4;border-radius:14px;overflow:hidden}
+  .u-item{border-top:1px solid #f1ebe0}
+  .u-item:first-child{border-top:none}
+  .u-row{display:flex;align-items:center;gap:14px;padding:15px 20px}
+  .u-perms{padding:0 20px 16px 72px}
+  .u-perms-lbl{display:block;font-size:11.5px;color:#9a8d7d;margin-bottom:8px}
+  .u-chips{display:flex;flex-wrap:wrap;gap:7px}
+  .u-chip{border:1px solid #e0d8cb;background:#faf6f0;color:#8a7d6d;border-radius:18px;padding:5px 12px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit}
+  .u-chip.on{background:#eef6ec;border-color:#bfdcb6;color:#2e7d32}
+  .u-chip:disabled{opacity:.6;cursor:default}
+  .u-perms-foot{display:flex;align-items:center;gap:12px;margin-top:11px}
+  .u-save{background:#C0653A;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+  .u-save:disabled{opacity:.6;cursor:default}
+  .u-saved{font-size:12.5px;font-weight:600}
+  .u-av{width:38px;height:38px;border-radius:10px;background:#ead9c6;color:#9a6a44;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .u-info{flex:1;min-width:0}
+  .u-nome{font-weight:600;font-size:14px}
+  .u-mail{font-size:12.5px;color:#8a7d6d}
+  .u-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap}
+  .u-pend{background:#fff2e3;color:#b3651f}
+  .u-ok{background:#e7f4e8;color:#2e7d32}
+  .u-adm{background:#efe7f7;color:#7a4ca0}
+  .u-btn{border:none;border-radius:8px;padding:8px 15px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .u-btn:disabled{opacity:.6;cursor:default}
+  .u-approve{background:#C0653A;color:#fff}
+  .u-revoke{background:transparent;color:#b3651f;border:1px solid #e8d2b8}
+  .u-promote{background:transparent;color:#7a4ca0;border:1px solid #ddc9ec}
+  .u-demote{background:transparent;color:#7a4ca0;border:1px solid #ddc9ec}
+  .u-del{background:#b3402a;color:#fff}
+  .u-acoes{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+  .u-muted{color:#9a8d7d;font-size:13.5px;padding:34px;text-align:center}
+  .u-pendnote{background:#fff7ee;border:1px solid #f0dcc2;color:#9a6a44;font-size:13px;padding:12px 16px;border-radius:10px;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="usuarios">
+  <div class="body scroll">
+    <div class="u-wrap">
+      <div class="u-head">
+        <div class="sub">Acesso &amp; permissões</div>
+        <h1>Usuários</h1>
+        <p>Autorize quem pode acessar o sistema. Novos cadastros ficam <b>pendentes</b> até você liberar.</p>
+      </div>
+      <div id="uPendNote"></div>
+      <div class="u-card" id="uList"><div class="u-muted">Carregando…</div></div>
+    </div>
+  </div>
+</div>
+<script src="shell.js"></script>
+<script>
+(function () {
+  var listEl = document.getElementById('uList');
+  var noteEl = document.getElementById('uPendNote');
+  function sb(){ return window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client(); }
+  // chama a função admin; se der erro de sessão/permissão transitório, renova e tenta 1x
+  async function invokeAdmin(body){
+    var r = await sb().functions.invoke('aprovar-admin', { body: body });
+    var err = r.error ? r.error.message : (r.data && r.data.error);
+    if (err && /restrito|autenticad|jwt|token|sess/i.test(err)) {
+      try { await sb().auth.refreshSession(); } catch(e){}
+      r = await sb().functions.invoke('aprovar-admin', { body: body });
+    }
+    return r;
+  }
+  function call(action, user_id){ return invokeAdmin({ action: action, user_id: user_id }); }
+  function inicial(s){ return ((s||'?').trim().charAt(0) || '?').toUpperCase(); }
+  function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':String(s); return d.innerHTML; }
+
+  var TABS = [
+    { id:'painel', t:'Painel' }, { id:'precificacao', t:'Precificação' },
+    { id:'projetos', t:'Projetos' }, { id:'clientes', t:'Clientes' },
+    { id:'fornecedores', t:'Fornecedores' }, { id:'indicacoes', t:'Indicações' },
+    { id:'config', t:'Configuração' }
+  ];
+  function setAbas(user_id, abas){
+    return invokeAdmin({ action:'set_abas', user_id:user_id, abas:abas });
+  }
+
+  function render(users, meId){
+    var pend = users.filter(function(u){ return !u.aprovado; }).length;
+    noteEl.innerHTML = pend ? '<div class="u-pendnote">⏳ '+pend+' cadastro(s) aguardando sua autorização.</div>' : '';
+    if(!users.length){ listEl.innerHTML = '<div class="u-muted">Nenhum usuário cadastrado ainda.</div>'; return; }
+    listEl.innerHTML = users.map(function(u){
+      var badge = u.aprovado
+        ? (u.papel==='admin' ? '<span class="u-badge u-adm">Admin</span>' : '<span class="u-badge u-ok">Ativo</span>')
+        : '<span class="u-badge u-pend">Pendente</span>';
+      var acoes, permsRow = '';
+      if(u.id === meId){
+        acoes = '<span style="color:#9a8d7d;font-size:12px;white-space:nowrap">você</span>';
+      } else {
+        var btns = [];
+        if(u.papel === 'admin'){
+          btns.push('<button class="u-btn u-demote" data-act="remove_admin" data-id="'+u.id+'">Remover admin</button>');
+        } else {
+          btns.push(u.aprovado
+            ? '<button class="u-btn u-revoke" data-act="revoke" data-id="'+u.id+'">Bloquear</button>'
+            : '<button class="u-btn u-approve" data-act="approve" data-id="'+u.id+'">Autorizar</button>');
+          btns.push('<button class="u-btn u-promote" data-act="make_admin" data-id="'+u.id+'">Tornar admin</button>');
+        }
+        btns.push('<button class="u-btn u-del" data-act="delete" data-id="'+u.id+'">Excluir</button>');
+        acoes = btns.join('');
+        if(u.papel === 'admin'){
+          permsRow = '<div class="u-perms"><span class="u-perms-lbl" style="color:#7a4ca0">Administrador — acesso total a todas as abas.</span></div>';
+        } else {
+          var abas = u.abas_permitidas || [];
+          var chips = TABS.map(function(tb){
+            var on = abas.indexOf(tb.id) >= 0;
+            return '<button type="button" class="u-chip'+(on?' on':'')+'" data-uid="'+u.id+'" data-tab="'+tb.id+'">'+tb.t+'</button>';
+          }).join('');
+          permsRow = '<div class="u-perms"><span class="u-perms-lbl">Abas que pode acessar (clique para ligar/desligar e depois Salvar):</span>'+
+            '<div class="u-chips">'+chips+'</div>'+
+            '<div class="u-perms-foot"><button type="button" class="u-save" data-saveuid="'+u.id+'">Salvar acessos</button>'+
+            '<span class="u-saved" id="saved-'+u.id+'"></span></div></div>';
+        }
+      }
+      return '<div class="u-item"><div class="u-row"><div class="u-av">'+inicial(u.nome||u.email)+'</div>'+
+        '<div class="u-info"><div class="u-nome">'+esc(u.nome||'(sem nome)')+'</div><div class="u-mail">'+esc(u.email||'')+'</div></div>'+
+        badge + '<div class="u-acoes">'+acoes+'</div></div>' + permsRow + '</div>';
+    }).join('');
+
+    // ações: autorizar / bloquear / excluir
+    listEl.querySelectorAll('button[data-act]').forEach(function(b){
+      b.onclick = function(){
+        var act=b.getAttribute('data-act'), id=b.getAttribute('data-id');
+        if(act==='revoke' && !confirm('Bloquear o acesso deste usuário?\n\nEle não conseguirá mais entrar até você liberar de novo. A conta NÃO é apagada.')) return;
+        if(act==='delete' && !confirm('EXCLUIR este usuário definitivamente?\n\nA conta será apagada e não dá para desfazer.')) return;
+        if(act==='make_admin' && !confirm('Tornar este usuário ADMINISTRADOR?\n\nEle poderá ver tudo e gerenciar usuários (autorizar, bloquear, excluir).')) return;
+        if(act==='remove_admin' && !confirm('Remover o status de administrador deste usuário?\n\nEle volta a ser usuário comum, com as abas limitadas que você definir.')) return;
+        b.disabled=true; b.textContent='…';
+        call(act, id).then(function(r){
+          var err = r.error ? r.error.message : (r.data && r.data.error);
+          if(err){ alert('Erro: '+err); }
+          load();
+        });
+      };
+    });
+
+    // toggles de abas (apenas marcam; gravam ao clicar em "Salvar acessos")
+    listEl.querySelectorAll('.u-chip').forEach(function(c){
+      c.onclick = function(){
+        c.classList.toggle('on');
+        var fb = document.getElementById('saved-'+c.getAttribute('data-uid'));
+        if(fb){ fb.style.color='#9a8d7d'; fb.textContent='alterações não salvas'; }
+      };
+    });
+    listEl.querySelectorAll('.u-save').forEach(function(b){
+      b.onclick = function(){
+        var uid = b.getAttribute('data-saveuid');
+        var abas = [];
+        listEl.querySelectorAll('.u-chip.on[data-uid="'+uid+'"]').forEach(function(c){ abas.push(c.getAttribute('data-tab')); });
+        var fb = document.getElementById('saved-'+uid);
+        b.disabled = true; b.textContent = 'Salvando…';
+        setAbas(uid, abas).then(function(r){
+          b.disabled = false; b.textContent = 'Salvar acessos';
+          var err = r.error ? r.error.message : (r.data && r.data.error);
+          if(err){ if(fb){ fb.style.color='#b3402a'; fb.textContent='Erro: '+err; } return; }
+          var u = users.filter(function(x){ return x.id===uid; })[0]; if(u) u.abas_permitidas = abas;
+          if(fb){ fb.style.color='#2e7d32'; fb.textContent='✓ Salvo'; }
+        });
+      };
+    });
+  }
+
+  function load(){
+    if(!sb()){ setTimeout(load, 400); return; }
+    call('list').then(function(r){
+      if(r.error){ listEl.innerHTML = '<div class="u-muted">Não foi possível carregar.</div>'; return; }
+      if(r.data && r.data.error){ listEl.innerHTML = '<div class="u-muted">'+esc(r.data.error)+'</div>'; noteEl.innerHTML=''; return; }
+      render((r.data && r.data.users) || [], r.data && r.data.me);
+    });
+  }
+
+  // espera o cloud.js liberar a tela (usuário aprovado) antes de carregar
+  var tries = 0;
+  (function wait(){
+    if(document.getElementById('mabeCloudOv') && tries++ < 80){ setTimeout(wait, 400); return; }
+    load();
+  })();
+})();
+</script>
+</body>
+</html>

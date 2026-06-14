@@ -1,0 +1,293 @@
+/* ============================================================
+   Mabe Comercial — componentes de página (sobre painel.css)
+   Pele fixa: Studio. Tema claro/escuro herdado dos tokens.
+   ============================================================ */
+
+/* App ocupa a viewport; body rola */
+html, body { height: 100%; margin: 0; }
+.mabe { height: 100vh; }
+.mabe .body.scroll { overflow-y: auto; overflow-x: hidden; }
+.mabe .wrap { max-width: 1320px; margin: 0 auto; width: 100%; }
+
+/* topbar: botão de tema */
+.mabe .iconbtn {
+  width: 36px; height: 36px; border-radius: 9px; flex: 0 0 auto;
+  border: 1px solid var(--hair-2); background: var(--surface);
+  color: var(--ink-2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.mabe .iconbtn:hover { color: var(--ink); border-color: var(--ink-3); }
+.mabe .top .nav a { cursor: pointer; }
+
+/* botões extra */
+.mabe .btn:hover { border-color: var(--ink-3); }
+.mabe .btn { white-space: nowrap; }
+.mabe .brand { flex: 0 0 auto; }
+.mabe .brand .bn { white-space: nowrap; }
+.mabe .top .nav { flex-shrink: 0; }
+.mabe .top .search { flex: 0 1 210px; min-width: 92px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mabe .btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.mabe .btn.sm { padding: 6px 11px; font-size: 12.5px; }
+.mabe .btn.ghost { background: transparent; border-color: transparent; }
+.mabe .btn.ghost:hover { background: var(--surface-2); border-color: transparent; }
+.mabe .btn.danger { color: var(--lost); }
+.mabe .btn.danger:hover { background: var(--lost-soft); border-color: var(--lost); }
+
+/* ---------- drawer (painel lateral) ---------- */
+.mabe .scrim { position: fixed; inset: 0; background: rgba(20,16,12,.42); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 60; }
+.mabe .scrim.open { opacity: 1; pointer-events: auto; }
+.mabe .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(468px, 94vw); background: var(--surface); border-left: 1px solid var(--hair); box-shadow: -12px 0 44px rgba(20,16,12,.22); transform: translateX(102%); transition: transform .26s cubic-bezier(.2,.7,.3,1); z-index: 61; display: flex; flex-direction: column; }
+.mabe .drawer.open { transform: none; }
+.mabe .drawer .dh { padding: 18px 22px; border-bottom: 1px solid var(--hair); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.mabe .drawer .dh h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.mabe .drawer .dh .dsub { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+.mabe .drawer .dbody { padding: 20px 22px; overflow-y: auto; flex: 1; }
+.mabe .drawer .dfoot { padding: 15px 22px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface); }
+
+/* ---------- stage chips ---------- */
+.mabe .chip {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink-2); border: 1px solid transparent;
+}
+.mabe .chip .d { width: 7px; height: 7px; border-radius: 50%; }
+.mabe .chip.prospec { background: color-mix(in srgb, var(--st-prospec) 20%, var(--surface)); color: var(--ink-2); }
+.mabe .chip.prospec .d { background: var(--st-prospec); }
+.mabe .chip.negoc { background: color-mix(in srgb, var(--st-negoc) 18%, var(--surface)); color: var(--st-negoc); }
+.mabe .chip.negoc .d { background: var(--st-negoc); }
+.mabe .chip.prop { background: color-mix(in srgb, var(--st-prop) 16%, var(--surface)); color: var(--st-prop); }
+.mabe .chip.prop .d { background: var(--st-prop); }
+.mabe .chip.win { background: var(--win-soft); color: var(--win); }
+.mabe .chip.win .d { background: var(--win); }
+.mabe .chip.done { background: var(--accent-soft); color: var(--accent-2); }
+.mabe .chip.done .d { background: var(--accent); }
+.mabe .chip.lost { background: var(--lost-soft); color: var(--lost); }
+.mabe .chip.lost .d { background: var(--lost); }
+
+/* ---------- progress ---------- */
+.mabe .prog { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.mabe .prog > i { display: block; height: 100%; background: var(--win); border-radius: 999px; }
+.mabe .prog.acc > i { background: var(--accent); }
+
+/* ---------- toolbar ---------- */
+.mabe .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mabe .toolbar .sp { flex: 1; }
+.mabe .ipt {
+  display: flex; align-items: center; gap: 8px; color: var(--ink-3);
+  border: 1px solid var(--hair-2); border-radius: 9px; padding: 9px 12px; font-size: 13px;
+  background: var(--surface); min-width: 200px;
+}
+.mabe .filterpill {
+  font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2);
+  border-radius: 9px; padding: 8px 12px; background: var(--surface); cursor: pointer; display:flex; align-items:center; gap:7px;
+}
+
+/* ---------- tables (rows clicáveis) ---------- */
+.mabe .tbl tbody tr.click { cursor: pointer; }
+.mabe .tbl tbody tr.click:hover td { background: var(--surface-2); }
+.mabe .tbl.lined { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r); overflow: hidden; }
+.mabe .tbl.lined th, .mabe .tbl.lined td { padding: 12px 16px; }
+.mabe .tcell-strong { font-weight: 600; }
+.mabe .tfoot td { font-weight: 700; border-top: 2px solid var(--hair-2); }
+
+/* ---------- project cards (grid) ---------- */
+.mabe .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.mabe .pcard { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r); box-shadow: var(--shadow-sm); overflow: hidden; text-decoration: none; color: inherit; display: block; }
+.mabe .pcard:hover { box-shadow: var(--shadow-md); }
+.mabe .pcard .ph { height: 96px; background: var(--surface-2); position: relative; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; border-bottom: 1px solid var(--hair); overflow: hidden; }
+.mabe .pcard .ph.phempty { cursor: pointer; border: 1.5px dashed var(--hair-2); border-bottom: 1px solid var(--hair); }
+.mabe .pcard .ph.phempty:hover { background: var(--accent-soft); color: var(--accent-2); border-color: var(--accent); }
+.mabe .pcard .ph.phempty span { font-weight: 600; }
+.mabe .pcard .ph.phempty::after { display: none; }
+.mabe .pcard .ph .phacts { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; opacity: 0; transition: opacity .15s; }
+.mabe .pcard:hover .ph .phacts { opacity: 1; }
+.mabe .pcard .ph .phbtn { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(20,16,12,.55); color: #fff; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+.mabe .pcard .ph .phbtn:hover { background: rgba(20,16,12,.78); }
+.mabe .pcard .ph.phempty::after { content: none; }
+.mabe .pcard .pb { padding: 15px 16px; }
+.mabe .pcard .pt { font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+.mabe .pcard .psub { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+.mabe .miniflex { display: flex; gap: 18px; margin-top: 13px; }
+.mabe .miniflex .mlab { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.mabe .miniflex .mval { font-weight: 700; font-size: 14px; margin-top: 2px; }
+
+/* ---------- project header (detalhe) ---------- */
+.mabe .phead { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 20px 22px; }
+.mabe .phead .meta-row { display: flex; gap: 36px; flex-wrap: wrap; }
+.mabe .phead .meta-row .mlab { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.mabe .phead .meta-row .mval { font-weight: 600; font-size: 14.5px; margin-top: 3px; }
+.mabe .phead hr { border: none; border-top: 1px solid var(--hair); margin: 18px 0; }
+.mabe .statline { display: flex; gap: 0; }
+.mabe .statline > div { flex: 1; padding: 0 20px; border-left: 1px solid var(--hair); }
+.mabe .statline > div:first-child { padding-left: 0; border-left: none; }
+.mabe .statline .sv { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.mabe .statline .sl { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+
+/* ---------- kanban ---------- */
+.mabe .kanban { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 13px; align-items: start; }
+.mabe .kcol { background: var(--surface-2); border: 1px solid var(--hair); border-radius: 12px; padding: 11px; min-height: 130px; }
+.mabe .kcol .kh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+.mabe .kcol .kh .kt { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; }
+.mabe .kcol .kh .kc { font-size: 12px; color: var(--ink-3); font-weight: 600; background: var(--surface); border-radius: 999px; padding: 1px 8px; }
+.mabe .opp { background: var(--surface); border: 1px solid var(--hair); border-radius: 10px; padding: 11px; margin-bottom: 10px; box-shadow: var(--shadow-sm); cursor: pointer; }
+.mabe .opp:hover { box-shadow: var(--shadow-md); }
+.mabe .opp[draggable="true"] { cursor: grab; }
+.mabe .opp.dragging { opacity: .45; cursor: grabbing; box-shadow: var(--shadow-md); }
+.mabe .kcol.over { border-color: var(--accent); border-style: dashed; background: var(--accent-soft); }
+.mabe .kcol .kdrop { display: none; border: 1.5px dashed var(--accent); border-radius: 10px; color: var(--accent-2); font-size: 12px; font-weight: 600; text-align: center; padding: 14px 8px; }
+.mabe .kcol.over .kdrop { display: block; }
+.mabe .opp .ot { font-weight: 700; font-size: 13px; }
+.mabe .opp .of { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+.mabe .opp .om { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.mabe .opp .ov { font-weight: 700; font-size: 13px; }
+.mabe .miniRT { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 7px; }
+
+/* ---------- forms ---------- */
+.mabe .field { display: grid; gap: 6px; margin-bottom: 16px; }
+.mabe .field > label { font-size: 12.5px; font-weight: 600; }
+.mabe .field > label .req { color: var(--lost); }
+.mabe .field .hint { font-size: 11.5px; color: var(--ink-3); }
+.mabe .inp, .mabe .sel, .mabe .ta {
+  width: 100%; font-family: inherit; font-size: 14px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--hair-2); border-radius: 10px; padding: 10px 12px;
+}
+.mabe .inp:focus, .mabe .sel:focus, .mabe .ta:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.mabe .inp::placeholder, .mabe .ta::placeholder { color: var(--ink-3); }
+.mabe .inp[readonly], .mabe .inp.ro { background: var(--surface-2); color: var(--ink-2); }
+.mabe .sel { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%239a9385' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+.mabe .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 20px; }
+.mabe .form-grid .full { grid-column: 1 / -1; }
+.mabe .inset { display: flex; }
+.mabe .addon { display: inline-flex; align-items: center; padding: 0 12px; border: 1px solid var(--hair-2); border-left: none; border-radius: 0 10px 10px 0; background: var(--surface-2); color: var(--ink-2); font-size: 13px; }
+.mabe .inset .inp { border-radius: 10px 0 0 10px; }
+.mabe .dropzone { border: 1.5px dashed var(--hair-2); border-radius: 12px; background: var(--surface-2); color: var(--ink-3); font-size: 13px; padding: 22px; text-align: center; }
+
+/* segmented choice (radio-like) */
+.mabe .choice { display: flex; gap: 8px; flex-wrap: wrap; }
+.mabe .choice .opt { font-size: 13px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); border-radius: 10px; padding: 9px 13px; cursor: pointer; background: var(--surface); }
+.mabe .choice .opt.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-2); }
+
+/* ---------- wizard ---------- */
+.mabe .wizard { display: grid; grid-template-columns: 250px 1fr; gap: 0; background: var(--surface); border: 1px solid var(--hair); border-radius: 16px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.mabe .wsteps { background: var(--surface-2); border-right: 1px solid var(--hair); padding: 22px 18px; }
+.mabe .wstep { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; position: relative; }
+.mabe .wstep .wn { width: 26px; height: 26px; border-radius: 50%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; border: 1.5px solid var(--hair-2); color: var(--ink-3); background: var(--surface); }
+.mabe .wstep.done .wn { background: var(--win); border-color: var(--win); color: #fff; }
+.mabe .wstep.on .wn { background: var(--accent); border-color: var(--accent); color: #fff; }
+.mabe .wstep .wl { min-width: 0; }
+.mabe .wstep .wl .t { font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.mabe .wstep.on .wl .t, .mabe .wstep.done .wl .t { color: var(--ink); }
+.mabe .wstep .wl .s { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+.mabe .wstep:not(:last-child)::before { content: ''; position: absolute; left: 12.5px; top: 37px; bottom: -4px; width: 1.5px; background: var(--hair-2); }
+.mabe .wstep.done:not(:last-child)::before { background: var(--win); }
+.mabe .wbody { padding: 26px 28px; min-height: 440px; display: flex; flex-direction: column; }
+.mabe .wbody .wh { margin-bottom: 18px; }
+.mabe .wbody .wh h2 { margin: 0 0 3px; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.mabe .wbody .wh p { margin: 0; color: var(--ink-3); font-size: 13px; }
+.mabe .wfoot { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; }
+.mabe .summary { background: var(--surface-2); border: 1px solid var(--hair); border-radius: 12px; padding: 14px 16px; }
+.mabe .summary .srow { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed var(--hair); }
+.mabe .summary .srow:last-child { border-bottom: none; }
+.mabe .summary .srow .k { color: var(--ink-3); }
+.mabe .summary .srow .v { font-weight: 600; }
+
+/* ---------- config CRUD ---------- */
+.mabe .cfg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; align-items: start; }
+.mabe .crud-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 15px; }
+.mabe .crow { display: flex; align-items: center; gap: 11px; border: 1px solid var(--hair); border-radius: 11px; background: var(--surface-2); padding: 10px 12px; }
+.mabe .crow .grip { color: var(--ink-3); cursor: grab; font-size: 13px; }
+.mabe .crow .cn { font-weight: 600; font-size: 13.5px; }
+.mabe .crow .sp { flex: 1; }
+.mabe .crow .acts { display: flex; gap: 6px; }
+.mabe .crow.editing { border-color: var(--accent); background: var(--accent-soft); }
+.mabe .crow .ed-name { flex: 2 1 120px; }
+.mabe .crow .ed-rt { flex: 0 0 80px; }
+.mabe .crow .ed-med { flex: 1 1 110px; }
+.mabe .cbtn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink-2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+.mabe .cbtn:hover { color: var(--ink); border-color: var(--ink-3); }
+.mabe .cbtn:disabled { opacity: .35; cursor: not-allowed; }
+.mabe .cbtn.del:hover { color: var(--lost); border-color: var(--lost); background: var(--lost-soft); }
+.mabe .add-row { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; border-top: 1px dashed var(--hair); padding-top: 15px; }
+.mabe .add-row .inp { flex: 2 1 150px; }
+.mabe .add-row .inp.small { flex: 0 0 96px; }
+.mabe .add-row .inp.med { flex: 1 1 130px; }
+.mabe .chip.statusedit { cursor: pointer; }
+.mabe .chip.statusedit:hover { filter: brightness(.97); box-shadow: 0 0 0 2px var(--accent-soft); }
+#statusPop .statusopt { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 8px; cursor: pointer; }
+#statusPop .statusopt:hover { background: var(--surface-2); }
+#statusPop .statusopt.on { background: var(--surface-2); }
+.mabe .rtpill-pill { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+.mabe .papel { font-size: 11.5px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--hair); border-radius: 6px; padding: 1px 8px; white-space: nowrap; }
+.mabe .cdot { width: 11px; height: 11px; border-radius: 4px; flex: 0 0 auto; }
+.mabe .empty { color: var(--ink-3); font-size: 13px; font-style: italic; padding: 8px 2px; }
+.mabe .sel-real { font-family: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--hair-2); border-radius: 9px; padding: 8px 9px; }
+
+/* ---------- section title ---------- */
+.mabe .sect-title { display: flex; align-items: center; gap: 10px; margin: 4px 0 2px; }
+.mabe .sect-title h3 { margin: 0; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.mabe .sect-title .count { font-size: 12.5px; color: var(--ink-3); font-weight: 500; }
+
+/* botão "mover" no card do kanban (toque/celular) */
+.mabe .opp { position: relative; }
+.mabe .opp .opp-move {
+  position: absolute; top: 7px; right: 7px; width: 30px; height: 30px;
+  border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink-2);
+  border-radius: 8px; cursor: pointer; font-size: 14px; line-height: 1;
+  display: none; align-items: center; justify-content: center; padding: 0; z-index: 2;
+}
+.mabe .opp .opp-move:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* menu flutuante de etapas (mover oportunidade) */
+.mabe .stage-pop, .stage-pop {
+  position: fixed; z-index: 130; background: var(--surface);
+  border: 1px solid var(--hair-2); border-radius: 12px; box-shadow: var(--shadow-md);
+  padding: 6px; min-width: 190px;
+}
+.stage-pop .sp-opt { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; }
+.stage-pop .sp-opt:hover { background: var(--surface-2); }
+.stage-pop .sp-opt.on { background: var(--surface-2); font-weight: 600; }
+.stage-pop .sp-h { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 6px 10px 8px; }
+
+/* responsivo */
+@media (max-width: 880px) {
+  .mabe .top { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .mabe .top .nav { order: 3; margin-left: 0; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .mabe .top .ipt, .mabe .top .search { display: none; }
+  .mabe .body { padding: 16px; }
+  .mabe .kpis, .mabe .kpis.k6, .mabe .kpis.k7 { grid-template-columns: repeat(2, 1fr); }
+  .mabe .kpis .kv, .mabe .kpis.k6 .kv, .mabe .kpis.k7 .kv { font-size: 22px; }
+  .mabe .grid-2, .mabe .grid-2b { grid-template-columns: 1fr; }
+  .mabe .kanban { grid-template-columns: 1fr; gap: 14px; }
+  .mabe .cfg-grid { grid-template-columns: 1fr; }
+  .mabe .wizard { grid-template-columns: 1fr; }
+  .mabe .wsteps { display: flex; gap: 14px; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--hair); padding: 14px; }
+  .mabe .wstep::before { display: none; }
+  .mabe .form-grid { grid-template-columns: 1fr; }
+  /* no celular: mostra o botão "mover" e desliga o arrastar */
+  .mabe .opp { cursor: pointer; }
+  .mabe .opp .opp-move { display: flex; }
+  .mabe .opp .om { padding-right: 34px; }
+  .mabe .kcol .kdrop { display: none !important; }
+  /* page header empilha */
+  .mabe .page-h { flex-direction: column; align-items: stretch; gap: 12px; }
+  .mabe .page-h .btnbar { flex-wrap: wrap; }
+  .mabe .page-h .btnbar .btn, .mabe .page-h .btnbar .btn.primary { flex: 1 1 auto; justify-content: center; }
+  /* tabelas densas: permitem rolagem horizontal sem quebrar o layout */
+  .mabe .panel { overflow-x: auto; }
+  .mabe .tbl { min-width: 560px; }
+  .mabe .phead .statline { flex-direction: column; gap: 14px; }
+  .mabe .phead .statline > div { border-left: none; padding: 0; }
+  .mabe .phead .meta-row { gap: 14px 24px; }
+  /* toolbar de filtros empilha */
+  .mabe .toolbar { gap: 8px; }
+  .mabe .toolbar .ipt, .mabe .toolbar .filterpill, .mabe .toolbar .sel { width: 100%; }
+}
+
+@media (max-width: 540px) {
+  .mabe .kpis, .mabe .kpis.k6, .mabe .kpis.k7 { grid-template-columns: 1fr; }
+  .mabe .body { padding: 13px; }
+  .mabe .page-h h1 { font-size: 21px; }
+  .mabe .cards { grid-template-columns: 1fr; }
+  /* alvos de toque ≥ 44px */
+  .mabe .btn, .mabe .btn.primary, .mabe .seg button, .mabe .filterpill { min-height: 44px; }
+  .mabe .iconbtn { width: 40px; height: 40px; }
+}

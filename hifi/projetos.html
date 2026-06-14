@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projetos · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+<style>
+  #printReport { display: none; }
+  @media print {
+    @page { margin: 12mm; size: A4 landscape; }
+    body { background: #fff !important; }
+    .mabe .top, .mabe .toolbar, #vTab, #vCard, .scrim, .drawer, .page-h .btnbar { display: none !important; }
+    .mabe, .mabe .body, .mabe .body.scroll { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; }
+    .wrap { display: block !important; max-width: none !important; }
+    #printReport { display: block !important; color: #111; }
+    #printReport * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="projetos">
+  <div class="body scroll">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="page-h">
+        <div><div class="crumb">Carteira de obras</div><h1>Projetos</h1></div>
+        <div class="btnbar" style="display:flex;gap:10px;align-items:center">
+          <button class="btn" onclick="imprimir()" title="Imprimir balanço geral"><span style="font-size:15px">⎣</span>&nbsp; Imprimir balanço</button>
+          <button class="btn primary" onclick="openProj()">+&nbsp; Novo projeto</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="ipt" style="gap:8px"><span>⌕</span><input id="pjSearch" oninput="render()" placeholder="Buscar projeto ou cliente…" style="border:none;background:transparent;outline:none;font-family:inherit;font-size:13px;color:var(--ink);width:200px"></label>
+        <select class="filterpill" id="fStatus" onchange="render()" style="appearance:auto"><option value="">Status: todos</option><option value="prospec">Prospecção</option><option value="negoc">Ativo</option><option value="prop">Fechando</option><option value="win">Concluído</option><option value="lost">Perdido</option></select>
+        <select class="filterpill" id="fResp" onchange="render()" style="appearance:auto"><option value="">Responsável: todos</option></select>
+        <div class="sp"></div>
+        <div class="seg">
+          <button class="on" id="segTab" onclick="vp('tab')">Tabela</button>
+          <button id="segCard" onclick="vp('card')">Cartões</button>
+        </div>
+      </div>
+
+      <!-- TABELA -->
+      <div id="vTab">
+        <table class="tbl lined">
+          <thead><tr><th>Projeto</th><th>Cliente</th><th>Localização</th><th class="r">Valor projeto</th><th class="r">Op.</th><th style="width:140px">% fechado</th><th class="r">RT prev.</th><th>Status</th><th></th></tr></thead>
+          <tbody id="projBody"></tbody>
+        </table>
+      </div>
+
+      <!-- CARTÕES -->
+      <div id="vCard" class="cards" style="display:none"></div>
+
+      <!-- relatório consolidado (oculto em tela) -->
+      <div id="printReport"></div>
+
+    </div>
+  </div>
+
+  <!-- DRAWER novo projeto -->
+  <div class="scrim" id="scrim" onclick="closeProj()"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="dh">
+      <div><h2>Novo projeto</h2><div class="dsub">cadastre uma obra para lançar oportunidades</div></div>
+      <button class="iconbtn" onclick="closeProj()" title="Fechar">✕</button>
+    </div>
+    <div class="dbody">
+      <div class="field"><label>Nome do projeto <span class="req">*</span></label><input class="inp" id="pjNome" placeholder="ex.: Residência Jardins"></div>
+      <div class="field"><label>Cliente <span class="req">*</span></label><input class="inp" id="pjCli" placeholder="nome do cliente"></div>
+      <div class="form-grid">
+        <div class="field"><label>Tipo de projeto</label>
+          <select class="sel" id="pjTipo"><option>Comercial</option><option selected>Residencial</option><option>Airbnb</option><option>Reforma</option></select></div>
+        <div class="field"><label>Responsável</label>
+          <select class="sel" id="pjResp"><option>Você (Arq.)</option><option>Ana</option><option>Rafael</option></select></div>
+      </div>
+      <div class="form-grid" style="grid-template-columns:repeat(6,1fr);gap:0 14px">
+        <div class="field" style="grid-column:span 2"><label>CEP</label>
+          <div class="inset"><input class="inp" id="pjCep" style="border-radius:10px 0 0 10px" inputmode="numeric" placeholder="00000-000" maxlength="9">
+            <button class="addon" id="pjCepBtn" onclick="buscaCep()" style="cursor:pointer;border-left:none" title="Buscar endereço">buscar</button></div>
+          <span class="hint" id="pjCepHint">digite o CEP para preencher o endereço</span></div>
+        <div class="field" style="grid-column:span 3"><label>Logradouro</label><input class="inp" id="pjLograd" placeholder="rua / avenida"></div>
+        <div class="field" style="grid-column:span 1"><label>Número</label><input class="inp" id="pjNum" placeholder="nº"></div>
+        <div class="field" style="grid-column:span 2"><label>Bairro</label><input class="inp" id="pjBairro" placeholder="bairro"></div>
+        <div class="field" style="grid-column:span 3"><label>Cidade</label><input class="inp" id="pjCidade" placeholder="São Paulo"></div>
+        <div class="field" style="grid-column:span 1"><label>UF</label><input class="inp" id="pjUF" placeholder="SP" maxlength="2"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field full"><label>Valor do projeto <span class="req">*</span></label>
+          <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp" id="pjVal" style="border-radius:0 10px 10px 0" inputmode="numeric" placeholder="480.000" oninput="var d=this.value.replace(/[^\d]/g,'');this.value=d?Number(d).toLocaleString('pt-BR'):''"></div>
+          <span class="hint" id="pjValHint">todo projeto precisa de um valor — as oportunidades entram dentro dele</span></div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Observações</label><textarea class="ta" id="pjObs" rows="3" placeholder="escopo, referências, prazos…"></textarea></div>
+    </div>
+    <div class="dfoot">
+      <span class="hint" id="pjFootHint">a obra começa sem oportunidades</span>
+      <div style="display:flex;gap:10px">
+        <button class="btn ghost" onclick="closeProj()">Cancelar</button>
+        <button class="btn primary" id="pjSaveBtn" onclick="saveProj()">Criar projeto</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- menu flutuante de status -->
+  <div id="statusPop" style="display:none;position:fixed;z-index:120;background:var(--surface);border:1px solid var(--hair-2);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;min-width:180px"></div>
+  <input type="file" id="fotoInput" accept="image/*" style="display:none">
+</div>
+
+<script src="projects-data.js"></script>
+<script src="shell.js"></script>
+<script>
+  function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : '—'; }
+
+  // popula o filtro de responsáveis a partir dos projetos
+  function fillRespFilter(projetos){
+    var sel = document.getElementById('fResp');
+    var cur = sel.value;
+    var resps = [];
+    projetos.forEach(function(p){ if (p.resp && resps.indexOf(p.resp)<0) resps.push(p.resp); });
+    sel.innerHTML = '<option value="">Responsável: todos</option>' + resps.map(function(r){ return '<option value="' + r.replace(/"/g,'&quot;') + '">' + r + '</option>'; }).join('');
+    sel.value = cur;
+  }
+
+  function filtrarProjetos(){
+    var q = (document.getElementById('pjSearch').value||'').trim().toLowerCase();
+    var st = document.getElementById('fStatus').value;
+    var rp = document.getElementById('fResp').value;
+    return MabeDB.loadProjects().filter(function(p){
+      if (st && p.statusCls !== st) return false;
+      if (rp && p.resp !== rp) return false;
+      if (q){
+        var hay = (p.nome + ' ' + p.cliente + ' ' + (p.cidade||'')).toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  function render(){
+    fillRespFilter(MabeDB.loadProjects());
+    var projetos = filtrarProjetos();
+    // tabela
+    var body = document.getElementById('projBody');
+    if (!projetos.length){
+      body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-3);padding:28px">Nenhum projeto encontrado.</td></tr>';
+    } else body.innerHTML = projetos.map(function(p){
+      return '<tr class="click" onclick="abrir(' + p.id + ')">' +
+        '<td class="tcell-strong">' + p.nome + '</td>' +
+        '<td>' + p.cliente + '</td>' +
+        '<td style="color:var(--ink-2)">' + p.cidade + ' · ' + p.uf + '</td>' +
+        '<td class="r num">' + brl(p.valor) + '</td>' +
+        '<td class="r num">' + p.op + '</td>' +
+        '<td><div class="prog"><i style="width:' + p.pct + '%"></i></div><span style="font-size:11px;color:var(--ink-3)">' + p.pct + '%</span></td>' +
+        '<td class="r num rtpill">' + (p.rt ? brl(p.rt) : 'R$ 0') + '</td>' +
+        '<td><span class="chip statusedit ' + p.statusCls + '" title="Clique para mudar o status" onclick="event.stopPropagation();statusMenu(event,' + p.id + ')"><span class="d"></span>' + p.statusLabel + ' <span style="opacity:.6;font-size:10px">▾</span></span></td>' +
+        '<td class="r" style="white-space:nowrap"><button class="cbtn" title="Editar projeto" onclick="event.stopPropagation();editar(' + p.id + ')">✎</button> ' +
+        '<button class="cbtn del" title="Excluir projeto" onclick="event.stopPropagation();excluir(' + p.id + ',\'' + p.nome.replace(/'/g,"\\'") + '\')">🗑</button></td>' +
+        '</tr>';
+    }).join('');
+
+    // cartões
+    var vc = document.getElementById('vCard');
+    if (!projetos.length){
+      vc.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--ink-3);padding:40px">Nenhum projeto encontrado.</div>';
+    } else vc.innerHTML = projetos.map(function(p){
+      var foto = p.foto
+        ? '<div class="ph" style="padding:0;background-image:url(' + p.foto + ');background-size:cover;background-position:center">' +
+            '<div class="phacts">' +
+              '<button class="phbtn" title="Trocar foto" onclick="event.preventDefault();event.stopPropagation();escolherFoto(' + p.id + ')">✎</button>' +
+              '<button class="phbtn" title="Remover foto" onclick="event.preventDefault();event.stopPropagation();removerFoto(' + p.id + ')">🗑</button>' +
+            '</div></div>'
+        : '<div class="ph phempty" onclick="event.preventDefault();event.stopPropagation();escolherFoto(' + p.id + ')" title="Adicionar foto da obra"><span>＋ adicionar foto da obra</span></div>';
+      return '<div class="pcard" style="position:relative">' +
+        '<button class="cbtn" title="Editar" onclick="editar(' + p.id + ')" style="position:absolute;top:10px;right:46px;z-index:3;background:var(--surface)">✎</button>' +
+        '<button class="cbtn del" title="Excluir" onclick="excluir(' + p.id + ',\'' + p.nome.replace(/'/g,"\\'") + '\')" style="position:absolute;top:10px;right:10px;z-index:3;background:var(--surface)">🗑</button>' +
+        '<a href="javascript:abrir(' + p.id + ')" style="text-decoration:none;color:inherit;display:block">' +
+        foto + '<div class="pb">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="pt">' + p.nome + '</span><span class="chip statusedit ' + p.statusCls + '" title="Clique para mudar o status" onclick="event.preventDefault();event.stopPropagation();statusMenu(event,' + p.id + ')"><span class="d"></span>' + p.statusLabel + ' <span style="opacity:.6;font-size:10px">▾</span></span></div>' +
+        '<div class="psub">' + p.cliente + ' · ' + p.cidade + '/' + p.uf + '</div>' +
+        '<div class="miniflex"><div><div class="mlab">Valor</div><div class="mval num">' + brl(p.valor) + '</div></div>' +
+        '<div><div class="mlab">Op.</div><div class="mval num">' + p.op + '</div></div>' +
+        '<div><div class="mlab">RT prev.</div><div class="mval num">' + (p.rt ? brl(p.rt) : 'R$ 0') + '</div></div></div>' +
+        '<div style="margin-top:13px"><div style="font-size:11px;color:var(--ink-3);margin-bottom:5px">' + p.pct + '% fechado</div><div class="prog"><i style="width:' + p.pct + '%"></i></div></div>' +
+        '</div></a></div>';
+    }).join('');
+  }
+
+  // ---------- foto da obra ----------
+  var fotoTargetId = null;
+  function escolherFoto(id){ fotoTargetId = id; document.getElementById('fotoInput').click(); }
+  function removerFoto(id){
+    if (confirm('Remover a foto desta obra?')){ MabeDB.updateProject(id, { foto: '' }); render(); }
+  }
+  document.getElementById('fotoInput').addEventListener('change', function(){
+    var f = this.files && this.files[0]; if (!f || fotoTargetId==null){ this.value=''; return; }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      // redimensiona para caber (até 640px de largura) e comprime
+      var img = new Image();
+      img.onload = function(){
+        var maxW = 640, scale = Math.min(1, maxW / img.width);
+        var cv = document.createElement('canvas');
+        cv.width = Math.round(img.width*scale); cv.height = Math.round(img.height*scale);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        var data = cv.toDataURL('image/jpeg', 0.82);
+        MabeDB.updateProject(fotoTargetId, { foto: data });
+        fotoTargetId = null; render();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(f);
+    this.value = '';
+  });
+
+  function abrir(id){ location.href = 'projeto.html?id=' + id; }
+
+  // ---------- mudar status na lista ----------
+  var STATUS_OPTS = [
+    { label:'Prospecção', cls:'prospec' },
+    { label:'Ativo',      cls:'negoc' },
+    { label:'Fechando',   cls:'prop' },
+    { label:'Concluído',  cls:'win' },
+    { label:'Obra Entregue', cls:'done' },
+    { label:'Perdido',    cls:'lost' }
+  ];
+  function statusMenu(ev, id){
+    var p = MabeDB.getProject(id); if (!p) return;
+    var pop = document.getElementById('statusPop');
+    pop.innerHTML = STATUS_OPTS.map(function(o){
+      var on = o.label === p.statusLabel;
+      return '<div class="statusopt' + (on?' on':'') + '" onclick="setStatus(' + id + ',\'' + o.cls + '\',\'' + o.label + '\')">' +
+        '<span class="chip ' + o.cls + '" style="pointer-events:none"><span class="d"></span>' + o.label + '</span>' +
+        (on ? '<span style="margin-left:auto;color:var(--ink-3)">✓</span>' : '') + '</div>';
+    }).join('');
+    pop.style.display = 'block';
+    var r = ev.currentTarget.getBoundingClientRect();
+    var top = r.bottom + 6, left = r.left;
+    pop.style.visibility = 'hidden';
+    requestAnimationFrame(function(){
+      var ph = pop.offsetHeight, pw = pop.offsetWidth;
+      if (top + ph > window.innerHeight - 8) top = r.top - ph - 6;
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      pop.style.top = Math.max(8, top) + 'px';
+      pop.style.left = Math.max(8, left) + 'px';
+      pop.style.visibility = 'visible';
+    });
+  }
+  function setStatus(id, cls, label){
+    MabeDB.updateProject(id, { statusCls: cls, statusLabel: label });
+    document.getElementById('statusPop').style.display = 'none';
+    render();
+  }
+  document.addEventListener('click', function(e){
+    var pop = document.getElementById('statusPop');
+    if (pop.style.display === 'block' && !pop.contains(e.target) && !(e.target.closest && e.target.closest('.statusedit'))){
+      pop.style.display = 'none';
+    }
+  });
+  window.addEventListener('keydown', function(e){ if (e.key==='Escape') document.getElementById('statusPop').style.display='none'; });
+
+  function excluir(id, nome){
+    if (confirm('Excluir o projeto "' + nome + '"?\nAs oportunidades dessa obra também serão removidas.')){
+      MabeDB.deleteProject(id);
+      render();
+    }
+  }
+
+  function vp(v){
+    document.getElementById('vTab').style.display = v==='tab'?'block':'none';
+    document.getElementById('vCard').style.display = v==='card'?'grid':'none';
+    document.getElementById('segTab').classList.toggle('on', v==='tab');
+    document.getElementById('segCard').classList.toggle('on', v==='card');
+  }
+
+  // ---------- criar / editar projeto ----------
+  var editingProj = null;
+  function setField(id, v){ var e = document.getElementById(id); if (e) e.value = (v==null?'':v); }
+  function openProj(){
+    editingProj = null;
+    document.querySelector('#drawer .dh h2').textContent = 'Novo projeto';
+    document.querySelector('#drawer .dh .dsub').textContent = 'cadastre uma obra para lançar oportunidades';
+    document.getElementById('pjSaveBtn').textContent = 'Criar projeto';
+    document.getElementById('pjFootHint').textContent = 'a obra começa sem oportunidades';
+    ['pjNome','pjCli','pjCep','pjLograd','pjNum','pjBairro','pjCidade','pjUF','pjVal','pjObs'].forEach(function(id){ setField(id,''); });
+    setField('pjTipo','Residencial'); setField('pjResp','Você (Arq.)');
+    var h = document.getElementById('pjValHint');
+    if (h){ h.textContent = 'todo projeto precisa de um valor — as oportunidades entram dentro dele'; h.style.color = ''; }
+    var ch = document.getElementById('pjCepHint'); if (ch){ ch.textContent = 'digite o CEP para preencher o endereço'; ch.style.color = ''; }
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+    setTimeout(function(){ document.getElementById('pjNome').focus(); }, 60);
+  }
+  function editar(id){
+    var p = MabeDB.getProject(id);
+    if (!p) return;
+    editingProj = id;
+    document.querySelector('#drawer .dh h2').textContent = 'Editar projeto';
+    document.querySelector('#drawer .dh .dsub').textContent = p.nome;
+    document.getElementById('pjSaveBtn').textContent = 'Salvar alterações';
+    document.getElementById('pjFootHint').textContent = p.op ? (p.op + ' oportunidade' + (p.op>1?'s':'') + ' nesta obra') : 'sem oportunidades ainda';
+    setField('pjNome', p.nome); setField('pjCli', p.cliente);
+    setField('pjTipo', p.tipo || 'Residencial'); setField('pjResp', p.resp || 'Você (Arq.)');
+    setField('pjCep', p.cep || ''); setField('pjLograd', p.logradouro || '');
+    setField('pjNum', p.numero || ''); setField('pjBairro', p.bairro || '');
+    setField('pjCidade', p.cidade && p.cidade!=='—' ? p.cidade : ''); setField('pjUF', p.uf || '');
+    setField('pjVal', p.valor ? Number(p.valor).toLocaleString('pt-BR') : '');
+    setField('pjObs', p.obs || '');
+    var h = document.getElementById('pjValHint');
+    if (h){ h.textContent = 'todo projeto precisa de um valor — as oportunidades entram dentro dele'; h.style.color = ''; }
+    var ch = document.getElementById('pjCepHint'); if (ch){ ch.textContent = 'digite o CEP para preencher o endereço'; ch.style.color = ''; }
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+    setTimeout(function(){ document.getElementById('pjNome').focus(); }, 60);
+  }
+  function closeProj(){
+    document.getElementById('scrim').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
+  }
+  function saveProj(){
+    var nome = document.getElementById('pjNome').value.trim();
+    var cli  = document.getElementById('pjCli').value.trim();
+    if (!nome){ document.getElementById('pjNome').focus(); return; }
+    if (!cli){ document.getElementById('pjCli').focus(); return; }
+    var val = parseInt((document.getElementById('pjVal').value||'').replace(/\D/g,''),10) || 0;
+    if (!val){
+      var vf = document.getElementById('pjVal');
+      vf.focus();
+      var hint = document.getElementById('pjValHint');
+      if (hint){ hint.textContent = 'informe o valor do projeto'; hint.style.color = 'var(--lost)'; }
+      return;
+    }
+    var lograd = document.getElementById('pjLograd').value.trim();
+    var num = document.getElementById('pjNum').value.trim();
+    var endereco = lograd ? (lograd + (num ? ', ' + num : '')) : '';
+    var dados = {
+      nome: nome, cliente: cli,
+      tipo: document.getElementById('pjTipo').value,
+      cep: document.getElementById('pjCep').value.trim(),
+      logradouro: lograd, numero: num,
+      bairro: document.getElementById('pjBairro').value.trim(),
+      endereco: endereco,
+      cidade: document.getElementById('pjCidade').value.trim() || '—',
+      uf: (document.getElementById('pjUF').value.trim() || 'SP').toUpperCase(),
+      valor: val, resp: document.getElementById('pjResp').value,
+      obs: document.getElementById('pjObs').value.trim()
+    };
+    if (editingProj != null){
+      MabeDB.updateProject(editingProj, dados);
+    } else {
+      dados.op = 0; dados.pct = 0; dados.rt = 0; dados.statusLabel = 'Prospecção'; dados.statusCls = 'prospec';
+      MabeDB.addProject(dados);
+    }
+    editingProj = null;
+    ['pjNome','pjCli','pjCep','pjLograd','pjNum','pjBairro','pjCidade','pjUF','pjVal','pjObs'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('pjCepHint').textContent = 'digite o CEP para preencher o endereço';
+    document.getElementById('pjCepHint').style.color = '';
+    closeProj();
+    render();
+  }
+  document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeProj(); });
+
+  // ---------- busca de CEP (ViaCEP) ----------
+  function buscaCep(){
+    var inp = document.getElementById('pjCep');
+    var hint = document.getElementById('pjCepHint');
+    var cep = (inp.value||'').replace(/\D/g,'');
+    if (cep.length !== 8){ hint.textContent = 'CEP incompleto — digite os 8 dígitos'; hint.style.color = 'var(--lost)'; inp.focus(); return; }
+    inp.value = cep.slice(0,5) + '-' + cep.slice(5);
+    hint.textContent = 'buscando endereço…'; hint.style.color = 'var(--ink-3)';
+    fetch('https://viacep.com.br/ws/' + cep + '/json/')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.erro){ hint.textContent = 'CEP não encontrado — preencha manualmente'; hint.style.color = 'var(--lost)'; return; }
+        document.getElementById('pjLograd').value = d.logradouro || '';
+        document.getElementById('pjBairro').value = d.bairro || '';
+        document.getElementById('pjCidade').value = d.localidade || '';
+        document.getElementById('pjUF').value = d.uf || '';
+        hint.textContent = 'endereço preenchido · informe o número'; hint.style.color = 'var(--win)';
+        document.getElementById('pjNum').focus();
+      })
+      .catch(function(){ hint.textContent = 'sem conexão — preencha o endereço manualmente'; hint.style.color = 'var(--lost)'; });
+  }
+  // dispara ao sair do campo / Enter
+  (function(){
+    var cep = document.getElementById('pjCep');
+    if (!cep) return;
+    cep.addEventListener('blur', function(){ if ((cep.value||'').replace(/\D/g,'').length === 8) buscaCep(); });
+    cep.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); buscaCep(); } });
+  })();
+
+  // ---------- balanço consolidado (impressão) ----------
+  function rtAll(opps){ return opps.reduce(function(a,o){ return a + MabeDB.rtOf(o); }, 0); }
+  function imprimir(){
+    var projetos = MabeDB.loadProjects();
+    var hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    var T = { valor:0, op:0, fech:0, rtPrev:0, ganho:0 };
+
+    var rows = projetos.map(function(p){
+      var opps = MabeDB.loadOpps(p.id);
+      var won = opps.filter(function(o){ return o.et==='win'; });
+      var fechVal = won.reduce(function(a,o){ return a+o.val; }, 0);
+      var rtPrev = rtAll(won);
+      var ganho = rtAll(opps);
+      T.valor += p.valor||0; T.op += opps.length; T.fech += fechVal; T.rtPrev += rtPrev; T.ganho += ganho;
+      return '<tr>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + p.nome + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee">' + p.cliente + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;color:#666">' + p.tipo + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;color:#666">' + p.cidade + '/' + p.uf + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums">' + brl(p.valor) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">' + opps.length + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums;color:#4f6f3b;font-weight:600">' + brl(fechVal) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums;color:#c0673f">' + (rtPrev?brl(Math.round(rtPrev)):'—') + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums;color:#c2772f;font-weight:600">' + (ganho?brl(Math.round(ganho)):'—') + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">' + p.pct + '%</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee">' + p.statusLabel + '</td>' +
+        '</tr>';
+    }).join('');
+
+    function cell(label, val, color){
+      return '<div style="border:1px solid #ddd6c8;border-radius:8px;padding:10px 12px">' +
+        '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#888">' + label + '</div>' +
+        '<div style="font-size:18px;font-weight:700;margin-top:3px' + (color?(';color:'+color):'') + '">' + val + '</div></div>';
+    }
+
+    var html =
+      '<div style="font-family:Archivo,Helvetica,Arial,sans-serif;color:#1b1a17">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b1a17;padding-bottom:12px;margin-bottom:16px">' +
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Mabe Comercial · Balanço geral da carteira</div>' +
+          '<div style="font-size:24px;font-weight:700;margin-top:4px">Todas as obras</div>' +
+          '<div style="font-size:12px;color:#666;margin-top:4px">' + projetos.length + ' projetos · ' + T.op + ' oportunidades</div></div>' +
+          '<div style="text-align:right;font-size:11px;color:#888">Emitido em<br><b style="color:#333;font-size:13px">' + hoje + '</b></div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px">' +
+          cell('Projetos', projetos.length, '#1b1a17') +
+          cell('Valor em carteira', brl(T.valor), '#1b1a17') +
+          cell('Fechado (total)', brl(T.fech), '#4f6f3b') +
+          cell('RT prevista (total)', brl(Math.round(T.rtPrev)), '#c0673f') +
+          cell('Ganho possível (total)', brl(Math.round(T.ganho)), '#c2772f') +
+        '</div>' +
+        '<div style="font-size:13px;font-weight:700;margin-bottom:6px">Obras (' + projetos.length + ')</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+          '<thead><tr style="border-bottom:2px solid #1b1a17">' +
+            ['Projeto','Cliente','Tipo','Local','Valor projeto','Op.','Fechado','RT prev.','Ganho poss.','% fech.','Status']
+              .map(function(h,i){ return '<th style="padding:6px 8px;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#888;text-align:' + (i>=4&&i<=9?'right':'left') + '">' + h + '</th>'; }).join('') +
+          '</tr></thead><tbody>' + rows + '</tbody>' +
+          '<tfoot><tr style="border-top:2px solid #1b1a17;font-weight:700">' +
+            '<td style="padding:8px" colspan="4">Total · ' + projetos.length + ' obras</td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums">' + brl(T.valor) + '</td>' +
+            '<td style="padding:8px;text-align:right">' + T.op + '</td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#4f6f3b">' + brl(T.fech) + '</td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#c0673f">' + brl(Math.round(T.rtPrev)) + '</td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#c2772f">' + brl(Math.round(T.ganho)) + '</td>' +
+            '<td colspan="2"></td>' +
+          '</tr></tfoot>' +
+        '</table>' +
+        '<div style="margin-top:18px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px">Ganho possível = soma das RT de todas as oportunidades de cada obra, independente da etapa. Valores em reais (R$).</div>' +
+      '</div>';
+
+    document.getElementById('printReport').innerHTML = html;
+    window.print();
+  }
+
+  // busca vinda da topbar (?q=)
+  (function(){
+    var q = new URLSearchParams(location.search).get('q');
+    if (q){ document.getElementById('pjSearch').value = q; }
+  })();
+  // popula o select de responsável a partir da Configuração
+  (function fillRespProj(){
+    if(!MabeDB.loadResponsaveis) return;
+    var sel=document.getElementById('pjResp'); if(!sel) return;
+    sel.innerHTML = MabeDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
+  })();
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Residência Alphaville · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="prc.css">
+<link rel="stylesheet" href="ct.css">
+<style>
+  /* ---- relatório de impressão ---- */
+  #printReport { display: none; }
+  #app .statline > div { padding: 0 14px; }
+  #app .statline .sv { font-size: 19px; white-space: nowrap; }
+  @media print {
+    @page { margin: 14mm; size: A4; }
+    body { background: #fff !important; }
+    .mabe .top, .mabe .toolbar, #vFunil, #vTab, .scrim, .drawer,
+    .page-h .btnbar, .phead { display: none !important; }
+    .mabe, .mabe .body, .mabe .body.scroll { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; }
+    .wrap { display: block !important; max-width: none !important; }
+    #printReport { display: block !important; color: #111; }
+    #printReport * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="projetos">
+  <div class="body scroll">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="page-h">
+        <div>
+          <div class="crumb"><a href="projetos.html" style="color:var(--ink-3)">Projetos</a> › <span id="crumbName">—</span></div>
+          <h1 id="projName">—</h1>
+        </div>
+        <div class="btnbar" style="display:flex;gap:10px;align-items:center">
+          <button class="btn" onclick="imprimirLucro()" title="Imprimir lucro do projeto">🧮&nbsp; Imprimir Lucro</button>
+          <button class="btn" onclick="imprimir()" title="Imprimir balanço"><span style="font-size:15px">⎣</span>&nbsp; Imprimir</button>
+          <button class="btn" id="btnCustos" title="Custos de terceiros">💸&nbsp; Custos de Terceiros</button>
+          <a class="btn primary" id="btnNovaOpp" href="oportunidade.html" data-comment-anchor="9b41777129-button">+&nbsp; Nova oportunidade</a>
+        </div>
+      </div>
+
+      <div class="phead">
+        <div class="meta-row">
+          <div><div class="mlab">Cliente</div><div class="mval" id="mvCliente">—</div></div>
+          <div><div class="mlab">Localização</div><div class="mval" id="mvLocal">—</div></div>
+          <div><div class="mlab">Responsável</div><div class="mval" id="mvResp">—</div></div>
+          <div><div class="mlab">Tipo</div><div class="mval" id="mvTipo">—</div></div>
+          <div><div class="mlab">Valor do projeto</div><div class="mval" id="mvValor" style="text-align: center">—</div></div>
+          <div><div class="mlab">Custos de terceiros</div><div class="mval" id="mvCustos" style="text-align: center;color:var(--st-prop)">R$ 0</div></div>
+        </div>
+        <hr>
+        <div class="statline">
+          <div><div class="sv num" style="color:var(--win)" id="stFech">R$ 307 mil</div><div class="sl" id="slFech">Fechado · 5 oportunidades</div></div>
+          <div><div class="sv num" style="color:var(--st-negoc)" id="stNeg">R$ 173 mil</div><div class="sl" id="slNeg">Em negociação · 3</div></div>
+          <div><div class="sv num" style="color:var(--lost)" id="stLost">R$ 42 mil</div><div class="sl" id="slLost">Perdido · 1</div></div>
+          <div><div class="sv num" style="color:var(--accent)" id="stRt">R$ 0</div><div class="sl" id="slRt">RT Realizada· ~8.2%</div></div>
+          <div><div class="sv num" style="color:var(--st-prop)" id="stGanho">R$ 0</div><div class="sl" id="slGanho">Ganho possível · RT total</div></div>
+          <div><div class="sv num" id="stPct">0%</div><div class="sl" style="margin-bottom:6px">% Fechado</div><div class="prog"><i id="pctBar" style="width:0%"></i></div></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="sect-title"><h3>Oportunidades da obra</h3><span class="count" id="oppCount"></span></div>
+        <div class="sp"></div>
+        <span class="hint" style="margin-right:4px">clique para editar · arraste (ou toque em ⇄) para mudar a etapa</span>
+        <div class="seg">
+          <button class="on" id="segFunil" onclick="viewOpp('funil')">Funil</button>
+          <button id="segTab" onclick="viewOpp('tab')">Tabela</button>
+        </div>
+      </div>
+
+      <div id="vFunil" class="kanban"></div>
+
+      <div id="vTab" class="panel" style="display:none;padding:0;overflow:hidden;">
+        <table class="tbl">
+          <thead><tr><th>Serviço</th><th>Fornecedor</th><th>Responsável</th><th>Etapa</th><th class="r">Valor</th><th class="r">% RT</th><th class="r">R$ RT</th><th class="r">Prob.</th></tr></thead>
+          <tbody id="tabBody"></tbody>
+        </table>
+      </div>
+
+      <!-- relatório de impressão (oculto em tela) -->
+      <div id="printReport"></div>
+
+    </div>
+  </div>
+
+  <!-- DRAWER edição -->
+  <div class="scrim" id="scrim" onclick="closeEdit()"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="dh">
+      <div><h2 id="dwTitle">Editar oportunidade</h2><div class="dsub" id="dwSub">Residência Alphaville</div></div>
+      <button class="iconbtn" onclick="closeEdit()" title="Fechar">✕</button>
+    </div>
+    <div class="dbody">
+      <div class="field"><label>Serviço <span class="req">*</span></label><input class="inp" id="dwServ" list="dwServList" placeholder="ex.: Marcenaria"><datalist id="dwServList"></datalist></div>
+      <div class="field"><label>Fornecedor</label>
+        <select class="sel" id="dwForn">
+          <option>a definir</option><option>Marcenaria Bianco</option><option>VidroArt</option><option>Pisos &amp; Cia</option><option>Studio Móveis</option><option>LuxLed</option><option>Verde &amp; Cia</option><option>SmartHaus</option><option>TecidoArt</option>
+        </select></div>
+      <div class="form-grid">
+        <div class="field"><label>Valor do serviço</label>
+          <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp" id="dwVal" style="border-radius:0 10px 10px 0" inputmode="numeric" placeholder="25.000" oninput="maskVal(this);dwCalc()"></div></div>
+        <div class="field"><label>Comissão (RT)</label>
+          <div class="seg" id="dwRtTipo" style="margin-bottom:8px">
+            <button type="button" class="on" data-rt="pct" onclick="setRtTipo('pct')">Em %</button>
+            <button type="button" data-rt="brl" onclick="setRtTipo('brl')">Em R$</button>
+          </div>
+          <div class="inset"><input class="inp" id="dwRt" style="border-radius:10px 0 0 10px" inputmode="decimal" oninput="dwCalc()"><span class="addon" id="dwRtAddon">%</span></div>
+          <span class="hint" id="dwRtCalc">RT —</span></div>
+      </div>
+      <div class="field"><label>Responsável</label>
+        <select class="sel" id="dwResp"><option>Você (Arq.)</option><option>Ana</option><option>Rafael</option></select></div>
+
+      <div class="field"><label>Etapa do funil <span class="req">*</span></label>
+        <div class="choice" id="dwEtapas">
+          <span class="opt" data-et="prospec">Prospecção</span>
+          <span class="opt" data-et="negoc">Em negociação</span>
+          <span class="opt" data-et="prop">Proposta enviada</span>
+          <span class="opt" data-et="win">Fechado / Ganho</span>
+          <span class="opt" data-et="lost">Perdido</span>
+        </div>
+        <span class="hint">mude aqui para mover a oportunidade no funil</span>
+      </div>
+
+      <div class="field" id="dwMotivoWrap" style="display:none;background:var(--lost-soft);border:1px solid var(--lost);border-radius:12px;padding:12px 14px;">
+        <label style="color:var(--lost)">Motivo da perda <span class="req">*</span></label>
+        <select class="sel" id="dwMotivo"><option>Preço acima do concorrente</option><option>Prazo de entrega</option><option>Cliente desistiu</option><option>Escolheu concorrente</option><option>Sem retorno</option></select>
+      </div>
+
+      <div class="field"><label>Probabilidade — <b id="dwProbLab">50%</b></label>
+        <input type="range" id="dwProb" min="0" max="100" value="50" style="width:100%;accent-color:var(--accent)" oninput="document.getElementById('dwProbLab').textContent=this.value+'%'"></div>
+
+      <div class="field" style="margin-bottom:0"><label>Observações / histórico</label><textarea class="ta" id="dwObs" rows="3" placeholder="anotações da negociação…"></textarea></div>
+    </div>
+    <div class="dfoot">
+      <button class="btn danger" id="dwDel" onclick="delOpp()">Excluir</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn ghost" onclick="closeEdit()">Cancelar</button>
+        <button class="btn primary" onclick="saveOpp()">Salvar</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- modal: Custos de Terceiros (dentro de #app p/ herdar tokens do tema) -->
+  <div class="overlay prc-ov" id="ct-ov">
+    <div class="modal">
+      <div class="modal-hdr"><h3 id="ct-title">💸 Custos de Terceiros</h3><button class="modal-close" onclick="CT.close()">×</button></div>
+      <p class="ct-sub">Serviços terceirizados deste projeto (freelancer, renderização, filmagem e outros). Ficam salvos junto do projeto.</p>
+      <div class="ct-stats">
+        <div class="ct-st tot"><div class="k">Total</div><div class="v" id="ct-tot">R$ 0</div></div>
+        <div class="ct-st pagar"><div class="k">A pagar</div><div class="v" id="ct-pagar">R$ 0</div></div>
+        <div class="ct-st pago"><div class="k">Pago</div><div class="v" id="ct-pago">R$ 0</div></div>
+        <div class="ct-st"><div class="k">Lançamentos</div><div class="v" id="ct-n">0</div></div>
+      </div>
+      <div class="ct-frm">
+        <div class="field"><label>Data</label><input type="date" id="ct-data"></div>
+        <div class="field"><label>Categoria</label><select id="ct-cat"></select></div>
+        <div class="field full"><label>Prestador</label><input id="ct-prest" placeholder="Nome / empresa"></div>
+        <div class="field full"><label>Descrição</label><input id="ct-desc" placeholder="Ex: Render 3 ambientes"></div>
+        <div class="field"><label>Valor (R$)</label><input type="number" id="ct-valor" min="0" step="0.01" placeholder="0,00"></div>
+        <div class="field"><label>Status</label><select id="ct-status"><option value="a_pagar">A pagar</option><option value="pago">Pago</option></select></div>
+        <div class="field"><label>&nbsp;</label><button class="btn primary" id="ct-add" onclick="CT.salvar()">Adicionar</button></div>
+      </div>
+      <div class="ct-tools">
+        <button class="btn" onclick="CT.novaCategoria()">+ Nova categoria</button>
+        <button class="btn" onclick="CT.editarCategoria()">✎ Renomear categoria</button>
+        <button class="btn" onclick="CT.excluirCategoria()">🗑 Excluir categoria</button>
+        <button class="btn" id="ct-cancel" style="display:none" onclick="CT.cancelar()">Cancelar edição</button>
+      </div>
+      <div class="ct-wrap">
+        <table class="ct-table">
+          <thead><tr><th>Data</th><th>Categoria</th><th>Prestador</th><th>Descrição</th><th>Status</th><th class="r">Valor</th><th></th></tr></thead>
+          <tbody id="ct-tbody"></tbody>
+        </table>
+      </div>
+      <div class="ct-foot" style="display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap">
+        <span>Total de custos: <b id="ct-foot-total">R$ 0</b></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="projects-data.js"></script>
+<script src="ct.js"></script>
+<script src="shell.js"></script>
+<script>
+  var STAGES = [
+    { k:'prospec', l:'Prospecção' },
+    { k:'negoc',   l:'Montando Orçamento' },
+    { k:'prop',    l:'Proposta' },
+    { k:'win',     l:'Fechado' },
+    { k:'lost',    l:'Perdido' }
+  ];
+  var SLAB = { prospec:'Prospecção', negoc:'Em negociação', prop:'Proposta enviada', win:'Fechado / Ganho', lost:'Perdido' };
+
+  var opps = [];
+  var PROJ = null, projId = null, seq = 1, editing = null;
+
+  // carrega o projeto pelo id da URL
+  (function loadProject(){
+    var qs = new URLSearchParams(location.search);
+    projId = qs.get('id');
+    PROJ = MabeDB.getProject(projId);
+    if (!PROJ){ var all = MabeDB.loadProjects(); PROJ = all[0]; }
+    projId = PROJ ? PROJ.id : null;
+    opps = projId != null ? MabeDB.loadOpps(projId) : [];
+    seq = opps.reduce(function(m,o){ return Math.max(m, o.id); }, 0) + 1;
+    // cabeçalho
+    if (PROJ){
+      document.getElementById('crumbName').textContent = PROJ.nome;
+      document.getElementById('projName').textContent = PROJ.nome;
+      document.title = PROJ.nome + ' · Mabe Comercial';
+      document.getElementById('mvCliente').textContent = PROJ.cliente || '—';
+      document.getElementById('mvLocal').textContent = (PROJ.cidade || '—') + ' · ' + (PROJ.uf || '');
+      document.getElementById('mvResp').textContent = PROJ.resp || '—';
+      document.getElementById('mvTipo').textContent = PROJ.tipo || '—';
+      document.getElementById('mvValor').textContent = PROJ.valor ? brl(PROJ.valor) : '—';
+      var bn = document.getElementById('btnNovaOpp');
+      if (bn) bn.href = 'oportunidade.html?proj=' + PROJ.id;
+      var bc = document.getElementById('btnCustos');
+      if (bc) bc.onclick = function(){ CT.open(PROJ.id, function(){ if(typeof render==='function') render(); }); };
+    }
+  })();
+
+  function persist(){
+    if (projId == null) return;
+    MabeDB.saveOpps(projId, opps);
+    MabeDB.recalc(projId);
+  }
+
+  function brl(v){ return 'R$ ' + Math.round(v||0).toLocaleString('pt-BR'); }
+  function parseMoney(s){ return parseFloat(String(s==null?'':s).replace(/\./g,'').replace(',','.')) || 0; }
+  function maskVal(el){ var d = (el.value||'').replace(/[^\d]/g,''); el.value = d ? Number(d).toLocaleString('pt-BR') : ''; }
+  function rtv(o){ return MabeDB.rtOf(o); }                 // em reais (entende % ou R$)
+  function rtLabel(o){ return o.rtTipo==='brl' ? ('R$ '+Number(o.rt||0).toLocaleString('pt-BR')) : ((o.rt||0)+'%'); }
+  function rtTxt(o){ var v = rtv(o); return 'RT ' + v.toLocaleString('pt-BR',{maximumFractionDigits:1}) + 'k'; }
+  function esc(s){ return String(s||'').replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
+
+  function render(){
+    // kanban
+    var html = STAGES.map(function(s){
+      var list = opps.filter(function(o){ return o.et === s.k; });
+      var cards = list.map(function(o){
+        var trail;
+        if (o.et === 'lost') trail = '<span class="chip lost"><span class="d"></span>' + (o.motivo? esc(o.motivo.split(' ')[0]) : 'perdido') + '</span>';
+        else if (o.et === 'prospec' || o.rt === 0) trail = '<span class="chip ' + o.et + '"><span class="d"></span>' + o.prob + '%</span>';
+        else trail = '<span class="miniRT">' + rtTxt(o) + '</span>';
+        return '<div class="opp" draggable="true" data-id="' + o.id + '" onclick="openEdit(' + o.id + ')">' +
+          '<button class="opp-move" title="Mover para outra etapa" onclick="event.stopPropagation();abrirMover(event,' + o.id + ')">⇄</button>' +
+          '<div class="ot">' + esc(o.serv) + '</div><div class="of">' + esc(o.forn) + '</div>' +
+          '<div class="om"><span class="ov num">' + brl(o.val) + '</span>' + trail + '</div></div>';
+      }).join('');
+      return '<div class="kcol" data-stage="' + s.k + '"><div class="kh"><span class="kt"><span class="dot ' + s.k + '"></span>' + s.l +
+        '</span><span class="kc">' + list.length + '</span></div>' + cards + '<div class="kdrop">soltar aqui</div></div>';
+    }).join('');
+    document.getElementById('vFunil').innerHTML = html;
+
+    // tabela
+    document.getElementById('tabBody').innerHTML = opps.map(function(o){
+      return '<tr class="click" onclick="openEdit(' + o.id + ')"' + (o.et==='lost'?' style="opacity:.72"':'') + '>' +
+        '<td class="tcell-strong">' + esc(o.serv) + '</td><td>' + esc(o.forn) + '</td><td>' + esc(o.resp) + '</td>' +
+        '<td><span class="chip ' + o.et + '"><span class="d"></span>' + SLAB[o.et].replace(' / Ganho','').replace('Em ','') + '</span></td>' +
+        '<td class="r num">' + brl(o.val) + '</td>' +
+        '<td class="r num">' + (o.rt? rtLabel(o) :'—') + '</td>' +
+        '<td class="r num' + (o.rt?' rtpill':'') + '">' + (o.rt? 'R$ ' + rtv(o).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' mil':'—') + '</td>' +
+        '<td class="r num">' + (o.et==='win'?'—':o.prob+'%') + '</td></tr>';
+    }).join('');
+
+    // contagens
+    document.getElementById('oppCount').textContent = opps.length + ' no total';
+    sumStat('win', 'stFech', 'slFech', 'Fechado');
+    sumStat('negoc', 'stNeg', 'slNeg', 'Em negociação');
+    sumStat('lost', 'stLost', 'slLost', 'Perdido');
+
+    // RT prevista (das fechadas) + % obra fechada
+    var won = opps.filter(function(o){ return o.et==='win'; });
+    var pipe = opps.filter(function(o){ return o.et!=='lost'; });
+    var rtPrev = won.reduce(function(a,o){ return a + rtv(o); }, 0);
+    var wonVal = won.reduce(function(a,o){ return a + o.val; }, 0);
+    var pipeVal = pipe.reduce(function(a,o){ return a + o.val; }, 0);
+    var pct = pipeVal ? Math.round(wonVal / pipeVal * 100) : 0;
+    var ganho = opps.reduce(function(a,o){ return a + rtv(o); }, 0); // RT de TODAS as oportunidades
+    document.getElementById('stRt').textContent = rtPrev ? brl(rtPrev) : 'R$ 0';
+    document.getElementById('slRt').textContent = wonVal ? ('RT prevista · ~' + (rtPrev/wonVal*100).toFixed(1) + '%') : 'RT prevista';
+    document.getElementById('stGanho').textContent = ganho ? brl(ganho) : 'R$ 0';
+    document.getElementById('slGanho').textContent = 'Ganho possível · ' + opps.length + ' oportun.';
+    document.getElementById('stPct').textContent = pct + '%';
+    document.getElementById('pctBar').style.width = pct + '%';
+    var freshP = (window.MabeDB && PROJ) ? MabeDB.getProject(PROJ.id) : PROJ;
+    var custosTot = (freshP && Array.isArray(freshP.custos)) ? freshP.custos.reduce(function(a,c){ return a + (Number(c.valor)||0); }, 0) : 0;
+    if (PROJ && freshP) PROJ.custos = freshP.custos;
+    var mvc = document.getElementById('mvCustos'); if (mvc) mvc.textContent = brl(custosTot);
+
+    persist();
+  }
+  function sumStat(k, svId, slId, lab){
+    var list = opps.filter(function(o){ return o.et===k; });
+    var tot = list.reduce(function(a,o){ return a + o.val; }, 0);
+    document.getElementById(svId).textContent = brl(tot);
+    document.getElementById(slId).textContent = lab + ' · ' + list.length + (list.length===1?' oportunidade':' oportunidades');
+  }
+
+  // drawer
+  function setEtapa(k){
+    var prev = document.querySelector('#dwEtapas .opt.on');
+    var prevK = prev ? prev.dataset.et : null;
+    document.querySelectorAll('#dwEtapas .opt').forEach(function(o){ o.classList.toggle('on', o.dataset.et===k); });
+    document.getElementById('dwMotivoWrap').style.display = k==='lost' ? 'block' : 'none';
+    var probEl = document.getElementById('dwProb'), lab = document.getElementById('dwProbLab');
+    if (k==='win'){ probEl.value = 100; lab.textContent = '100%'; }
+    else if (prevK==='win' && k!=='win' && k!=='lost'){
+      var v = prompt('Qual a nova probabilidade de fechamento (%)?', '50');
+      if (v!==null){ var n = Math.max(0, Math.min(100, parseInt(v,10)||0)); probEl.value = n; lab.textContent = n + '%'; }
+    }
+    else if (k==='lost'){ probEl.value = 0; lab.textContent = '0%'; }
+  }
+  document.querySelectorAll('#dwEtapas .opt').forEach(function(o){ o.addEventListener('click', function(){ setEtapa(o.dataset.et); }); });
+
+  var dwRtTipo = 'pct';
+  function setRtTipo(t){
+    dwRtTipo = t;
+    document.querySelectorAll('#dwRtTipo button').forEach(function(b){ b.classList.toggle('on', b.dataset.rt===t); });
+    document.getElementById('dwRtAddon').textContent = t==='brl' ? 'R$' : '%';
+    document.getElementById('dwRt').placeholder = t==='brl' ? 'ex.: 16.200' : 'ex.: 9';
+    dwCalc();
+  }
+  function dwCalc(){
+    var val = parseMoney(document.getElementById('dwVal').value);
+    var rt = parseMoney(document.getElementById('dwRt').value);
+    var v = dwRtTipo==='brl' ? rt : (val*rt/100);
+    var hint = document.getElementById('dwRtCalc');
+    if (dwRtTipo==='brl'){
+      hint.textContent = v ? ('RT R$ ' + Math.round(v).toLocaleString('pt-BR') + (val ? ' · ' + (v/val*100).toFixed(1).replace('.',',') + '% do serviço' : '')) : 'RT —';
+    } else {
+      hint.textContent = v ? ('RT R$ ' + Math.round(v).toLocaleString('pt-BR')) : 'RT —';
+    }
+  }
+
+  function openEdit(id){
+    editing = id;
+    var isNew = id === null;
+    var o = isNew ? { serv:'', forn:'a definir', resp:'Você (Arq.)', val:'', rt:'', rtTipo:'pct', prob:50, et:'prospec', motivo:'Preço acima do concorrente', obs:'' }
+                  : opps.find(function(x){ return x.id===id; });
+    document.getElementById('dwTitle').textContent = isNew ? 'Nova oportunidade' : 'Editar oportunidade';
+    document.getElementById('dwServ').value = o.serv;
+    document.getElementById('dwForn').value = o.forn;
+    document.getElementById('dwVal').value = o.val ? Number(o.val).toLocaleString('pt-BR') : '';
+    document.getElementById('dwRt').value = (o.rt===''||o.rt==null) ? '' : (o.rtTipo==='brl' ? Number(o.rt).toLocaleString('pt-BR') : o.rt);
+    setRtTipo(o.rtTipo || 'pct');
+    document.getElementById('dwResp').value = o.resp;
+    document.getElementById('dwProb').value = o.prob; document.getElementById('dwProbLab').textContent = o.prob + '%';
+    document.getElementById('dwMotivo').value = o.motivo || 'Preço acima do concorrente';
+    document.getElementById('dwObs').value = o.obs || '';
+    setEtapa(o.et);
+    dwCalc();
+    document.getElementById('dwDel').style.display = isNew ? 'none' : '';
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+  }
+  function closeEdit(){
+    document.getElementById('scrim').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
+    editing = undefined;
+  }
+  function readDrawer(){
+    var et = (document.querySelector('#dwEtapas .opt.on')||{}).dataset ? document.querySelector('#dwEtapas .opt.on').dataset.et : 'prospec';
+    return {
+      serv: document.getElementById('dwServ').value.trim(),
+      forn: document.getElementById('dwForn').value,
+      resp: document.getElementById('dwResp').value,
+      val: parseMoney(document.getElementById('dwVal').value),
+      rt: parseMoney(document.getElementById('dwRt').value),
+      rtTipo: dwRtTipo,
+      prob: parseInt(document.getElementById('dwProb').value,10),
+      et: et,
+      motivo: et==='lost' ? document.getElementById('dwMotivo').value : undefined,
+      obs: document.getElementById('dwObs').value.trim()
+    };
+  }
+  function saveOpp(){
+    var d = readDrawer();
+    if (!d.serv){ document.getElementById('dwServ').focus(); return; }
+    if (editing === null){ d.id = seq++; if(!d.dt) d.dt = new Date().toISOString().slice(0,10); opps.unshift(d); }
+    else { var o = opps.find(function(x){ return x.id===editing; }); Object.assign(o, d); }
+    render(); closeEdit();
+  }
+  function delOpp(){
+    if (editing == null) return;
+    var o = opps.find(function(x){ return x.id===editing; });
+    if (confirm('Excluir a oportunidade "' + o.serv + '"?')){ opps = opps.filter(function(x){ return x.id!==editing; }); render(); closeEdit(); }
+  }
+
+  function viewOpp(v){
+    document.getElementById('vFunil').style.display = v==='funil'?'grid':'none';
+    document.getElementById('vTab').style.display = v==='tab'?'block':'none';
+    document.getElementById('segFunil').classList.toggle('on', v==='funil');
+    document.getElementById('segTab').classList.toggle('on', v==='tab');
+  }
+
+  document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeEdit(); });
+
+  // ---------- drag & drop no kanban ----------
+  var kan = document.getElementById('vFunil');
+  var dragId = null;
+  function clearOver(){ kan.querySelectorAll('.kcol.over').forEach(function(c){ c.classList.remove('over'); }); }
+  kan.addEventListener('dragstart', function(e){
+    var card = e.target.closest('.opp'); if (!card || !card.dataset.id) return;
+    dragId = parseInt(card.dataset.id, 10);
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', String(dragId)); } catch(_){}
+  });
+  kan.addEventListener('dragend', function(e){
+    var card = e.target.closest('.opp'); if (card) card.classList.remove('dragging');
+    clearOver(); dragId = null;
+  });
+  kan.addEventListener('dragover', function(e){
+    var col = e.target.closest('.kcol'); if (!col || dragId == null) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    if (!col.classList.contains('over')){ clearOver(); col.classList.add('over'); }
+  });
+  kan.addEventListener('drop', function(e){
+    var col = e.target.closest('.kcol'); if (!col || dragId == null) return;
+    e.preventDefault();
+    moveOpp(dragId, col.dataset.stage);
+    clearOver(); dragId = null;
+  });
+  function moveOpp(id, stage){
+    var o = opps.find(function(x){ return x.id===id; });
+    if (!o || o.et === stage) return;
+    var temForn = o.forn && o.forn !== 'a definir' && o.forn.trim() !== '';
+    var temValor = (Number(o.val)||0) > 0;
+    var temRT = (Number(o.rt)||0) > 0;
+    if (stage !== 'prospec' && !temForn){
+      alert('Para tirar a oportunidade da Prospecção, escolha o fornecedor.');
+      openEdit(id); return;
+    }
+    if ((stage === 'negoc' || stage === 'prop' || stage === 'win') && (!temValor || !temRT)){
+      alert('Para mover para ' + (SLAB[stage]||stage) + ', informe o valor do serviço e a comissão (RT).');
+      openEdit(id); return;
+    }
+    var prevEt = o.et;
+    o.et = stage;
+    if (stage === 'win'){ o.prob = 100; }
+    else if (stage === 'lost'){ o.prob = 0; if (!o.motivo) o.motivo = 'Preço acima do concorrente'; }
+    else if (prevEt === 'win'){
+      var v = prompt('Qual a nova probabilidade de fechamento (%)?', '50');
+      o.prob = Math.max(0, Math.min(100, parseInt(v,10)||0));
+    }
+    render();
+  }
+
+  // ---------- menu "mover" (toque/celular e clique) ----------
+  function abrirMover(ev, id){
+    fecharMover();
+    var o = opps.find(function(x){ return x.id===id; });
+    if (!o) return;
+    var pop = document.createElement('div');
+    pop.className = 'stage-pop'; pop.id = 'stagePop';
+    pop.innerHTML = '<div class="sp-h">Mover para</div>' + STAGES.map(function(s){
+      var on = s.k === o.et ? ' on' : '';
+      return '<div class="sp-opt' + on + '" onclick="moverPara(' + id + ',\'' + s.k + '\')">' +
+        '<span class="dot ' + s.k + '"></span>' + s.l + (on ? ' ✓' : '') + '</div>';
+    }).join('');
+    document.body.appendChild(pop);
+    var r = ev.currentTarget.getBoundingClientRect();
+    var top = r.bottom + 6, left = r.right - 190;
+    pop.style.visibility = 'hidden';
+    requestAnimationFrame(function(){
+      var ph = pop.offsetHeight, pw = pop.offsetWidth;
+      if (top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 6);
+      if (left < 8) left = 8;
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      pop.style.top = top + 'px'; pop.style.left = left + 'px'; pop.style.visibility = 'visible';
+    });
+  }
+  function moverPara(id, stage){ fecharMover(); moveOpp(id, stage); }
+  function fecharMover(){ var p = document.getElementById('stagePop'); if (p) p.remove(); }
+  document.addEventListener('click', function(e){
+    var p = document.getElementById('stagePop');
+    if (p && !p.contains(e.target) && !(e.target.closest && e.target.closest('.opp-move'))) fecharMover();
+  });
+  window.addEventListener('keydown', function(e){ if (e.key==='Escape') fecharMover(); });
+
+  // ---------- impressão / balanço geral ----------
+  function imprimir(){
+    var STORD = ['prospec','negoc','prop','win','lost'];
+    var ordered = opps.slice().sort(function(a,b){ return STORD.indexOf(a.et) - STORD.indexOf(b.et); });
+    var stColor = { prospec:'#8a8166', negoc:'#b8902f', prop:'#c2772f', win:'#4f6f3b', lost:'#a3422f' };
+
+    function sumBy(k){ var l=opps.filter(function(o){return o.et===k;}); return { n:l.length, v:l.reduce(function(a,o){return a+o.val;},0) }; }
+    var sf=sumBy('win'), sn=sumBy('negoc'), sp=sumBy('prop'), spr=sumBy('prospec'), sl=sumBy('lost');
+    var rtPrev = opps.filter(function(o){return o.et==='win';}).reduce(function(a,o){return a+rtv(o);},0);
+    var ganho = opps.reduce(function(a,o){ return a+rtv(o); }, 0);
+    var totVal = opps.reduce(function(a,o){ return a+o.val; }, 0);
+    var pipe = opps.filter(function(o){return o.et!=='lost';});
+    var wonVal = sf.v, pipeVal = pipe.reduce(function(a,o){return a+o.val;},0);
+    var pct = pipeVal ? Math.round(wonVal/pipeVal*100) : 0;
+    var hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+
+    function cell(label, val, color){
+      return '<div style="border:1px solid #ddd6c8;border-radius:8px;padding:10px 12px">' +
+        '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#888">' + label + '</div>' +
+        '<div style="font-size:17px;font-weight:700;margin-top:3px' + (color?(';color:'+color):'') + '">' + val + '</div></div>';
+    }
+
+    var rows = ordered.map(function(o){
+      var rtval = rtv(o);
+      return '<tr>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + esc(o.serv) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee">' + esc(o.forn) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee">' + esc(o.resp) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;color:' + (stColor[o.et]||'#555') + ';font-weight:600">' + SLAB[o.et] + (o.et==='lost'&&o.motivo?(' <span style="color:#999;font-weight:400">— '+esc(o.motivo)+'</span>'):'') + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums">' + brl(o.val) + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">' + (o.rt?rtLabel(o):'—') + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;font-variant-numeric:tabular-nums;font-weight:600">' + (rtval?('R$ '+rtval.toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil'):'—') + '</td>' +
+        '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">' + (o.et==='win'?'—':o.prob+'%') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    var html =
+      '<div style="font-family:Archivo,Helvetica,Arial,sans-serif;color:#1b1a17">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b1a17;padding-bottom:12px;margin-bottom:16px">' +
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Mabe Comercial · Balanço de oportunidades</div>' +
+          '<div style="font-size:24px;font-weight:700;margin-top:4px">' + esc(PROJ ? PROJ.nome : '') + '</div>' +
+          '<div style="font-size:12px;color:#666;margin-top:4px">' + esc(PROJ?PROJ.cliente:'') + ' · ' + esc(PROJ?(PROJ.cidade+'/'+PROJ.uf):'') + ' · Obra ' + (PROJ&&PROJ.valor?brl(PROJ.valor):'—') + ' · Resp.: ' + esc(PROJ?PROJ.resp:'') + '</div></div>' +
+          '<div style="text-align:right;font-size:11px;color:#888">Emitido em<br><b style="color:#333;font-size:13px">' + hoje + '</b></div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">' +
+          cell('Fechado · '+sf.n, brl(sf.v), '#4f6f3b') +
+          cell('Em negociação · '+sn.n, brl(sn.v), '#b8902f') +
+          cell('Proposta · '+sp.n, brl(sp.v), '#c2772f') +
+          cell('Prospecção · '+spr.n, brl(spr.v), '#8a8166') +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">' +
+          cell('Perdido · '+sl.n, brl(sl.v), '#a3422f') +
+          cell('RT prevista (fechado)', rtPrev?brl(rtPrev):'R$ 0', '#c0673f') +
+          cell('Ganho possível · RT total', ganho?brl(ganho):'R$ 0', '#c2772f') +
+          cell('Obra fechada', pct+'%', '#1b1a17') +
+        '</div>' +
+        '<div style="font-size:13px;font-weight:700;margin-bottom:6px">Todas as oportunidades (' + opps.length + ')</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:11.5px">' +
+          '<thead><tr style="border-bottom:2px solid #1b1a17">' +
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Serviço</th>' +
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Fornecedor</th>' +
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Responsável</th>' +
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Etapa</th>' +
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Valor</th>' +
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">% RT</th>' +
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">RT R$</th>' +
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Prob.</th>' +
+          '</tr></thead><tbody>' + rows + '</tbody>' +
+          '<tfoot><tr style="border-top:2px solid #1b1a17;font-weight:700">' +
+            '<td style="padding:8px" colspan="4">Total · ' + opps.length + ' oportunidades</td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums">' + brl(totVal) + '</td>' +
+            '<td></td>' +
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#c2772f">' + brl(ganho) + '</td>' +
+            '<td></td>' +
+          '</tr></tfoot>' +
+        '</table>' +
+        '<div style="margin-top:18px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px">Ganho possível = soma das RT de todas as oportunidades, independente da etapa. Valores em reais (R$).</div>' +
+      '</div>';
+
+    document.getElementById('printReport').innerHTML = html;
+    window.print();
+  }
+
+  // ---------- imprimir lucro do projeto ----------
+  // Lucro = Valor do projeto + Comissões realizadas (RT de fechadas) − Custos de terceiros
+  function imprimirLucro(){
+    var valProjeto = (PROJ && PROJ.valor) ? PROJ.valor : 0;
+    var comissao = opps.filter(function(o){ return o.et==='win'; }).reduce(function(a,o){ return a + rtv(o); }, 0);
+    var custos = (PROJ && Array.isArray(PROJ.custos)) ? PROJ.custos : [];
+    var terceiros = custos.reduce(function(a,c){ return a + (Number(c.valor)||0); }, 0);
+    var lucro = valProjeto + comissao - terceiros;
+    var margem = valProjeto ? (lucro / valProjeto * 100) : 0;
+    var hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    var money = function(v){ return 'R$ ' + Math.round(v||0).toLocaleString('pt-BR'); };
+
+    var custosRows = custos.length ? custos.map(function(c){
+      var dt=(c.data||'').split('-').reverse().join('/');
+      return '<tr><td>'+dt+'</td><td>'+(c.cat||'-')+'</td><td>'+(c.prest||'-')+'</td><td>'+(c.desc||'-')+'</td>'+
+        '<td style="text-align:center">'+(c.status==='pago'?'Pago':'A pagar')+'</td>'+
+        '<td style="text-align:right;font-variant-numeric:tabular-nums">'+money(c.valor)+'</td></tr>';
+    }).join('') : '<tr><td colspan="6" style="color:#888;padding:10px">Nenhum custo de terceiro lançado.</td></tr>';
+
+    var wonRows = opps.filter(function(o){return o.et==='win';});
+    var comRows = wonRows.length ? wonRows.map(function(o){
+      return '<tr><td>'+esc(o.serv)+'</td><td>'+esc(o.forn)+'</td>'+
+        '<td style="text-align:right;font-variant-numeric:tabular-nums">'+money(o.val)+'</td>'+
+        '<td style="text-align:right;font-variant-numeric:tabular-nums;color:#c0673f">'+money(rtv(o))+'</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="color:#888;padding:10px">Nenhuma oportunidade fechada.</td></tr>';
+
+    var cell = function(label,val,color){
+      return '<div style="border:1px solid #ddd6c8;border-radius:8px;padding:12px 14px">'+
+        '<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#888">'+label+'</div>'+
+        '<div style="font-size:19px;font-weight:700;margin-top:3px'+(color?(';color:'+color):'')+'">'+val+'</div></div>';
+    };
+
+    var html =
+      '<div style="font-family:Archivo,Helvetica,Arial,sans-serif;color:#1b1a17">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b1a17;padding-bottom:12px;margin-bottom:18px">'+
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Mabe Comercial · Lucro do Projeto</div>'+
+          '<div style="font-size:23px;font-weight:700;margin-top:4px">'+esc(PROJ?PROJ.nome:'')+'</div>'+
+          '<div style="font-size:12px;color:#666;margin-top:4px">'+esc(PROJ?PROJ.cliente:'')+' · '+esc(PROJ?(PROJ.cidade+'/'+PROJ.uf):'')+'</div></div>'+
+          '<div style="text-align:right;font-size:11px;color:#888">Emitido em<br><b style="color:#333;font-size:13px">'+hoje+'</b></div>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">'+
+          cell('Valor do projeto', money(valProjeto), '#1b1a17')+
+          cell('Comissões realizadas', money(comissao), '#4f6f3b')+
+          cell('Custos de terceiros', money(terceiros), '#b45309')+
+        '</div>'+
+        '<div style="background:#1b1a17;color:#fff;border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+          '<div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#bbb">Lucro do projeto</div>'+
+          '<div style="font-size:12px;color:#999;margin-top:4px">Margem sobre o valor: '+margem.toFixed(1).replace('.',',')+'%</div></div>'+
+          '<div style="font-size:32px;font-weight:700;color:'+(lucro>=0?'#87a06c':'#c4604c')+'">'+money(lucro)+'</div>'+
+        '</div>'+
+        '<div style="font-size:11px;color:#999;text-align:right;margin-bottom:22px">Lucro = Valor do projeto ('+money(valProjeto)+') + Comissões realizadas ('+money(comissao)+') − Custos de terceiros ('+money(terceiros)+')</div>'+
+        '<div style="font-size:13px;font-weight:700;margin-bottom:6px">Comissões realizadas (oportunidades fechadas)</div>'+
+        '<table style="width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:22px">'+
+          '<thead><tr style="border-bottom:2px solid #1b1a17">'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Serviço</th>'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Fornecedor</th>'+
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Valor</th>'+
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Comissão</th>'+
+          '</tr></thead><tbody>'+comRows+'</tbody></table>'+
+        '<div style="font-size:13px;font-weight:700;margin-bottom:6px">Custos de terceiros</div>'+
+        '<table style="width:100%;border-collapse:collapse;font-size:11.5px">'+
+          '<thead><tr style="border-bottom:2px solid #1b1a17">'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Data</th>'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Categoria</th>'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Prestador</th>'+
+            '<th style="text-align:left;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Descrição</th>'+
+            '<th style="text-align:center;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Status</th>'+
+            '<th style="text-align:right;padding:6px 8px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#888">Valor</th>'+
+          '</tr></thead><tbody>'+custosRows+'</tbody>'+
+          '<tfoot><tr style="border-top:2px solid #1b1a17;font-weight:700"><td colspan="5" style="padding:8px">Total de custos de terceiros</td>'+
+            '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#b45309">'+money(terceiros)+'</td></tr></tfoot>'+
+        '</table>'+
+        '<div style="margin-top:20px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px;text-align:center">Mabe Comercial · Arquitetura &amp; Design</div>'+
+      '</div>';
+
+    var w=window.open('','_blank');
+    if(!w){ alert('Permita pop-ups para imprimir o lucro do projeto.'); return; }
+    w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Lucro — '+esc(PROJ?PROJ.nome:'')+'</title>'+
+      '<style>@page{margin:14mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:24px;background:#fff}</style></head><body>'+html+
+      '<scr'+'ipt>window.onload=function(){window.print();}<\/scr'+'ipt></body></html>');
+    w.document.close();
+  }
+
+  // popula selects de responsável a partir da Configuração
+  (function fillResp(){
+    if(!MabeDB.loadResponsaveis) return;
+    var nomes = MabeDB.loadResponsaveis();
+    document.querySelectorAll('#dwResp').forEach(function(sel){
+      var keep = sel.value;
+      sel.innerHTML = nomes.map(function(n){ return '<option>'+n+'</option>'; }).join('');
+      if(keep && nomes.indexOf(keep)>-1) sel.value = keep;
+    });
+  })();
+  // popula o datalist de serviços (Configuração)
+  (function fillServDL(){
+    if(!MabeDB.loadServicos) return;
+    var dl=document.getElementById('dwServList'); if(!dl) return;
+    dl.innerHTML = MabeDB.loadServicos().map(function(n){ return '<option value="'+n+'"></option>'; }).join('');
+  })();
+
+  // injeta fornecedores cadastrados no seletor do drawer
+  (function fillDwForn(){
+    var sel = document.getElementById('dwForn'); if(!sel || !MabeDB.loadFornecedores) return;
+    var nomes = {}; [].forEach.call(sel.options, function(o){ nomes[o.textContent.toLowerCase()] = true; });
+    MabeDB.loadFornecedores().forEach(function(f){
+      if(f.nome && !nomes[f.nome.toLowerCase()]){ nomes[f.nome.toLowerCase()]=true; var o=document.createElement('option'); o.textContent=f.nome; sel.appendChild(o); }
+    });
+  })();
+
+  render();
+</script>
+</body>
+</html>

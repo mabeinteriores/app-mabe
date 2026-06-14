@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova oportunidade · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="">
+  <div class="body scroll">
+    <div class="wrap" style="max-width:1040px;display:flex;flex-direction:column;gap:18px;">
+
+      <div class="page-h">
+        <div>
+          <div class="crumb"><a id="crumbProj" href="projetos.html" style="color:var(--ink-3)">Projetos</a> › Nova oportunidade</div>
+          <h1>Nova oportunidade</h1>
+        </div>
+        <a class="btn ghost" id="cancelLink" href="projetos.html">Cancelar</a>
+      </div>
+
+      <div class="wizard">
+        <!-- rail -->
+        <div class="wsteps" id="rail">
+          <div class="wstep on"><div class="wn">1</div><div class="wl"><div class="t">Serviço &amp; fornecedor</div><div class="s">o que e com quem</div></div></div>
+          <div class="wstep"><div class="wn">2</div><div class="wl"><div class="t">Valores &amp; RT</div><div class="s">valor e comissão</div></div></div>
+          <div class="wstep"><div class="wn">3</div><div class="wl"><div class="t">Negociação</div><div class="s">etapa, datas, equipe</div></div></div>
+          <div class="wstep"><div class="wn">4</div><div class="wl"><div class="t">Anexos &amp; revisão</div><div class="s">conferir e salvar</div></div></div>
+        </div>
+
+        <!-- body -->
+        <div class="wbody">
+          <!-- STEP 1 -->
+          <div class="wpane" data-step="0">
+            <div class="wh"><h2>Serviço &amp; fornecedor</h2><p>Qual serviço você está negociando e com quem.</p></div>
+            <div class="form-grid">
+              <div class="field"><label>Projeto / obra <span class="req">*</span></label>
+                <select class="sel" id="wProj"></select></div>
+              <div class="field"><label>Tipo de serviço <span class="req">*</span></label>
+                <select class="sel" id="wServ"><option>Marcenaria</option><option>Pisos</option><option>Vidraçaria</option><option>Móveis soltos</option><option>Iluminação</option><option>Climatização</option><option>Pintura</option><option>Paisagismo</option><option>Automação</option></select></div>
+              <div class="field full"><label>Título da oportunidade</label><input class="inp" id="wTitulo" placeholder="ex.: Marcenaria planejada — cozinha + closets"></div>
+              <div class="field"><label>Fornecedor <span class="req">*</span></label>
+                <select class="sel" id="wForn"><option>Marcenaria Bianco</option><option>VidroArt</option><option>Pisos &amp; Cia</option><option>Studio Móveis</option><option>LuxLed</option><option>Verde &amp; Cia</option><option>SmartHaus</option><option>TecidoArt</option><option>a definir</option></select></div>
+              <div class="field"><label>Contato</label><input class="inp" id="wContato" placeholder="nome · telefone"></div>
+              <div class="field full"><label>Concorrentes nesta cotação</label><input class="inp" id="wConc" placeholder="ex.: MarcenaPlus, Tora &amp; Cia"><span class="hint">ajuda a entender perdas por preço depois</span></div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="wpane" data-step="1" style="display:none">
+            <div class="wh"><h2>Valores &amp; comissão (RT)</h2><p>Quanto vale o serviço e quanto você recebe de comissão.</p></div>
+            <div class="form-grid">
+              <div class="field"><label>Valor do serviço <span class="req">*</span></label>
+                <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp" id="val" style="border-radius:0 10px 10px 0" placeholder="180.000" inputmode="numeric"></div></div>
+              <div class="field"><label>Forma / condição de pagamento</label>
+                <select class="sel"><option>30/60/90 (3x)</option><option>À vista</option><option>Entrada + saldo na entrega</option><option>Parcelado em 6x</option></select></div>
+              <div class="field"><label>Comissão (RT)</label>
+                <div class="seg" id="rtTipo" style="margin-bottom:8px">
+                  <button type="button" class="on" data-rt="pct" onclick="setRtTipo('pct')">Em %</button>
+                  <button type="button" data-rt="brl" onclick="setRtTipo('brl')">Em R$</button>
+                </div>
+                <div class="inset"><input class="inp" id="rtpct" style="border-radius:10px 0 0 10px" placeholder="9" inputmode="decimal"><span class="addon" id="rtAddon">%</span></div>
+                <span class="hint">escolha % ou valor fixo · padrão do serviço pré-preenchido</span></div>
+              <div class="field"><label>RT calculada</label>
+                <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp ro" id="rtval" style="border-radius:0 10px 10px 0" value="—" readonly></div>
+                <span class="hint">valor × % · automático</span></div>
+              <div class="field"><label>Custo estimado <span class="hint" style="display:inline">(p/ margem)</span></label>
+                <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp" id="custo" style="border-radius:0 10px 10px 0" placeholder="opcional" inputmode="numeric"></div></div>
+              <div class="field"><label>Margem estimada</label><input class="inp ro" id="margem" value="—" readonly></div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="wpane" data-step="2" style="display:none">
+            <div class="wh"><h2>Negociação</h2><p>Em que ponto está e quem cuida.</p></div>
+            <div class="field"><label>Etapa do funil <span class="req">*</span></label>
+              <div class="choice" id="etapas">
+                <span class="opt" data-et="prospec">Prospecção</span>
+                <span class="opt on" data-et="negoc">Em negociação</span>
+                <span class="opt" data-et="prop">Proposta enviada</span>
+                <span class="opt" data-et="win">Fechado / Ganho</span>
+                <span class="opt" data-et="lost">Perdido</span>
+              </div>
+            </div>
+            <div class="field" id="motivoWrap" style="display:none;background:var(--lost-soft);border:1px solid var(--lost);border-radius:12px;padding:12px 14px;">
+              <label style="color:var(--lost)">Motivo da perda <span class="req">*</span></label>
+              <select class="sel" id="wMotivo"><option>Preço acima do concorrente</option><option>Prazo de entrega</option><option>Cliente desistiu</option><option>Escolheu concorrente</option><option>Sem retorno</option></select>
+            </div>
+            <div class="form-grid">
+              <div class="field full"><label>Probabilidade de fechamento — <b id="probLab">70%</b></label>
+                <input type="range" id="prob" min="0" max="100" value="70" style="width:100%;accent-color:var(--accent)"></div>
+              <div class="field"><label>Responsável (quem fez) <span class="req">*</span></label>
+                <select class="sel" id="wResp"><option>Você (Arq.)</option><option>Ana</option><option>Rafael</option></select></div>
+              <div class="field"><label>Cliente final</label>
+                <select class="sel" id="wCliente"><option>Marina Costa</option></select></div>
+              <div class="field"><label>Data de abertura</label><input class="inp" type="date"></div>
+              <div class="field"><label>Previsão de fechamento</label><input class="inp" type="date"></div>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="wpane" data-step="3" style="display:none">
+            <div class="wh"><h2>Anexos &amp; revisão</h2><p>Anexe documentos e confira antes de salvar.</p></div>
+            <div class="field"><label>Anexos</label><div class="dropzone">Arraste propostas, contratos, orçamentos — ou clique para escolher · PDF / imagem</div></div>
+            <div class="field"><label>Observações / histórico de contatos</label><textarea class="ta" id="wObs" rows="3" placeholder="ex.: 12/06 liguei, pediu revisão do prazo. 14/06 enviei proposta v2…"></textarea></div>
+            <label class="ml" style="display:block;margin:6px 0 8px">Resumo</label>
+            <div class="summary" id="summary"></div>
+          </div>
+
+          <!-- foot -->
+          <div class="wfoot">
+            <button class="btn ghost" id="btnBack" onclick="step(-1)" disabled>← Voltar</button>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="btn">Salvar rascunho</button>
+              <button class="btn primary" id="btnNext" onclick="step(1)">Próximo →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="projects-data.js"></script>
+<script src="shell.js"></script>
+<script>
+  var cur = 0, total = 4;
+  var panes = [].slice.call(document.querySelectorAll('.wpane'));
+  var rail = [].slice.call(document.querySelectorAll('#rail .wstep'));
+
+  function render(){
+    panes.forEach(function(p,i){ p.style.display = i===cur ? 'block' : 'none'; });
+    rail.forEach(function(r,i){ r.classList.toggle('on', i===cur); r.classList.toggle('done', i<cur);
+      r.querySelector('.wn').textContent = i<cur ? '✓' : (i+1); });
+    document.getElementById('btnBack').disabled = cur===0;
+    document.getElementById('btnNext').textContent = cur===total-1 ? 'Salvar oportunidade' : 'Próximo →';
+    document.getElementById('btnNext').classList.toggle('win', cur===total-1);
+    if (cur===total-1) fillSummary();
+  }
+  function step(d){
+    var n2 = cur + d;
+    if (n2 < 0 || n2 >= total) { if (n2>=total) saveOpportunity(); return; }
+    cur = n2; render();
+    document.querySelector('.wbody').scrollTop = 0;
+  }
+
+  // RT auto-calc
+  function n(v){ return parseFloat(String(v||'').replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.')) || 0; }
+  function fmt(v){ return v.toLocaleString('pt-BR', {maximumFractionDigits:0}); }
+  var rtTipo = 'pct';
+  function setRtTipo(t){
+    rtTipo = t;
+    document.querySelectorAll('#rtTipo button').forEach(function(b){ b.classList.toggle('on', b.dataset.rt===t); });
+    document.getElementById('rtAddon').textContent = t==='brl' ? 'R$' : '%';
+    document.getElementById('rtpct').placeholder = t==='brl' ? '16.200' : '9';
+    calc();
+  }
+  function calc(){
+    var val = n(document.getElementById('val').value);
+    var rtIn = n(document.getElementById('rtpct').value);
+    var custo = n(document.getElementById('custo').value);
+    var rt = rtTipo==='brl' ? rtIn : (val * rtIn / 100);
+    document.getElementById('rtval').value = rt ? 'R$ ' + fmt(rt) : '—';
+    var marg = (val && custo) ? Math.round((val - custo) / val * 100) : null;
+    document.getElementById('margem').value = marg!==null ? marg + '%' : '—';
+  }
+  ['val','rtpct','custo'].forEach(function(id){ document.getElementById(id).addEventListener('input', calc); });
+  // pré-preenche RT padrão de Marcenaria (9%)
+  document.getElementById('rtpct').value = '9';
+
+  // etapa + motivo
+  document.querySelectorAll('#etapas .opt').forEach(function(o){
+    o.addEventListener('click', function(){
+      document.querySelectorAll('#etapas .opt').forEach(function(x){ x.classList.remove('on'); });
+      o.classList.add('on');
+      document.getElementById('motivoWrap').style.display = o.dataset.et==='lost' ? 'block' : 'none';
+    });
+  });
+  // probabilidade
+  document.getElementById('prob').addEventListener('input', function(){ document.getElementById('probLab').textContent = this.value + '%'; });
+
+  function getSel(stepIdx, fieldIdx){
+    var pane = panes[stepIdx];
+    var sels = pane.querySelectorAll('select');
+    return sels[fieldIdx] ? sels[fieldIdx].value : '';
+  }
+  function fillSummary(){
+    var etapa = (document.querySelector('#etapas .opt.on')||{}).textContent || '—';
+    var rows = [
+      ['Projeto', document.getElementById('wProj').value],
+      ['Serviço', document.getElementById('wServ').value],
+      ['Fornecedor', document.getElementById('wForn').value],
+      ['Valor do serviço', document.getElementById('val').value ? 'R$ ' + fmt(n(document.getElementById('val').value)) : '—'],
+      ['Comissão (RT)', document.getElementById('rtval').value + ' · ' + (document.getElementById('rtpct').value||'0') + (rtTipo==='brl'?' (R$ fixo)':'%')],
+      ['Etapa', etapa],
+      ['Probabilidade', document.getElementById('prob').value + '%'],
+      ['Responsável', document.getElementById('wResp').value]
+    ];
+    document.getElementById('summary').innerHTML = rows.map(function(r){
+      return '<div class="srow"><span class="k">' + r[0] + '</span><span class="v">' + (r[1]||'—') + '</span></div>';
+    }).join('');
+  }
+
+  // popula selects de responsável (Configuração)
+  (function fillResp(){
+    if(!MabeDB.loadResponsaveis) return;
+    var nomes = MabeDB.loadResponsaveis();
+    ['wResp'].forEach(function(id){ var sel=document.getElementById(id); if(sel) sel.innerHTML = nomes.map(function(n){ return '<option>'+n+'</option>'; }).join(''); });
+  })();
+  // popula o tipo de serviço a partir da Configuração
+  (function fillServ(){
+    if(!MabeDB.loadServicos) return;
+    var sel=document.getElementById('wServ'); if(!sel) return;
+    sel.innerHTML = MabeDB.loadServicos().map(function(n){ return '<option>'+n+'</option>'; }).join('');
+  })();
+
+  // ---------- contexto do projeto + salvar ----------
+  var projetos = MabeDB.loadProjects();
+  // injeta fornecedores cadastrados no seletor
+  (function fillForn(){
+    var sel = document.getElementById('wForn'); if(!sel || !MabeDB.loadFornecedores) return;
+    var nomes = {}; [].forEach.call(sel.options, function(o){ nomes[o.textContent.toLowerCase()] = true; });
+    var add = MabeDB.loadFornecedores().filter(function(f){ return f.nome && !nomes[f.nome.toLowerCase()]; });
+    if(add.length){
+      add.slice().reverse().forEach(function(f){ var o=document.createElement('option'); o.textContent=f.nome; sel.insertBefore(o, sel.firstChild); });
+      sel.selectedIndex = 0;
+    }
+  })();
+  var qProj = new URLSearchParams(location.search).get('proj');
+  (function initProjetos(){
+    var sel = document.getElementById('wProj');
+    sel.innerHTML = projetos.map(function(p){
+      return '<option value="' + p.id + '"' + (String(p.id)===String(qProj)?' selected':'') + '>' + p.nome + '</option>';
+    }).join('');
+    function syncProj(){
+      var p = projetos.find(function(x){ return String(x.id)===String(sel.value); });
+      if (!p) return;
+      document.title = 'Nova oportunidade · ' + p.nome;
+      var crumb = document.getElementById('crumbProj');
+      crumb.textContent = p.nome; crumb.href = 'projeto.html?id=' + p.id;
+      document.getElementById('cancelLink').href = 'projeto.html?id=' + p.id;
+      var cli = document.getElementById('wCliente');
+      cli.innerHTML = '<option>' + (p.cliente||'—') + '</option>';
+    }
+    sel.addEventListener('change', syncProj);
+    if (qProj) syncProj(); else syncProj();
+  })();
+
+  function saveOpportunity(){
+    var projId = document.getElementById('wProj').value;
+    var et = (document.querySelector('#etapas .opt.on')||{}).dataset ? document.querySelector('#etapas .opt.on').dataset.et : 'negoc';
+    var rtIn = n(document.getElementById('rtpct').value);
+    var opp = {
+      serv: document.getElementById('wServ').value,
+      forn: document.getElementById('wForn').value,
+      resp: document.getElementById('wResp').value,
+      val: n(document.getElementById('val').value),
+      rt: rtIn,
+      rtTipo: rtTipo,
+      prob: parseInt(document.getElementById('prob').value,10) || 0,
+      et: et,
+      motivo: et==='lost' ? document.getElementById('wMotivo').value : undefined,
+      obs: document.getElementById('wObs').value.trim(),
+      titulo: document.getElementById('wTitulo').value.trim()
+    };
+    if (!opp.val){ alert('Informe o valor do serviço.'); cur = 1; render(); return; }
+    var list = MabeDB.loadOpps(projId);
+    opp.id = list.reduce(function(m,o){ return Math.max(m, o.id); }, 0) + 1;
+    list.push(opp);
+    MabeDB.saveOpps(projId, list);
+    MabeDB.recalc(projId);
+    location.href = 'projeto.html?id=' + projId;
+  }
+
+  render();
+</script>
+</body>
+</html>

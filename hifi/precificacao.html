@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precificação · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="prc.css">
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="precificacao">
+  <div class="body scroll">
+    <div class="wrap prcwrap" style="display:flex;flex-direction:column;gap:18px">
+
+      <div class="page-h">
+        <div><div class="crumb">Orçamentos por cômodo</div><h1>Precificação de Projetos</h1></div>
+        <button class="btn primary" onclick="PRC.novoOrcamento()">+&nbsp; Novo Orçamento</button>
+      </div>
+      <div id="calc-alert"></div>
+      <div id="prc-edit-banner" style="display:none;background:var(--ink);border-radius:10px;padding:11px 16px;margin-bottom:2px;align-items:center;justify-content:space-between;gap:10px">
+        <span style="color:var(--accent);font-weight:600;font-size:13px">✏️ Editando proposta — ao salvar, a proposta anterior será atualizada (não cria nova)</span>
+        <button onclick="PRC.cancelarEdicao()" style="background:none;border:1px solid var(--hair-2);color:var(--ink-2);padding:5px 12px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer;white-space:nowrap">✕ Cancelar edição</button>
+      </div>
+
+      <!-- CLIENTE -->
+      <div class="card">
+        <div class="prc-stephead"><span class="prc-stepnum">1</span><div><div class="prc-steptitle">Cliente</div><div class="prc-stepsub">Escolha um cliente existente ou digite o nome</div></div></div>
+        <div class="prc-cli">
+          <div class="field" style="flex:1;min-width:220px;margin-bottom:0">
+            <label>Cliente *</label>
+            <select id="sel-cliente" onchange="onClienteChange()"><option value="">— Selecionar cliente —</option></select>
+          </div>
+          <div class="field" style="flex:1;min-width:200px;margin-bottom:0">
+            <label>Ou nome manual</label>
+            <input type="text" id="inp-cliente-manual" placeholder="Digite o nome..." oninput="onClienteChange()">
+          </div>
+          <button class="btn btn-secondary" onclick="PRC.novoCliente()" style="white-space:nowrap">+ Novo cliente</button>
+        </div>
+        <div id="prc-cli-info" class="prc-cli-info" style="display:none"></div>
+      </div>
+
+      <!-- SEGMENTO -->
+      <div class="card">
+        <div class="prc-stephead"><span class="prc-stepnum">2</span><div><div class="prc-steptitle">Tipo de projeto</div><div class="prc-stepsub">Selecione o segmento para liberar os cômodos</div></div></div>
+        <div class="prc-segs" id="prc-segs"></div>
+      </div>
+
+      <!-- BUILDER -->
+      <div id="prc-builder" style="display:none">
+        <div class="calc-layout">
+          <div class="card">
+            <div class="prc-stephead"><span class="prc-stepnum">3</span><div><div class="prc-steptitle">Monte o projeto</div><div class="prc-stepsub">Clique nos cômodos para adicionar · informe o tamanho quando pedido</div></div></div>
+            <div class="prc-builder-head">
+              <div><span id="prc-cur-emoji" class="prc-cur-emoji"></span> <b id="prc-cur-name"></b></div>
+              <button type="button" id="prc-imovel-btn" class="prc-imovel-btn" onclick="PRC.openImovel()">🏡 Informações do imóvel</button>
+            </div>
+            <div class="lbl" style="margin:6px 0 10px">Adicionar cômodos</div>
+            <div class="prc-rooms" id="prc-rooms"></div>
+          </div>
+          <div class="card">
+            <div class="lbl" style="margin-bottom:10px">Projeto atual</div>
+            <div id="prc-items"></div>
+            <div class="prc-desc">
+              <label for="prc-desc-val">Desconto (R$)</label>
+              <input type="number" id="prc-desc-val" inputmode="numeric" placeholder="0" oninput="PRC.onDesc()">
+            </div>
+            <div class="prc-total">
+              <div class="prc-total-lbl">Total do projeto</div>
+              <div class="prc-total-orig" id="prc-total-orig" style="display:none"></div>
+              <div class="prc-total-val" id="prc-total">R$ 0</div>
+              <div class="prc-total-desc" id="prc-total-desc" style="display:none"></div>
+              <div class="prc-total-count" id="prc-total-count"></div>
+            </div>
+            <div class="prc-size" id="prc-size-row" style="display:none">
+              <span class="prc-size-lbl">Tamanho do projeto</span>
+              <span class="prc-size-val" id="prc-size-val">0 m²</span>
+            </div>
+            <button class="btn-gerar" id="prc-btn-salvar" onclick="PRC.salvar()" style="background:var(--ink);color:#fff;border:2px solid var(--accent);margin-top:14px">💾 Salvar proposta</button>
+            <button class="btn-gerar" id="prc-btn-pdf" onclick="PRC.gerarPDF()" style="background:var(--accent);color:#fff;margin-top:10px">📥 Gerar PDF</button>
+            <button class="btn-gerar" id="prc-btn-wpp" onclick="PRC.whatsapp()" style="background:#16a34a;color:#fff;margin-top:10px">📲 Orçamento WhatsApp</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSTAS RECENTES -->
+      <div class="card" id="prc-recent-wrap" style="display:none">
+        <div class="lbl" style="margin-bottom:12px">Propostas salvas</div>
+        <div class="prc-recent" id="prc-recent"></div>
+      </div>
+
+      <!-- SHEET -->
+      <div class="overlay" id="prc-sheet-ov">
+        <div class="modal" style="max-width:440px">
+          <div class="modal-hdr"><h3 id="prc-sheet-title">Cômodo</h3><button class="modal-close" onclick="PRC.closeSheet()">✕</button></div>
+          <div class="prc-sheet-sub" id="prc-sheet-sub">Selecione</div>
+          <div id="prc-sheet-opts"></div>
+          <button class="btn btn-secondary" id="prc-sheet-back" style="display:none;width:100%;margin-top:6px" onclick="PRC.sheetBack()">‹ Voltar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- MODAIS (dentro de #app para herdar os tokens do tema) -->
+<div class="overlay prc-ov" id="prc-newcli-ov">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr"><h3>👤 Novo Cliente</h3><button class="modal-close" onclick="fecharModal('prc-newcli-ov')">✕</button></div>
+    <div id="prc-newcli-alert"></div>
+    <div class="form-grid">
+      <div class="field"><label>Nome *</label><input type="text" id="prc-nc-nome"></div>
+      <div class="field"><label>Esposa / Cônjuge</label><input type="text" id="prc-nc-esposa"></div>
+      <div class="field"><label>Telefone</label><input type="tel" id="prc-nc-tel"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="prc-nc-email"></div>
+      <div class="field form-full"><label>Endereço</label><input type="text" id="prc-nc-end"></div>
+      <div class="field"><label>Tipo</label><select id="prc-nc-tipo"><option value="comum">😊 Comum</option><option value="exigente">🤔 Exigente</option><option value="chato">😤 Chato</option></select></div>
+      <div class="field"><label>Origem</label><select id="prc-nc-origem"><option value="direto">Direto</option><option value="indicacao">Indicação</option><option value="instagram">Instagram</option><option value="site">Site</option><option value="outro">Outro</option></select></div>
+    </div>
+    <div class="form-actions"><button class="btn btn-primary" onclick="PRC.salvarNovoCliente()">✓ Salvar e selecionar</button><button class="btn btn-secondary" onclick="fecharModal('prc-newcli-ov')">Cancelar</button></div>
+  </div>
+</div>
+
+<div class="overlay prc-ov" id="prc-imovel-ov">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr"><h3>🏡 Informações do imóvel</h3><button class="modal-close" onclick="PRC.closeImovel()">✕</button></div>
+    <p style="font-size:13px;color:var(--ink-3);margin:-6px 0 16px">Dados do imóvel desta proposta — você pode editar a qualquer momento.</p>
+    <div class="field"><label>Tipo de imóvel</label>
+      <div class="prc-imv-opts" id="prc-imv-tipos">
+        <button type="button" class="prc-imv-opt" data-v="Casa fora de condomínio" onclick="PRC.imovelTipo(this)">🏠 Casa fora de condomínio</button>
+        <button type="button" class="prc-imv-opt" data-v="Casa em condomínio" onclick="PRC.imovelTipo(this)">🏡 Casa em condomínio</button>
+        <button type="button" class="prc-imv-opt" data-v="Apartamento" onclick="PRC.imovelTipo(this)">🏢 Apartamento</button>
+        <button type="button" class="prc-imv-opt" data-v="Corporativo" onclick="PRC.imovelTipo(this)">🏬 Corporativo</button>
+      </div>
+    </div>
+    <div class="field" id="prc-imv-condo-wrap" style="display:none"><label>Nome do condomínio</label><input type="text" id="prc-imv-condo" placeholder="Condomínio"></div>
+    <div class="field"><label>Condição</label>
+      <div class="prc-imv-opts" id="prc-imv-conds">
+        <button type="button" class="prc-imv-opt" data-v="Novo" onclick="PRC.imovelCond(this)">✨ Novo</button>
+        <button type="button" class="prc-imv-opt" data-v="Usado" onclick="PRC.imovelCond(this)">🔑 Usado</button>
+      </div>
+    </div>
+    <div class="field"><label>CEP</label>
+      <div class="prc-imv-cep">
+        <input type="text" id="prc-imv-cep" inputmode="numeric" maxlength="9" placeholder="00000-000" onkeydown="if(event.key==='Enter'){event.preventDefault();PRC.buscaCep();}">
+        <button type="button" class="btn btn-secondary" id="prc-imv-cepbtn" onclick="PRC.buscaCep()">Buscar</button>
+      </div>
+      <span class="prc-cep-hint" id="prc-imv-cephint">digite o CEP para preencher o endereço automaticamente</span>
+    </div>
+    <div class="field"><label>Estado e cidade</label>
+      <div class="prc-imv-loc">
+        <select id="prc-imv-uf" onchange="PRC.onUF()">
+          <option value="">UF</option>
+          <option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option>
+          <option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option>
+          <option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option>
+          <option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option>
+          <option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option>
+          <option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option>
+          <option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option>
+        </select>
+        <input type="text" id="prc-imv-cidade" list="prc-imv-cidades" autocomplete="off" placeholder="Cidade"><datalist id="prc-imv-cidades"></datalist>
+      </div>
+    </div>
+    <div class="field"><label>Endereço</label>
+      <div class="prc-imv-loc3">
+        <input type="text" id="prc-imv-rua" placeholder="Rua / Logradouro">
+        <input type="text" id="prc-imv-bairro" placeholder="Bairro">
+        <input type="text" id="prc-imv-num" inputmode="numeric" placeholder="Nº">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-primary" id="prc-imv-confirm" style="flex:1" onclick="PRC.confirmImovel()">💾 Salvar proposta</button>
+      <button class="btn btn-secondary" onclick="PRC.closeImovel()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay prc-ov" id="prc-cfg-ov">
+  <div class="modal" style="max-width:660px">
+    <div class="modal-hdr"><h3>⚙️ Tabela de Precificação — Segmentos e Cômodos</h3><button class="modal-close" onclick="PRC.closeConfig()">✕</button></div>
+    <div id="prc-cfg-list"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="PRC.addSeg()">+ Adicionar segmento</button>
+    <div class="prc-note">Cada segmento tem cômodos próprios. Em cada cômodo escolha <b>Por m²</b> (faixas de tamanho) ou <b>Valor fixo</b> (por unidade). Os valores ficam só aqui — nunca aparecem ao montar o projeto.</div>
+  </div>
+</div>
+</div>
+
+<script src="projects-data.js"></script>
+<script src="shell.js"></script>
+<script src="prc.js"></script>
+<script>
+  // popular clientes + propostas recentes ao abrir
+  if(window.popularSelectClientes) popularSelectClientes();
+  if(window.renderPropostas) renderPropostas();
+  // vindo de "+ Nova Precificação" / de uma indicação fechada → começa orçamento do zero
+  var _qp = new URLSearchParams(location.search);
+  if(_qp.get('novo')){
+    if(window.PRC && PRC.novoOrcamento) PRC.novoOrcamento();
+    var _cli = _qp.get('cliente');
+    if(_cli){
+      var _mc = document.getElementById('inp-cliente-manual');
+      if(_mc){ _mc.value = _cli; if(window.onClienteChange) onClienteChange(); }
+      var _al = document.getElementById('calc-alert');
+      if(_al && _qp.get('fromInd')){ _al.innerHTML = '<div class="alert loading">📋 Indicação fechada de <b>'+_cli+'</b> — monte a precificação e salve para criar o projeto.</div>'; }
+    }
+  }
+</script>
+</body>
+</html>

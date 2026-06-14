@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mabē — Controle de Indicações</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brown:     #26241f;
+  --brown-md:  #6f6a60;
+  --brown-lt:  #9a9385;
+  --gold:      #c0673f;
+  --gold-lt:   #f2e1d5;
+  --cream:     #f4f1ea;
+  --cream-dk:  #faf6ee;
+  --warm-gray: #9a9385;
+  --dark:      #221f18;
+  --white:     #fffdf9;
+  --sidebar-w: 220px;
+  --green:     #5d7e49;
+  --green-bg:  #e2e8d7;
+  --amber:     #c08a2e;
+  --amber-bg:  #f3e7cd;
+  --red:       #b1503f;
+  --red-bg:    #f2ddd6;
+  --blue:      #2f6db0;
+  --blue-bg:   #dce8f4;
+  --purple:    #a44e29;
+  --purple-bg: #f2e1d5;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+*, *::before, *::after { font-family:'Archivo','Helvetica Neue',Arial,sans-serif !important; }
+html { font-size:14px; }
+body { font-family:'Jost',sans-serif; background:var(--cream); color:var(--dark); display:flex; min-height:100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar-w); background:var(--dark); min-height:100vh;
+  display:flex; flex-direction:column; position:fixed; top:0; left:0; z-index:100;
+  border-right:1px solid rgba(201,169,110,0.15);
+}
+.sidebar-logo { padding:28px 24px 20px;
+  border-bottom:1px solid rgba(201,169,110,0.15); }
+.logo-main { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:300;
+  color:var(--white); letter-spacing:-1px; line-height:1; }
+.logo-main span { color:var(--gold); font-style:italic; }
+.logo-sub { font-size:9px; letter-spacing:4px; color:var(--warm-gray);
+  text-transform:uppercase; margin-top:4px; }
+.sidebar-nav { flex:1; padding:16px 0; }
+.nav-section { font-size:8px; letter-spacing:3px; text-transform:uppercase;
+  color:rgba(200,189,176,0.4); padding:12px 24px 6px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 24px;
+  color:var(--warm-gray); cursor:pointer; transition:all 0.2s; font-size:13px;
+  font-weight:300; border-left:2px solid transparent; }
+.nav-item:hover { color:var(--white); background:rgba(255,255,255,0.04); }
+.nav-item.active { color:var(--gold); border-left-color:var(--gold);
+  background:rgba(201,169,110,0.06); }
+.nav-icon { font-size:15px; width:18px; text-align:center; }
+.sidebar-footer { padding:20px 24px;
+  border-top:1px solid rgba(201,169,110,0.15); }
+.sidebar-footer p { font-size:10px; color:rgba(200,189,176,0.5); line-height:1.6; }
+
+/* ── MAIN ── */
+.main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+.topbar { background:var(--white); border-bottom:1px solid var(--cream-dk);
+  padding:16px 32px; display:flex; justify-content:space-between; align-items:center;
+  position:sticky; top:0; z-index:50; }
+.topbar-title { font-family:'Cormorant Garamond',serif; font-size:22px;
+  font-weight:400; color:var(--brown); }
+.topbar-actions { display:flex; gap:10px; align-items:center; }
+.btn { padding:8px 18px; border-radius:4px; font-family:'Jost',sans-serif;
+  font-size:12px; font-weight:400; cursor:pointer; transition:all 0.2s;
+  letter-spacing:0.5px; border:none; }
+.btn-primary { background:var(--brown); color:var(--white); }
+.btn-primary:hover { background:var(--brown-md); }
+.btn-outline { background:transparent; color:var(--brown);
+  border:1px solid var(--warm-gray); }
+.btn-outline:hover { border-color:var(--brown); background:var(--cream); }
+.btn-gold { background:var(--gold); color:var(--dark); font-weight:500; }
+.btn-gold:hover { opacity:0.88; }
+.btn-sm { padding:5px 12px; font-size:11px; }
+.btn-danger { background:var(--red-bg); color:var(--red); border:1px solid rgba(139,32,32,0.2); }
+.btn-danger:hover { background:var(--red); color:white; }
+
+.content { padding:28px 32px; flex:1; }
+
+/* ── PAGES ── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── DASHBOARD ── */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.kpi { background:var(--white); border:1px solid var(--cream-dk);
+  border-radius:8px; padding:20px; position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%;
+  background:var(--gold); }
+.kpi-label { font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--brown-lt); margin-bottom:8px; }
+.kpi-value { font-family:'Cormorant Garamond',serif; font-size:36px;
+  font-weight:400; color:var(--brown); line-height:1; }
+.kpi-sub { font-size:11px; color:var(--warm-gray); margin-top:6px; }
+.kpi-green::before { background:var(--green); }
+.kpi-amber::before { background:var(--amber); }
+.kpi-red::before { background:var(--red); }
+
+.section-title { font-family:'Cormorant Garamond',serif; font-size:20px;
+  font-weight:400; color:var(--brown); margin-bottom:16px; display:flex;
+  align-items:center; gap:10px; }
+.section-title::after { content:''; flex:1; height:1px; background:var(--cream-dk); }
+
+/* ── TABLE ── */
+.table-wrap { background:var(--white); border:1px solid var(--cream-dk);
+  border-radius:8px; overflow:hidden; margin-bottom:28px; }
+.table-header { padding:14px 20px; border-bottom:1px solid var(--cream-dk);
+  display:flex; justify-content:space-between; align-items:center; }
+.table-header h3 { font-size:13px; font-weight:500; color:var(--dark); }
+.filter-row { display:flex; gap:8px; align-items:center; }
+.search-input { padding:6px 12px; border:1px solid var(--cream-dk); border-radius:4px;
+  font-family:'Jost',sans-serif; font-size:12px; background:var(--cream);
+  color:var(--dark); outline:none; transition:border 0.2s; width:200px; }
+.search-input:focus { border-color:var(--gold); }
+.filter-select { padding:6px 10px; border:1px solid var(--cream-dk); border-radius:4px;
+  font-family:'Jost',sans-serif; font-size:12px; background:var(--cream);
+  color:var(--dark); outline:none; cursor:pointer; }
+table { width:100%; border-collapse:collapse; }
+thead th { background:var(--cream); padding:10px 16px; text-align:left;
+  font-size:10px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--brown-lt); border-bottom:1px solid var(--cream-dk); }
+tbody tr { border-bottom:1px solid var(--cream-dk); transition:background 0.15s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--cream); }
+tbody td { padding:12px 16px; font-size:13px; color:var(--dark); }
+
+/* ── STATUS BADGES ── */
+.badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px;
+  border-radius:20px; font-size:11px; font-weight:400; white-space:nowrap; }
+.badge::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.badge-novo    { background:var(--blue-bg);   color:var(--blue);   }
+.badge-novo::before    { background:var(--blue);   }
+.badge-contato { background:var(--purple-bg); color:var(--purple); }
+.badge-contato::before { background:var(--purple); }
+.badge-reuniao { background:var(--amber-bg);  color:var(--amber);  }
+.badge-reuniao::before { background:var(--amber);  }
+.badge-proposta{ background:var(--gold-lt);   color:var(--brown);  }
+.badge-proposta::before{ background:var(--gold);   }
+.badge-fechado { background:var(--green-bg);  color:var(--green);  }
+.badge-fechado::before { background:var(--green);  }
+.badge-perdido { background:var(--red-bg);    color:var(--red);    }
+.badge-perdido::before { background:var(--red);    }
+
+/* ── TIMELINE ── */
+.timeline { display:flex; gap:0; margin:16px 0 8px; position:relative; }
+.tl-step { flex:1; position:relative; }
+.tl-step::before { content:''; position:absolute; top:10px; left:50%; right:-50%;
+  height:2px; background:var(--cream-dk); z-index:0; }
+.tl-step:last-child::before { display:none; }
+.tl-dot { width:22px; height:22px; border-radius:50%; border:2px solid var(--cream-dk);
+  background:var(--white); margin:0 auto; position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center; font-size:10px;
+  transition:all 0.3s; }
+.tl-dot.done { background:var(--green); border-color:var(--green); color:white; }
+.tl-dot.active { background:var(--gold); border-color:var(--gold); color:var(--dark); font-weight:600; }
+.tl-label { font-size:9px; text-align:center; margin-top:5px; color:var(--warm-gray);
+  letter-spacing:0.5px; }
+.tl-step.done .tl-label  { color:var(--green); }
+.tl-step.active .tl-label{ color:var(--brown); font-weight:500; }
+
+/* ── TRIMESTRE PROGRESS ── */
+.trim-bar { background:var(--cream-dk); border-radius:4px; height:6px;
+  overflow:hidden; margin-top:6px; }
+.trim-fill { height:100%; border-radius:4px; background:linear-gradient(to right,var(--gold),var(--brown-lt));
+  transition:width 0.6s ease; }
+.trim-fill.bonus { background:linear-gradient(to right,var(--green),var(--gold)); }
+
+/* ── MODAL ── */
+.modal-bg { position:fixed; inset:0; background:rgba(26,18,16,0.6);
+  backdrop-filter:blur(4px); z-index:200; display:none;
+  align-items:center; justify-content:center; }
+.modal-bg.open { display:flex; }
+.modal { background:var(--white); border-radius:10px; width:560px; max-width:95vw;
+  max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(26,18,16,0.3); }
+.modal-head { padding:24px 28px 16px; border-bottom:1px solid var(--cream-dk);
+  display:flex; justify-content:space-between; align-items:center; }
+.modal-head h2 { font-family:'Cormorant Garamond',serif; font-size:22px;
+  font-weight:400; color:var(--brown); }
+.modal-close { background:none; border:none; font-size:20px; color:var(--warm-gray);
+  cursor:pointer; padding:4px 8px; line-height:1; }
+.modal-close:hover { color:var(--dark); }
+.modal-body { padding:24px 28px; }
+.modal-foot { padding:16px 28px; border-top:1px solid var(--cream-dk);
+  display:flex; justify-content:flex-end; gap:10px; }
+
+/* ── FORMS ── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-grid.full { grid-template-columns:1fr; }
+.field { display:flex; flex-direction:column; gap:5px; }
+.field.span2 { grid-column:1/-1; }
+label { font-size:11px; font-weight:500; color:var(--brown-lt);
+  letter-spacing:0.5px; text-transform:uppercase; }
+input, select, textarea {
+  padding:9px 12px; border:1px solid var(--cream-dk); border-radius:4px;
+  font-family:'Jost',sans-serif; font-size:13px; background:var(--cream);
+  color:var(--dark); outline:none; transition:border 0.2s; }
+input:focus, select:focus, textarea:focus { border-color:var(--gold); background:var(--white); }
+textarea { resize:vertical; min-height:70px; }
+
+/* ── DETAIL PANEL ── */
+.detail-panel { background:var(--white); border:1px solid var(--cream-dk);
+  border-radius:8px; padding:24px; margin-bottom:20px; }
+.detail-panel h3 { font-family:'Cormorant Garamond',serif; font-size:18px;
+  color:var(--brown); margin-bottom:16px; }
+.detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.detail-item label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--warm-gray); display:block; margin-bottom:4px; }
+.detail-item p { font-size:13px; color:var(--dark); font-weight:400; }
+
+/* ── LOG ── */
+.log-list { list-style:none; }
+.log-item { display:flex; gap:14px; padding:12px 0;
+  border-bottom:1px solid var(--cream-dk); }
+.log-item:last-child { border-bottom:none; }
+.log-dot { width:10px; height:10px; border-radius:50%; background:var(--gold);
+  flex-shrink:0; margin-top:4px; }
+.log-dot.green { background:var(--green); }
+.log-dot.red   { background:var(--red); }
+.log-dot.blue  { background:var(--blue); }
+.log-content p { font-size:13px; color:var(--dark); line-height:1.5; }
+.log-content span { font-size:11px; color:var(--warm-gray); }
+
+/* ── COMISSÃO CARD ── */
+.comm-card { background:var(--brown); color:var(--white); border-radius:8px;
+  padding:24px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+.comm-item { text-align:center; }
+.comm-val { font-family:'Cormorant Garamond',serif; font-size:28px;
+  font-weight:400; color:var(--gold); display:block; }
+.comm-lbl { font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--warm-gray); margin-top:4px; display:block; }
+
+/* ── ALERTS ── */
+.alert { padding:10px 16px; border-radius:6px; font-size:12px;
+  margin-bottom:12px; display:flex; gap:8px; align-items:flex-start; }
+.alert-warn { background:var(--amber-bg); color:var(--amber);
+  border:1px solid rgba(133,79,11,0.2); }
+.alert-success { background:var(--green-bg); color:var(--green);
+  border:1px solid rgba(59,109,17,0.2); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:48px 20px; color:var(--warm-gray); }
+.empty-icon { font-size:40px; margin-bottom:12px; opacity:0.5; }
+.empty p { font-size:13px; }
+
+/* ── CORRETOR CHIP ── */
+.corretor-chip { display:inline-flex; align-items:center; gap:6px;
+  background:var(--cream-dk); padding:3px 10px; border-radius:20px;
+  font-size:12px; color:var(--brown); }
+.corretor-avatar { width:20px; height:20px; border-radius:50%;
+  background:var(--brown); color:var(--gold); font-size:10px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; }
+
+/* ── DIAS RESTANTES ── */
+.dias-chip { font-size:11px; padding:2px 8px; border-radius:10px; }
+.dias-ok    { background:var(--green-bg); color:var(--green); }
+.dias-warn  { background:var(--amber-bg); color:var(--amber); }
+.dias-late  { background:var(--red-bg);   color:var(--red);   }
+
+/* ── RESPONSIVO ── */
+@media(max-width:900px) {
+  .kpi-grid { grid-template-columns:1fr 1fr; }
+  .detail-grid { grid-template-columns:1fr 1fr; }
+  .comm-card { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-main">mab<span>ē</span></div>
+    <div class="logo-sub">Gestão Interna</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Visão Geral</div>
+    <div class="nav-item active" onclick="goPage('dashboard')">
+      <span class="nav-icon">◈</span> Dashboard
+    </div>
+    <div class="nav-section">Indicações</div>
+    <div class="nav-item" onclick="goPage('indicacoes')">
+      <span class="nav-icon">⟶</span> Todas as Indicações
+    </div>
+    <div class="nav-item" onclick="goPage('trimestre')">
+      <span class="nav-icon">◷</span> Controle Trimestral
+    </div>
+    <div class="nav-section">Parceiros</div>
+    <div class="nav-item" onclick="goPage('imobiliarias')">
+      <span class="nav-icon">⬡</span> Imobiliárias
+    </div>
+    <div class="nav-item" onclick="goPage('influenciadores')">
+      <span class="nav-icon">✦</span> Influenciadores
+    </div>
+    <div class="nav-item" onclick="goPage('construtoras')">
+      <span class="nav-icon">⌂</span> Construtoras
+    </div>
+    <div class="nav-item" onclick="goPage('comissoes')">
+      <span class="nav-icon">◎</span> Comissões e Bônus
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <p>mabē design de interiores<br>Sistema interno v1.0</p>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-actions">
+      <span id="topbarDate" style="font-size:12px;color:var(--warm-gray)"></span>
+      <button class="btn btn-gold" onclick="openModal('modalIndicacao')">+ Nova Indicação</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="kpi-grid" id="kpiGrid"></div>
+
+      <div class="section-title">Indicações Recentes</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Cliente</th><th>Corretor</th><th>Status</th>
+            <th>Dias no Status</th><th>Projeto</th><th>Ações</th>
+          </tr></thead>
+          <tbody id="tbodyDash"></tbody>
+        </table>
+      </div>
+
+      <div class="section-title">Alerta de Ciclos Trimestrais</div>
+      <div id="alertsTrim"></div>
+    </div>
+
+    <!-- ═══════════════ INDICAÇÕES ═══════════════ -->
+    <div class="page" id="page-indicacoes">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Todas as Indicações</h3>
+          <div class="filter-row">
+            <input class="search-input" id="searchInd" placeholder="Buscar cliente ou corretor..." oninput="renderIndicacoes()">
+            <select class="filter-select" id="filterStatus" onchange="renderIndicacoes()">
+              <option value="">Todos os status</option>
+              <option value="Novo Lead">Novo Lead</option>
+              <option value="Contato Feito">Contato Feito</option>
+              <option value="Reunião Agendada">Reunião Agendada</option>
+              <option value="Proposta Enviada">Proposta Enviada</option>
+              <option value="Fechado">Fechado</option>
+              <option value="Perdido">Perdido</option>
+            </select>
+            <select class="filter-select" id="filterCorretor" onchange="renderIndicacoes()">
+              <option value="">Todos os corretores</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Data Registro</th><th>Cliente</th><th>Corretor</th>
+            <th>Tipo de Imóvel</th><th>Status</th><th>Dias no Status</th>
+            <th>Valor Projeto</th><th>Ações</th>
+          </tr></thead>
+          <tbody id="tbodyInd"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════ TRIMESTRE ═══════════════ -->
+    <div class="page" id="page-trimestre">
+      <div id="trimestreContent"></div>
+    </div>
+
+    <!-- ═══════════════ IMOBILIÁRIAS ═══════════════ -->
+    <div class="page" id="page-imobiliarias">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+        <button class="btn btn-primary" onclick="openModal('modalImob')">+ Cadastrar Imobiliária</button>
+      </div>
+      <div id="imobiliariasContent"></div>
+    </div>
+
+    <!-- ═══════════════ CORRETORES ═══════════════ -->
+    <div class="page" id="page-corretores">
+      <div class="topbar-actions" style="margin-bottom:20px;justify-content:flex-end;display:flex">
+        <button class="btn btn-primary" onclick="openModal('modalCorretor')">+ Cadastrar Corretor</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Nome</th><th>Telefone</th><th>E-mail</th><th>Endereço</th>
+            <th>Imobiliária</th><th>Cadastrado em</th><th>Indicações</th><th>Fechados</th>
+            <th>Total Comissões</th><th>Ações</th>
+          </tr></thead>
+          <tbody id="tbodyCorr"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════ INFLUENCIADORES ═══════════════ -->
+    <div class="page" id="page-influenciadores">
+      <div class="topbar-actions" style="margin-bottom:20px;justify-content:flex-end;display:flex">
+        <button class="btn btn-primary" onclick="openModal('modalInfluenciador')">+ Cadastrar Influenciador</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Nome / @</th><th>Telefone</th><th>E-mail</th><th>Rede / Seguidores</th>
+            <th>Nicho</th><th>Cadastrado em</th><th>Indicações</th><th>Fechados</th>
+            <th>Total Comissões</th><th>Ações</th>
+          </tr></thead>
+          <tbody id="tbodyInflu"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════ CONSTRUTORAS ═══════════════ -->
+    <div class="page" id="page-construtoras">
+      <div class="topbar-actions" style="margin-bottom:20px;justify-content:flex-end;display:flex">
+        <button class="btn btn-primary" onclick="openModal('modalConstrutora')">+ Cadastrar Construtora</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Construtora</th><th>Responsável</th><th>Telefone</th><th>E-mail</th>
+            <th>Cidade/UF</th><th>Cadastrado em</th><th>Indicações</th><th>Fechados</th>
+            <th>Total Comissões</th><th>Ações</th>
+          </tr></thead>
+          <tbody id="tbodyConstr"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════ COMISSÕES ═══════════════ -->
+    <div class="page" id="page-comissoes">
+      <div id="comissoesContent"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════ MODAL NOVA INDICAÇÃO ═══════ -->
+<div class="modal-bg" id="modalIndicacao">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Nova Indicação</h2>
+      <button class="modal-close" onclick="closeModal('modalIndicacao')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Parceiro *</label>
+          <select id="fCorretor" required>
+            <option value="">Selecione o parceiro...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nome do Cliente *</label>
+          <input type="text" id="fClienteNome" placeholder="Nome completo">
+        </div>
+        <div class="field">
+          <label>Telefone do Cliente *</label>
+          <input type="text" id="fClienteTel" placeholder="(51) 99999-9999">
+        </div>
+        <div class="field">
+          <label>Tipo de Imóvel</label>
+          <select id="fTipoImovel">
+            <option value="">Selecione...</option>
+            <option>Apartamento novo (lançamento)</option>
+            <option>Apartamento usado (reforma)</option>
+            <option>Casa nova (construção)</option>
+            <option>Casa usada (reforma)</option>
+            <option>Comercial</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Valor Estimado do Projeto</label>
+          <input type="text" id="fValorEstimado" placeholder="R$ 0,00">
+        </div>
+        <div class="field span2">
+          <label>Como o corretor abordou o cliente</label>
+          <textarea id="fContexto" placeholder="Ex: Após assinatura de contrato de apartamento no Residencial X. Cliente demonstrou interesse em reformar cozinha e sala..."></textarea>
+        </div>
+        <div class="field span2">
+          <label>Observações adicionais</label>
+          <textarea id="fObs" placeholder="Informações relevantes sobre o cliente ou o projeto..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalIndicacao')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarIndicacao()">Registrar Indicação</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL NOVA IMOBILIÁRIA ═══════ -->
+<div class="modal-bg" id="modalImob">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Cadastrar Imobiliária</h2>
+      <button class="modal-close" onclick="closeModal('modalImob')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Nome da Imobiliária *</label>
+          <input type="text" id="iNome" placeholder="Ex: Premium RS Imóveis">
+        </div>
+        <div class="field span2">
+          <label>Endereço *</label>
+          <input type="text" id="iEndereco" placeholder="Rua, número, bairro, cidade">
+        </div>
+        <div class="field">
+          <label>Telefone</label>
+          <input type="text" id="iTel" placeholder="(51) 3333-4444">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="iEmail" placeholder="contato@imobiliaria.com.br">
+        </div>
+        <div class="field">
+          <label>Site</label>
+          <input type="text" id="iSite" placeholder="www.imobiliaria.com.br">
+        </div>
+        <div class="field">
+          <label>Responsável / Gerente</label>
+          <input type="text" id="iResponsavel" placeholder="Nome do responsável">
+        </div>
+        <div class="field span2">
+          <label>Observações</label>
+          <textarea id="iObs" placeholder="Informações relevantes sobre esta imobiliária..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalImob')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarImob()">Cadastrar Imobiliária</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL CORRETOR VINCULADO À IMOBILIÁRIA ═══════ -->
+<div class="modal-bg" id="modalCorretorImob">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalCorretorImobTitle">Adicionar Corretor</h2>
+      <button class="modal-close" onclick="closeModal('modalCorretorImob')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalCorretorImobImobInfo" style="background:var(--cream);border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--brown-md)"></div>
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Nome Completo *</label>
+          <input type="text" id="ciNome" placeholder="Nome do corretor">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp *</label>
+          <input type="text" id="ciTel" placeholder="(51) 99999-9999">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="ciEmail" placeholder="corretor@email.com">
+        </div>
+        <div class="field span2">
+          <label>Endereço</label>
+          <input type="text" id="ciEndereco" placeholder="Endereço do corretor (opcional)">
+        </div>
+        <div class="field">
+          <label>CRECI</label>
+          <input type="text" id="ciCreci" placeholder="Número do CRECI">
+        </div>
+        <div class="field">
+          <label>Cargo / Função</label>
+          <input type="text" id="ciCargo" placeholder="Ex: Corretor Sênior">
+        </div>
+        <div class="field span2">
+          <label>Observações</label>
+          <textarea id="ciObs" placeholder="Informações relevantes..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalCorretorImob')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarCorretorImob()">Adicionar Corretor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL NOVO CORRETOR ═══════ -->
+<div class="modal-bg" id="modalCorretor">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Cadastrar Corretor Parceiro</h2>
+      <button class="modal-close" onclick="closeModal('modalCorretor')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Nome Completo *</label>
+          <input type="text" id="cNome" placeholder="Nome do corretor">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp *</label>
+          <input type="text" id="cTel" placeholder="(51) 99999-9999">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="cEmail" placeholder="email@exemplo.com">
+        </div>
+        <div class="field span2">
+          <label>Endereço</label>
+          <input type="text" id="cEndereco" placeholder="Rua, número, bairro, cidade">
+        </div>
+        <div class="field span2">
+          <label>Vincular à Imobiliária Cadastrada</label>
+          <select id="cImobSelect" onchange="document.getElementById('cImobManual').style.display=this.value?'none':'block'">
+            <option value="">Sem vínculo / Independente</option>
+          </select>
+        </div>
+        <div class="field span2" id="cImobManualWrap">
+          <label>Ou informe a imobiliária manualmente</label>
+          <input type="text" id="cImobManual" placeholder="Nome da imobiliária (se não cadastrada)">
+        </div>
+        <div class="field">
+          <label>CRECI</label>
+          <input type="text" id="cCreci" placeholder="Número do CRECI">
+        </div>
+        <div class="field">
+          <label>Cargo / Função</label>
+          <input type="text" id="cCargo" placeholder="Ex: Corretor Sênior">
+        </div>
+        <div class="field span2">
+          <label>Observações</label>
+          <textarea id="cObs" placeholder="Informações relevantes sobre este parceiro..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalCorretor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarCorretor()">Cadastrar Parceiro</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL INFLUENCIADOR ═══════ -->
+<div class="modal-bg" id="modalInfluenciador">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalInfluTitle">Cadastrar Influenciador</h2>
+      <button class="modal-close" onclick="closeModal('modalInfluenciador')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2"><label>Nome / @ *</label><input type="text" id="nfNome" placeholder="Nome ou @perfil"></div>
+        <div class="field"><label>Telefone</label><input type="text" id="nfTel" placeholder="(00) 90000-0000"></div>
+        <div class="field"><label>E-mail</label><input type="email" id="nfEmail" placeholder="contato@email.com"></div>
+        <div class="field"><label>Rede principal</label><select id="nfRede"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Outra</option></select></div>
+        <div class="field"><label>Seguidores</label><input type="text" id="nfSeguidores" placeholder="Ex: 50 mil"></div>
+        <div class="field span2"><label>Nicho</label><input type="text" id="nfNicho" placeholder="Ex: Decoração, Arquitetura, Lifestyle"></div>
+        <div class="field span2"><label>Observações</label><textarea id="nfObs" placeholder="Informações relevantes..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalInfluenciador')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarInfluenciador()">Cadastrar Parceiro</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL CONSTRUTORA ═══════ -->
+<div class="modal-bg" id="modalConstrutora">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalConstrTitle">Cadastrar Construtora</h2>
+      <button class="modal-close" onclick="closeModal('modalConstrutora')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2"><label>Nome da Construtora *</label><input type="text" id="ncNome" placeholder="Ex: Construtora Horizonte"></div>
+        <div class="field"><label>Responsável</label><input type="text" id="ncResp" placeholder="Nome do contato"></div>
+        <div class="field"><label>Telefone</label><input type="text" id="ncTel" placeholder="(00) 0000-0000"></div>
+        <div class="field"><label>E-mail</label><input type="email" id="ncEmail" placeholder="contato@construtora.com.br"></div>
+        <div class="field"><label>Site</label><input type="text" id="ncSite" placeholder="www.construtora.com.br"></div>
+        <div class="field"><label>Cidade</label><input type="text" id="ncCidade" placeholder="Cidade"></div>
+        <div class="field"><label>UF</label><input type="text" id="ncUF" placeholder="UF" maxlength="2"></div>
+        <div class="field span2"><label>Observações</label><textarea id="ncObs" placeholder="Empreendimentos, foco de atuação..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalConstrutora')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarConstrutora()">Cadastrar Parceiro</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL CONFIGURAÇÕES DE COMISSÕES ═══════ -->
+<div class="modal-bg" id="modalConfig">
+  <div class="modal" style="width:600px;max-width:96vw">
+    <div class="modal-head">
+      <h2>⚙ Configurar Comissões e Bônus</h2>
+      <button class="modal-close" onclick="closeModal('modalConfig')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- FAIXAS -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown-lt);margin-bottom:10px">
+          Faixas de Comissão Automática
+        </div>
+        <div id="configFaixas"></div>
+        <div style="font-size:11px;color:var(--warm-gray);margin-top:6px">
+          ⚠ A última faixa é sempre "Acima de" — sem limite superior.
+        </div>
+      </div>
+
+      <!-- BÔNUS -->
+      <div style="border-top:1px solid var(--cream-dk);padding-top:18px;margin-top:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown-lt)">
+            Regras de Bônus por Volume
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="adicionarRegraBonus()">+ Adicionar regra</button>
+        </div>
+        <div id="configBonus"></div>
+        <div style="font-size:11px;color:var(--warm-gray);margin-top:6px">
+          O período é em dias corridos a partir do 1º contrato fechado no ciclo.
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalConfig')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarConfig()">Salvar Configurações</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL EDITAR COMISSÃO ═══════ -->
+<div class="modal-bg" id="modalEditComm">
+  <div class="modal" style="width:440px">
+    <div class="modal-head">
+      <h2 id="modalEditCommTitle">Editar Comissão</h2>
+      <button class="modal-close" onclick="closeModal('modalEditComm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Valor Real do Contrato (R$)</label>
+          <input type="text" id="ecValor" placeholder="Ex: 35000">
+        </div>
+        <div class="field span2">
+          <label>% de Comissão</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" id="ecPct" min="0" max="100" step="0.5" placeholder="Ex: 15" style="flex:1">
+            <span style="font-size:14px;color:var(--brown-lt);font-weight:500">%</span>
+          </div>
+          <span style="font-size:11px;color:var(--warm-gray);margin-top:4px">Padrão automático pela faixa: até R$20k=12% · até R$50k=15% · acima=20%</span>
+        </div>
+        <div class="field span2" id="ecCommPreview" style="background:var(--cream);border-radius:6px;padding:12px 14px;display:none">
+          <span style="font-size:11px;color:var(--brown-lt);letter-spacing:1px;text-transform:uppercase">Comissão calculada</span>
+          <div id="ecCommVal" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--brown);margin-top:4px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalEditComm')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarEditComm()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL ATUALIZAR STATUS ═══════ -->
+<div class="modal-bg" id="modalStatus">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalStatusTitle">Atualizar Indicação</h2>
+      <button class="modal-close" onclick="closeModal('modalStatus')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalStatusTimeline" style="margin-bottom:20px"></div>
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Novo Status</label>
+          <select id="sStatus">
+            <option value="Novo Lead">Novo Lead</option>
+            <option value="Contato Feito">Contato Feito</option>
+            <option value="Reunião Agendada">Reunião Agendada</option>
+            <option value="Proposta Enviada">Proposta Enviada</option>
+            <option value="Fechado">Fechado</option>
+            <option value="Perdido">Perdido</option>
+          </select>
+        </div>
+        <div class="field" id="fieldValorReal" style="display:none">
+          <label>Valor Real do Contrato (R$)</label>
+          <input type="text" id="sValorReal" placeholder="R$ 0,00">
+        </div>
+        <div class="field span2">
+          <label>Anotação / Log</label>
+          <textarea id="sLog" placeholder="O que aconteceu nessa etapa? Detalhe o contato, reunião, resultado..."></textarea>
+        </div>
+        <div class="field span2">
+          <label>Data da Ocorrência</label>
+          <input type="date" id="sData">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modalStatus')">Cancelar</button>
+      <button class="btn btn-gold" onclick="salvarStatus()">Salvar Atualização</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════════
+let state = JSON.parse(localStorage.getItem('mabe_ind') || 'null') || {
+  imobiliarias: [],
+  corretores: [],
+  indicacoes: [],
+  nextId: 1,
+  nextCorrId: 1,
+  nextImobId: 1,
+  config: {
+    faixas: [
+      { ate: 20000,  pct: 12, label: 'Até R$ 20.000' },
+      { ate: 50000,  pct: 15, label: 'R$ 20.001 a R$ 50.000' },
+      { ate: null,   pct: 20, label: 'Acima de R$ 50.000' },
+    ],
+    bonus: [
+      { minContratos: 2, maxContratos: 2, periodo: 90, valor: 1500 },
+      { minContratos: 3, maxContratos: null, periodo: 90, valor: 4000 },
+    ]
+  },
+};
+function save() { localStorage.setItem('mabe_ind', JSON.stringify(state)); }
+// garante arrays dos novos parceiros mesmo em estados já salvos
+if(!Array.isArray(state.influenciadores)) state.influenciadores = [];
+if(!Array.isArray(state.construtoras)) state.construtoras = [];
+
+// Migração: garante que state.config existe mesmo em dados salvos antigos
+if(!state.config) {
+  state.config = {
+    faixas: [
+      { ate: 20000, pct: 12, label: 'Até R$ 20.000' },
+      { ate: 50000, pct: 15, label: 'R$ 20.001 a R$ 50.000' },
+      { ate: null,  pct: 20, label: 'Acima de R$ 50.000' },
+    ],
+    bonus: [
+      { minContratos: 2, maxContratos: 2,    periodo: 90, valor: 1500 },
+      { minContratos: 3, maxContratos: null,  periodo: 90, valor: 4000 },
+    ]
+  };
+  save();
+}
+
+// ══════════════════════════════════════════════════
+// UTILITÁRIOS
+// ══════════════════════════════════════════════════
+const STATUSES = ['Novo Lead','Contato Feito','Reunião Agendada','Proposta Enviada','Fechado','Perdido'];
+const STATUS_CLASS = {
+  'Novo Lead':'badge-novo','Contato Feito':'badge-contato',
+  'Reunião Agendada':'badge-reuniao','Proposta Enviada':'badge-proposta',
+  'Fechado':'badge-fechado','Perdido':'badge-perdido'
+};
+const COMM_RATE = v => {
+  const faixas = state.config.faixas;
+  for(let i=0;i<faixas.length;i++){
+    if(faixas[i].ate===null || v <= faixas[i].ate) return faixas[i].pct/100;
+  }
+  return faixas[faixas.length-1].pct/100;
+};
+const fmt = v => v ? 'R$ '+Number(v).toLocaleString('pt-BR') : '—';
+const fmtPct = v => (v*100).toFixed(0)+'%';
+const today = () => new Date().toISOString().split('T')[0];
+const daysDiff = (d1,d2='') => {
+  const a=new Date(d1), b=d2?new Date(d2):new Date();
+  return Math.floor((b-a)/(1000*60*60*24));
+};
+const getCorretor = id => state.corretores.find(c=>c.id===id)
+  || (state.influenciadores||[]).find(c=>c.id===id)
+  || (state.construtoras||[]).find(c=>c.id===id);
+// todos os parceiros (corretores + influenciadores + construtoras) com rótulo de tipo
+const allParceiros = () => [].concat(
+  state.corretores.map(c=>Object.assign({_tipo:'Corretor'},c)),
+  (state.influenciadores||[]).map(c=>Object.assign({_tipo:'Influenciador'},c)),
+  (state.construtoras||[]).map(c=>Object.assign({_tipo:'Construtora'},c))
+);
+const badge = s => `<span class="badge ${STATUS_CLASS[s]||''}">${s}</span>`;
+
+function diasChip(dias, label='') {
+  let cls = dias <= 7 ? 'dias-ok' : dias <= 14 ? 'dias-warn' : 'dias-late';
+  return `<span class="dias-chip ${cls}">${dias}d ${label}</span>`;
+}
+
+// ══════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard:'Dashboard', indicacoes:'Todas as Indicações',
+  trimestre:'Controle Trimestral', imobiliarias:'Imobiliárias Parceiras',
+  corretores:'Corretores Parceiros', influenciadores:'Influenciadores',
+  construtoras:'Construtoras', comissoes:'Comissões e Bônus'
+};
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelector(`[onclick="goPage('${id}')"]`).classList.add('active');
+  document.getElementById('topbarTitle').textContent = PAGE_TITLES[id];
+  const renders = { dashboard:renderDashboard, indicacoes:renderIndicacoes,
+    trimestre:renderTrimestre, imobiliarias:renderImobiliarias,
+    corretores:renderCorretores, influenciadores:renderInfluenciadores,
+    construtoras:renderConstrutoras, comissoes:renderComissoes };
+  if(renders[id]) renders[id]();
+}
+
+// ══════ INFLUENCIADORES & CONSTRUTORAS ══════
+let editingInfluId=null, editingConstrId=null;
+function indsByPartner(field, id){ return state.indicacoes.filter(i=>i[field]===id); }
+function comissoesPartner(inds){ return inds.filter(i=>i.status==='Fechado').reduce((s,i)=>s+((i.valorReal||i.valorEstimado||0)*COMM_RATE(i.valorReal||i.valorEstimado||0)),0); }
+
+function salvarInfluenciador(){
+  const n=document.getElementById('nfNome').value.trim();
+  if(!n){alert('Informe o nome / @ do influenciador.');return;}
+  const dados={ nome:n, tel:document.getElementById('nfTel').value.trim(), email:document.getElementById('nfEmail').value.trim(),
+    rede:document.getElementById('nfRede').value, seguidores:document.getElementById('nfSeguidores').value.trim(),
+    nicho:document.getElementById('nfNicho').value.trim(), obs:document.getElementById('nfObs').value.trim() };
+  if(editingInfluId){ const idx=state.influenciadores.findIndex(x=>x.id===editingInfluId); if(idx>-1) Object.assign(state.influenciadores[idx],dados); editingInfluId=null; }
+  else { dados.id=Date.now(); dados.dataCad=new Date().toISOString().slice(0,10); state.influenciadores.unshift(dados); }
+  save(); closeModal('modalInfluenciador'); ['nfNome','nfTel','nfEmail','nfSeguidores','nfNicho','nfObs'].forEach(i=>document.getElementById(i).value=''); renderInfluenciadores();
+}
+function editarInfluenciador(id){ const p=state.influenciadores.find(x=>x.id===id); if(!p)return; editingInfluId=id;
+  document.getElementById('modalInfluTitle').textContent='Editar Influenciador';
+  document.getElementById('nfNome').value=p.nome||''; document.getElementById('nfTel').value=p.tel||''; document.getElementById('nfEmail').value=p.email||'';
+  document.getElementById('nfRede').value=p.rede||'Instagram'; document.getElementById('nfSeguidores').value=p.seguidores||''; document.getElementById('nfNicho').value=p.nicho||''; document.getElementById('nfObs').value=p.obs||'';
+  openModal('modalInfluenciador'); }
+function excluirInfluenciador(id){ if(!confirm('Excluir este influenciador?'))return; state.influenciadores=state.influenciadores.filter(x=>x.id!==id); save(); renderInfluenciadores(); }
+function renderInfluenciadores(){
+  const tb=document.getElementById('tbodyInflu'); if(!tb)return;
+  if(!state.influenciadores.length){ tb.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--warm-gray);padding:30px">Nenhum influenciador cadastrado.</td></tr>'; return; }
+  tb.innerHTML=state.influenciadores.map(p=>{
+    const inds=indsByPartner('influId',p.id); const fech=inds.filter(i=>i.status==='Fechado').length; const com=comissoesPartner(inds);
+    return `<tr><td><strong>${p.nome}</strong></td><td>${p.tel||'—'}</td><td>${p.email||'—'}</td><td>${p.rede||'—'}${p.seguidores?(' · '+p.seguidores):''}</td><td>${p.nicho||'—'}</td><td>${p.dataCad?p.dataCad.split('-').reverse().join('/'):'—'}</td><td>${inds.length}</td><td>${fech}</td><td>${fmt(com)}</td><td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="editarInfluenciador(${p.id})">✏️</button> <button class="btn btn-danger btn-sm" onclick="excluirInfluenciador(${p.id})">🗑</button></td></tr>`;
+  }).join('');
+}
+
+function salvarConstrutora(){
+  const n=document.getElementById('ncNome').value.trim();
+  if(!n){alert('Informe o nome da construtora.');return;}
+  const dados={ nome:n, responsavel:document.getElementById('ncResp').value.trim(), tel:document.getElementById('ncTel').value.trim(),
+    email:document.getElementById('ncEmail').value.trim(), site:document.getElementById('ncSite').value.trim(),
+    cidade:document.getElementById('ncCidade').value.trim(), uf:document.getElementById('ncUF').value.trim().toUpperCase(), obs:document.getElementById('ncObs').value.trim() };
+  if(editingConstrId){ const idx=state.construtoras.findIndex(x=>x.id===editingConstrId); if(idx>-1) Object.assign(state.construtoras[idx],dados); editingConstrId=null; }
+  else { dados.id=Date.now(); dados.dataCad=new Date().toISOString().slice(0,10); state.construtoras.unshift(dados); }
+  save(); closeModal('modalConstrutora'); ['ncNome','ncResp','ncTel','ncEmail','ncSite','ncCidade','ncUF','ncObs'].forEach(i=>document.getElementById(i).value=''); renderConstrutoras();
+}
+function editarConstrutora(id){ const p=state.construtoras.find(x=>x.id===id); if(!p)return; editingConstrId=id;
+  document.getElementById('modalConstrTitle').textContent='Editar Construtora';
+  document.getElementById('ncNome').value=p.nome||''; document.getElementById('ncResp').value=p.responsavel||''; document.getElementById('ncTel').value=p.tel||'';
+  document.getElementById('ncEmail').value=p.email||''; document.getElementById('ncSite').value=p.site||''; document.getElementById('ncCidade').value=p.cidade||''; document.getElementById('ncUF').value=p.uf||''; document.getElementById('ncObs').value=p.obs||'';
+  openModal('modalConstrutora'); }
+function excluirConstrutora(id){ if(!confirm('Excluir esta construtora?'))return; state.construtoras=state.construtoras.filter(x=>x.id!==id); save(); renderConstrutoras(); }
+function renderConstrutoras(){
+  const tb=document.getElementById('tbodyConstr'); if(!tb)return;
+  if(!state.construtoras.length){ tb.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--warm-gray);padding:30px">Nenhuma construtora cadastrada.</td></tr>'; return; }
+  tb.innerHTML=state.construtoras.map(p=>{
+    const inds=indsByPartner('construtoraId',p.id); const fech=inds.filter(i=>i.status==='Fechado').length; const com=comissoesPartner(inds);
+    return `<tr><td><strong>${p.nome}</strong></td><td>${p.responsavel||'—'}</td><td>${p.tel||'—'}</td><td>${p.email||'—'}</td><td>${p.cidade||'—'}${p.uf?('/'+p.uf):''}</td><td>${p.dataCad?p.dataCad.split('-').reverse().join('/'):'—'}</td><td>${inds.length}</td><td>${fech}</td><td>${fmt(com)}</td><td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="editarConstrutora(${p.id})">✏️</button> <button class="btn btn-danger btn-sm" onclick="excluirConstrutora(${p.id})">🗑</button></td></tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if(id==='modalIndicacao'||id==='modalCorretor'||id==='modalCorretorImob') populateCorretorSelects();
+  // Resetar título/botão do modal de imobiliária se for novo
+  if(id==='modalImob' && !editingImobEditId) {
+    document.querySelector('#modalImob .modal-head h2').textContent='Cadastrar Imobiliária';
+    document.querySelector('#modalImob .modal-foot .btn-primary').textContent='Cadastrar Imobiliária';
+  }
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if(id==='modalImob') { editingImobEditId=null; _limparImob(); }
+  if(id==='modalCorretor') {
+    editingCorrId=null;
+    document.querySelector('#modalCorretor .modal-head h2').textContent='Cadastrar Corretor Parceiro';
+    document.querySelector('#modalCorretor .modal-foot .btn-primary').textContent='Cadastrar Parceiro';
+  }
+}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{
+  if(e.target===m) m.classList.remove('open');
+}));
+
+// ══════════════════════════════════════════════════
+// IMOBILIÁRIAS
+// ══════════════════════════════════════════════════
+let editingImobId = null;
+
+// ids sendo editados
+let editingImobEditId = null;
+let editingCorrImobId = null; // corretor sendo editado dentro da imob
+
+function _limparImob() {
+  ['iNome','iEndereco','iTel','iEmail','iSite','iResponsavel','iObs'].forEach(id=>document.getElementById(id).value='');
+}
+
+function salvarImob() {
+  const n=document.getElementById('iNome').value.trim();
+  if(!n){alert('Informe o nome da imobiliária.');return;}
+  const dados={
+    nome:n,
+    endereco:document.getElementById('iEndereco').value,
+    tel:document.getElementById('iTel').value,
+    email:document.getElementById('iEmail').value,
+    site:document.getElementById('iSite').value,
+    responsavel:document.getElementById('iResponsavel').value,
+    obs:document.getElementById('iObs').value,
+  };
+  if(editingImobEditId) {
+    // EDITAR
+    const idx=state.imobiliarias.findIndex(i=>i.id===editingImobEditId);
+    if(idx>-1) Object.assign(state.imobiliarias[idx], dados);
+    // Atualiza nome nos corretores vinculados
+    state.corretores.filter(c=>c.imobId===editingImobEditId).forEach(c=>c.imob=dados.nome);
+    editingImobEditId=null;
+  } else {
+    // NOVO
+    state.imobiliarias.push({ id:state.nextImobId++, dataCad:today(), ...dados });
+  }
+  save(); closeModal('modalImob'); _limparImob();
+  renderImobiliarias(); populateCorretorSelects();
+}
+
+function editarImob(id) {
+  editingImobEditId = id;
+  const imob=state.imobiliarias.find(i=>i.id===id);
+  document.getElementById('iNome').value=imob.nome||'';
+  document.getElementById('iEndereco').value=imob.endereco||'';
+  document.getElementById('iTel').value=imob.tel||'';
+  document.getElementById('iEmail').value=imob.email||'';
+  document.getElementById('iSite').value=imob.site||'';
+  document.getElementById('iResponsavel').value=imob.responsavel||'';
+  document.getElementById('iObs').value=imob.obs||'';
+  // Muda título do modal
+  document.querySelector('#modalImob .modal-head h2').textContent='Editar Imobiliária';
+  document.querySelector('#modalImob .modal-foot .btn-primary').textContent='Salvar Alterações';
+  openModal('modalImob');
+}
+
+function excluirImob(id) {
+  const imob=state.imobiliarias.find(i=>i.id===id);
+  const corrs=state.corretores.filter(c=>c.imobId===id);
+  const msg = corrs.length
+    ? `Excluir "${imob.nome}"?\n\nATENÇÃO: Esta imobiliária tem ${corrs.length} corretor(es) vinculado(s).\nOs corretores ficarão sem vínculo (não serão excluídos).`
+    : `Excluir "${imob.nome}"? Esta ação não pode ser desfeita.`;
+  if(!confirm(msg)) return;
+  state.imobiliarias=state.imobiliarias.filter(i=>i.id!==id);
+  // Desvincula corretores
+  state.corretores.filter(c=>c.imobId===id).forEach(c=>{c.imobId=null;});
+  save(); renderImobiliarias(); renderCorretores(); populateCorretorSelects();
+}
+
+// ── Corretor dentro da imobiliária ────────────────
+function abrirCorretorImob(imobId) {
+  editingImobId = imobId;
+  editingCorrImobId = null;
+  const imob=state.imobiliarias.find(i=>i.id===imobId);
+  document.getElementById('modalCorretorImobTitle').textContent=`Adicionar Corretor — ${imob.nome}`;
+  document.getElementById('modalCorretorImobImobInfo').innerHTML=
+    `<span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--warm-gray)">Imobiliária</span><br><b>${imob.nome}</b>${imob.endereco?'<br><span style="color:var(--warm-gray);font-size:12px">'+imob.endereco+'</span>':''}`;
+  document.querySelector('#modalCorretorImob .modal-foot .btn-gold').textContent='Adicionar Corretor';
+  ['ciNome','ciTel','ciEmail','ciEndereco','ciCreci','ciCargo','ciObs'].forEach(id=>document.getElementById(id).value='');
+  openModal('modalCorretorImob');
+}
+
+function editarCorretorImob(corrId, imobId) {
+  editingImobId = imobId;
+  editingCorrImobId = corrId;
+  const c=state.corretores.find(x=>x.id===corrId);
+  const imob=state.imobiliarias.find(i=>i.id===imobId);
+  document.getElementById('modalCorretorImobTitle').textContent=`Editar Corretor — ${c.nome}`;
+  document.getElementById('modalCorretorImobImobInfo').innerHTML=
+    `<span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--warm-gray)">Imobiliária</span><br><b>${imob?imob.nome:'—'}</b>`;
+  document.getElementById('ciNome').value=c.nome||'';
+  document.getElementById('ciTel').value=c.tel||'';
+  document.getElementById('ciEmail').value=c.email||'';
+  document.getElementById('ciEndereco').value=c.endereco||'';
+  document.getElementById('ciCreci').value=c.creci||'';
+  document.getElementById('ciCargo').value=c.cargo||'';
+  document.getElementById('ciObs').value=c.obs||'';
+  document.querySelector('#modalCorretorImob .modal-foot .btn-gold').textContent='Salvar Alterações';
+  openModal('modalCorretorImob');
+}
+
+function excluirCorretorImob(corrId) {
+  const c=state.corretores.find(x=>x.id===corrId);
+  const inds=state.indicacoes.filter(i=>i.corretorId===corrId);
+  const msg = inds.length
+    ? `Excluir "${c.nome}"?\n\nAVISO: Este corretor tem ${inds.length} indicação(ões) registrada(s).\nAs indicações serão mantidas, mas ficarão sem corretor vinculado.`
+    : `Excluir "${c.nome}"? Esta ação não pode ser desfeita.`;
+  if(!confirm(msg)) return;
+  state.corretores=state.corretores.filter(x=>x.id!==corrId);
+  save(); renderImobiliarias(); renderCorretores(); populateCorretorSelects();
+}
+
+function salvarCorretorImob() {
+  const n=document.getElementById('ciNome').value.trim();
+  const t=document.getElementById('ciTel').value.trim();
+  if(!n||!t){alert('Preencha nome e telefone.');return;}
+  const imob=state.imobiliarias.find(i=>i.id===editingImobId);
+  const dados={
+    nome:n, tel:t,
+    email:document.getElementById('ciEmail').value,
+    endereco:document.getElementById('ciEndereco').value,
+    imob:imob?imob.nome:'', imobId:editingImobId,
+    creci:document.getElementById('ciCreci').value,
+    cargo:document.getElementById('ciCargo').value,
+    obs:document.getElementById('ciObs').value,
+  };
+  if(editingCorrImobId) {
+    // EDITAR
+    const idx=state.corretores.findIndex(x=>x.id===editingCorrImobId);
+    if(idx>-1) Object.assign(state.corretores[idx], dados);
+    editingCorrImobId=null;
+  } else {
+    // NOVO
+    state.corretores.push({ id:state.nextCorrId++, dataCad:today(), ...dados });
+  }
+  save(); closeModal('modalCorretorImob');
+  renderImobiliarias(); renderCorretores(); populateCorretorSelects();
+}
+
+function renderImobiliarias() {
+  const el=document.getElementById('imobiliariasContent');
+  if(!el)return;
+  if(!state.imobiliarias.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">⬡</div><p>Nenhuma imobiliária cadastrada ainda.</p></div>';return;
+  }
+  el.innerHTML=state.imobiliarias.map(imob=>{
+    const corrs=state.corretores.filter(c=>c.imobId===imob.id);
+    const indsImob=state.indicacoes.filter(i=>corrs.some(c=>c.id===i.corretorId));
+    const fechadosImob=indsImob.filter(i=>i.status==='Fechado');
+    return `
+    <div class="table-wrap" style="margin-bottom:24px">
+      <!-- Cabeçalho -->
+      <div style="background:var(--brown);padding:20px 24px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--white);margin-bottom:4px">${imob.nome}</div>
+          <div style="font-size:12px;color:var(--warm-gray);display:flex;flex-wrap:wrap;gap:14px;margin-top:6px">
+            ${imob.endereco?`<span>📍 ${imob.endereco}</span>`:''}
+            ${imob.tel?`<span>📞 ${imob.tel}</span>`:''}
+            ${imob.email?`<span>✉ ${imob.email}</span>`:''}
+            ${imob.responsavel?`<span>👤 ${imob.responsavel}</span>`:''}
+          </div>
+        </div>
+        <!-- Métricas + ações -->
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-shrink:0">
+          <div style="display:flex;gap:24px;text-align:center">
+            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${corrs.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Corretores</div></div>
+            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${indsImob.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Indicações</div></div>
+            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${fechadosImob.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Fechados</div></div>
+          </div>
+          <!-- Botões editar / excluir imobiliária -->
+          <div style="display:flex;flex-direction:column;gap:6px;padding-top:2px">
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:var(--white);border:1px solid rgba(255,255,255,0.2);font-size:11px" onclick="editarImob(${imob.id})">✏️ Editar</button>
+            <button class="btn btn-sm" style="background:rgba(255,100,100,0.15);color:#ffaaaa;border:1px solid rgba(255,100,100,0.25);font-size:11px" onclick="excluirImob(${imob.id})">🗑 Excluir</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha dourada -->
+      <div style="height:2px;background:linear-gradient(to right,var(--gold),transparent)"></div>
+
+      <!-- Corretores -->
+      <div>
+        <div style="padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--cream-dk)">
+          <span style="font-size:11px;font-weight:500;color:var(--brown-lt);letter-spacing:1px;text-transform:uppercase">Corretores desta imobiliária</span>
+          <button class="btn btn-outline btn-sm" onclick="abrirCorretorImob(${imob.id})">+ Adicionar Corretor</button>
+        </div>
+        ${corrs.length?`
+        <table>
+          <thead><tr>
+            <th>Nome</th><th>Telefone</th><th>E-mail</th><th>Endereço</th>
+            <th>CRECI</th><th>Cargo</th><th>Indicações</th><th>Fechados</th><th>Ações</th>
+          </tr></thead>
+          <tbody>${corrs.map(c=>{
+            const indsC=state.indicacoes.filter(i=>i.corretorId===c.id);
+            const fechC=indsC.filter(i=>i.status==='Fechado');
+            return `<tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="corretor-avatar">${c.nome[0]}</div>
+                  <div><div style="font-weight:500">${c.nome}</div><div style="font-size:11px;color:var(--warm-gray)">${c.cargo||''}</div></div>
+                </div>
+              </td>
+              <td>${c.tel}</td>
+              <td style="font-size:12px">${c.email||'—'}</td>
+              <td style="font-size:11px;color:var(--warm-gray);max-width:140px">${c.endereco||'—'}</td>
+              <td style="font-size:12px">${c.creci||'—'}</td>
+              <td style="font-size:12px">${c.cargo||'—'}</td>
+              <td><b>${indsC.length}</b></td>
+              <td><b style="color:var(--green)">${fechC.length}</b></td>
+              <td>
+                <div style="display:flex;gap:5px">
+                  <button class="btn btn-outline btn-sm" onclick="editarCorretorImob(${c.id},${imob.id})" title="Editar corretor">✏️</button>
+                  <button class="btn btn-danger btn-sm" onclick="excluirCorretorImob(${c.id})" title="Excluir corretor">🗑</button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`:
+        `<div style="padding:24px;text-align:center;color:var(--warm-gray);font-size:13px">
+          Nenhum corretor cadastrado nesta imobiliária ainda.<br>
+          <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="abrirCorretorImob(${imob.id})">+ Adicionar primeiro corretor</button>
+        </div>`}
+      </div>
+      ${imob.obs?`<div style="padding:10px 20px;background:var(--cream);border-top:1px solid var(--cream-dk);font-size:12px;color:var(--warm-gray)">📝 ${imob.obs}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// CORRETORES
+// ══════════════════════════════════════════════════
+let editingCorrId = null;
+
+function editarCorretor(id) {
+  editingCorrId = id;
+  const c = state.corretores.find(x=>x.id===id);
+  document.getElementById('cNome').value     = c.nome||'';
+  document.getElementById('cTel').value      = c.tel||'';
+  document.getElementById('cEmail').value    = c.email||'';
+  document.getElementById('cEndereco').value = c.endereco||'';
+  document.getElementById('cCreci').value    = c.creci||'';
+  document.getElementById('cCargo').value    = c.cargo||'';
+  document.getElementById('cObs').value      = c.obs||'';
+  populateCorretorSelects();
+  document.getElementById('cImobSelect').value = c.imobId||'';
+  document.getElementById('cImobManual').value = c.imobId?'':c.imob||'';
+  document.getElementById('cImobManual').style.display = c.imobId?'none':'block';
+  document.querySelector('#modalCorretor .modal-head h2').textContent = 'Editar Corretor';
+  document.querySelector('#modalCorretor .modal-foot .btn-primary').textContent = 'Salvar Alterações';
+  openModal('modalCorretor');
+}
+
+function excluirCorretor(id) {
+  const c = state.corretores.find(x=>x.id===id);
+  const inds = state.indicacoes.filter(i=>i.corretorId===id);
+  const msg = inds.length
+    ? `Excluir "${c.nome}"?\n\nAVISO: este corretor tem ${inds.length} indicação(ões).\nAs indicações serão mantidas sem corretor vinculado.`
+    : `Excluir "${c.nome}"? Não é possível desfazer.`;
+  if(!confirm(msg)) return;
+  state.corretores = state.corretores.filter(x=>x.id!==id);
+  save(); renderCorretores(); renderImobiliarias(); populateCorretorSelects();
+}
+
+function salvarCorretor() {
+  const n=document.getElementById('cNome').value.trim();
+  const t=document.getElementById('cTel').value.trim();
+  if(!n||!t){alert('Preencha nome e telefone.');return;}
+  const imobId=parseInt(document.getElementById('cImobSelect').value)||null;
+  const imob=imobId?state.imobiliarias.find(i=>i.id===imobId):null;
+  const dados = {
+    nome:n, tel:t,
+    email:document.getElementById('cEmail').value,
+    endereco:document.getElementById('cEndereco').value,
+    imob:imob?imob.nome:document.getElementById('cImobManual').value,
+    imobId:imobId||null,
+    creci:document.getElementById('cCreci').value,
+    cargo:document.getElementById('cCargo').value,
+    obs:document.getElementById('cObs').value,
+  };
+  if(editingCorrId) {
+    const idx=state.corretores.findIndex(x=>x.id===editingCorrId);
+    if(idx>-1) Object.assign(state.corretores[idx], dados);
+    editingCorrId=null;
+  } else {
+    state.corretores.push({ id:state.nextCorrId++, dataCad:today(), ...dados });
+  }
+  save(); closeModal('modalCorretor');
+  ['cNome','cTel','cEmail','cEndereco','cImobManual','cCreci','cCargo','cObs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cImobSelect').value='';
+  renderCorretores(); renderImobiliarias(); populateCorretorSelects();
+}
+
+function populateCorretorSelects() {
+  ['fCorretor','filterCorretor'].forEach(sid=>{
+    const sel=document.getElementById(sid);
+    if(!sel)return;
+    const cur=sel.value;
+    sel.innerHTML=sid==='fCorretor'?'<option value="">Selecione o parceiro...</option>':'<option value="">Todos os parceiros</option>';
+    // Agrupa por imobiliária
+    const semImob=state.corretores.filter(c=>!c.imobId);
+    const comImob=state.imobiliarias.map(imob=>({
+      imob, corrs:state.corretores.filter(c=>c.imobId===imob.id)
+    })).filter(g=>g.corrs.length);
+    comImob.forEach(g=>{
+      const og=document.createElement('optgroup');
+      og.label='🏢 '+g.imob.nome;
+      g.corrs.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; og.appendChild(o); });
+      sel.appendChild(og);
+    });
+    if(semImob.length){
+      const og=document.createElement('optgroup'); og.label='🏢 Corretores independentes';
+      semImob.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; og.appendChild(o); });
+      sel.appendChild(og);
+    }
+    if((state.influenciadores||[]).length){
+      const og=document.createElement('optgroup'); og.label='✦ Influenciadores';
+      state.influenciadores.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; og.appendChild(o); });
+      sel.appendChild(og);
+    }
+    if((state.construtoras||[]).length){
+      const og=document.createElement('optgroup'); og.label='⌂ Construtoras';
+      state.construtoras.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.nome; og.appendChild(o); });
+      sel.appendChild(og);
+    }
+    sel.value=cur;
+  });
+  // Select de imobiliária no modal de corretor avulso
+  const selImobCorr=document.getElementById('cImobSelect');
+  if(selImobCorr){
+    const cur2=selImobCorr.value;
+    selImobCorr.innerHTML='<option value="">Sem vínculo / Independente</option>';
+    state.imobiliarias.forEach(i=>selImobCorr.innerHTML+=`<option value="${i.id}">${i.nome}</option>`);
+    selImobCorr.value=cur2;
+  }
+}
+
+function renderCorretores() {
+  const tbody=document.getElementById('tbodyCorr');
+  if(!tbody)return;
+  if(!state.corretores.length){
+    tbody.innerHTML='<tr><td colspan="10"><div class="empty"><div class="empty-icon">◉</div><p>Nenhum corretor cadastrado ainda.</p></div></td></tr>';return;
+  }
+  tbody.innerHTML=state.corretores.map(c=>{
+    const inds=state.indicacoes.filter(i=>i.corretorId===c.id);
+    const fechados=inds.filter(i=>i.status==='Fechado');
+    const totalComm=fechados.reduce((s,i)=>s+(i.valorReal||0)*((i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0))),0);
+    const imob=c.imobId?state.imobiliarias.find(i=>i.id===c.imobId):null;
+    return `<tr>
+      <td><div style="font-weight:500">${c.nome}</div><div style="font-size:11px;color:var(--warm-gray)">${c.cargo||''} ${c.creci?'· '+c.creci:''}</div></td>
+      <td>${c.tel}</td>
+      <td style="font-size:12px">${c.email||'—'}</td>
+      <td style="font-size:11px;color:var(--warm-gray);max-width:120px">${c.endereco||'—'}</td>
+      <td>${imob?`<span class="badge badge-proposta">${imob.nome}</span>`:c.imob?`<span style="font-size:12px">${c.imob}</span>`:'—'}</td>
+      <td>${c.dataCad}</td>
+      <td><b>${inds.length}</b></td>
+      <td><b style="color:var(--green)">${fechados.length}</b></td>
+      <td style="font-weight:500;color:var(--brown)">${totalComm>0?fmt(totalComm):'—'}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm" onclick="editarCorretor(${c.id})" title="Editar">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirCorretor(${c.id})" title="Excluir">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// INDICAÇÕES
+// ══════════════════════════════════════════════════
+function salvarIndicacao() {
+  const cid=parseInt(document.getElementById('fCorretor').value);
+  const cn=document.getElementById('fClienteNome').value.trim();
+  const ct=document.getElementById('fClienteTel').value.trim();
+  if(!cid||!cn||!ct){alert('Preencha o parceiro, nome e telefone do cliente.');return;}
+  const ve=parseFloat(document.getElementById('fValorEstimado').value.replace(/\D/g,''))||0;
+  const ehInflu=(state.influenciadores||[]).some(x=>x.id===cid);
+  const ehConstr=(state.construtoras||[]).some(x=>x.id===cid);
+  state.indicacoes.push({
+    id:state.nextId++, corretorId:cid,
+    influId: ehInflu?cid:null, construtoraId: ehConstr?cid:null,
+    clienteNome:cn, clienteTel:ct,
+    tipoImovel:document.getElementById('fTipoImovel').value,
+    valorEstimado:ve, valorReal:null, status:'Novo Lead',
+    contexto:document.getElementById('fContexto').value,
+    obs:document.getElementById('fObs').value,
+    dataRegistro:today(),
+    logs:[{data:today(),status:'Novo Lead',nota:'Lead registrado no sistema.',tipo:'blue'}]
+  });
+  save(); closeModal('modalIndicacao');
+  ['fClienteNome','fClienteTel','fValorEstimado','fContexto','fObs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCorretor').value='';
+  document.getElementById('fTipoImovel').value='';
+  renderDashboard(); renderIndicacoes();
+}
+
+let editingId = null;
+function abrirStatus(id) {
+  editingId=id;
+  const ind=state.indicacoes.find(i=>i.id===id);
+  if(!ind)return;
+  document.getElementById('modalStatusTitle').textContent=`Atualizar — ${ind.clienteNome}`;
+  document.getElementById('sStatus').value=ind.status;
+  document.getElementById('sLog').value='';
+  document.getElementById('sData').value=today();
+  document.getElementById('fieldValorReal').style.display='none';
+  document.getElementById('sStatus').onchange=function(){
+    document.getElementById('fieldValorReal').style.display=this.value==='Fechado'?'block':'none';
+  };
+  // timeline
+  const steps=['Novo Lead','Contato Feito','Reunião Agendada','Proposta Enviada','Fechado'];
+  const cur=steps.indexOf(ind.status);
+  document.getElementById('modalStatusTimeline').innerHTML=`
+    <div class="timeline">${steps.map((s,i)=>`
+      <div class="tl-step ${i<cur?'done':i===cur?'active':''}">
+        <div class="tl-dot ${i<cur?'done':i===cur?'active':''}">${i<cur?'✓':i+1}</div>
+        <div class="tl-label">${s.split(' ')[0]}</div>
+      </div>`).join('')}
+    </div>`;
+  openModal('modalStatus');
+}
+
+function salvarStatus() {
+  const ind=state.indicacoes.find(i=>i.id===editingId);
+  if(!ind)return;
+  const novoStatus=document.getElementById('sStatus').value;
+  const log=document.getElementById('sLog').value;
+  const data=document.getElementById('sData').value||today();
+  if(novoStatus==='Fechado'){
+    const vr=parseFloat(document.getElementById('sValorReal').value.replace(/\D/g,''));
+    if(vr) ind.valorReal=vr;
+  }
+  ind.status=novoStatus;
+  if(log) ind.logs.push({data,status:novoStatus,nota:log,
+    tipo:novoStatus==='Fechado'?'green':novoStatus==='Perdido'?'red':'default'});
+  save(); closeModal('modalStatus');
+  renderDashboard(); renderIndicacoes(); renderTrimestre(); renderComissoes();
+  if(novoStatus==='Fechado'){ abrirPrecificacaoDaIndicacao(ind); }
+}
+
+// Ao fechar: abre a Precificação já preenchida. O projeto só é criado ao salvar a proposta.
+function abrirPrecificacaoDaIndicacao(ind){
+  var qs = 'novo=1&fromInd=' + encodeURIComponent(ind.id)
+    + '&cliente=' + encodeURIComponent(ind.clienteNome||'')
+    + '&valor=' + encodeURIComponent(ind.valorReal || ind.valorEstimado || 0);
+  var url = 'precificacao.html?' + qs;
+  // 1) avisa a página hospedeira (indicacoes.html) para navegar a aba inteira
+  try{ if(window.parent && window.parent!==window) window.parent.postMessage({type:'mabe-open',url:url}, '*'); }catch(e){}
+  // 2) fallback: navega diretamente
+  try{ var nav=(window.parent&&window.parent!==window)?window.parent:window; nav.location.href=url; }
+  catch(e){ try{ window.location.href=url; }catch(e2){} }
+}
+
+// CONEXÃO: ao fechar uma indicação, cria/atualiza um projeto no app Mabe (MabeDB do parent)
+function criarProjetoDaIndicacao(ind){
+  try{
+    var DB = null;
+    try{ if(window.parent && window.parent.MabeDB) DB = window.parent.MabeDB; }catch(e){}
+    if(!DB && window.MabeDB) DB = window.MabeDB;
+    if(!DB) return;
+    var corr = state.corretores.find(function(c){return c.id===ind.corretorId;});
+    var ti = (ind.tipoImovel||'').toLowerCase();
+    var tipo = /reforma/.test(ti) ? 'Reforma' : (/coment|comercial|corporativ|sala|loja/.test(ti) ? 'Comercial' : 'Residencial');
+    var valor = Math.round(ind.valorReal || ind.valorEstimado || 0);
+    var dados = {
+      nome: (ind.clienteNome||'Cliente') + ' — Indicação',
+      cliente: ind.clienteNome||'—',
+      tipo: tipo, cidade:'—', uf:'',
+      valor: valor, resp:'Você (Arq.)',
+      obs: 'Origem: indicação' + (corr?(' de '+corr.nome):'') + '. ' + (ind.contexto||'')
+    };
+    if(ind.projId && DB.getProject(ind.projId)){
+      DB.updateProject(ind.projId, dados);
+    } else {
+      dados.op=0; dados.pct=0; dados.rt=0; dados.statusLabel='Ativo'; dados.statusCls='negoc';
+      var novo = DB.addProject(dados);
+      ind.projId = novo.id;
+    }
+  }catch(e){}
+}
+
+function renderIndicacoes() {
+  const tbody=document.getElementById('tbodyInd');
+  if(!tbody)return;
+  populateCorretorSelects();
+  const search=(document.getElementById('searchInd')||{value:''}).value.toLowerCase();
+  const fStatus=(document.getElementById('filterStatus')||{value:''}).value;
+  const fCorr=parseInt((document.getElementById('filterCorretor')||{value:''}).value)||0;
+  let inds=state.indicacoes.filter(i=>{
+    const c=getCorretor(i.corretorId);
+    const matchSearch=!search||i.clienteNome.toLowerCase().includes(search)||(c&&c.nome.toLowerCase().includes(search));
+    const matchStatus=!fStatus||i.status===fStatus;
+    const matchCorr=!fCorr||i.corretorId===fCorr;
+    return matchSearch&&matchStatus&&matchCorr;
+  });
+  if(!inds.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-icon">⟶</div><p>Nenhuma indicação encontrada.</p></div></td></tr>';return;}
+  tbody.innerHTML=inds.map(i=>{
+    const c=getCorretor(i.corretorId);
+    const lastLog=i.logs[i.logs.length-1];
+    const diasStatus=daysDiff(lastLog?lastLog.data:i.dataRegistro);
+    return `<tr>
+      <td style="font-size:12px;color:var(--warm-gray)">${i.dataRegistro}</td>
+      <td><div style="font-weight:500">${i.clienteNome}</div><div style="font-size:11px;color:var(--warm-gray)">${i.clienteTel}</div></td>
+      <td>${c?`<span class="corretor-chip"><div class="corretor-avatar">${c.nome[0]}</div>${c.nome}</span>`:'—'}</td>
+      <td style="font-size:12px">${i.tipoImovel||'—'}</td>
+      <td>${badge(i.status)}</td>
+      <td>${i.status==='Fechado'||i.status==='Perdido'?'—':diasChip(diasStatus,'no status')}</td>
+      <td style="font-size:12px">${i.valorReal?`<b style="color:var(--green)">${fmt(i.valorReal)}</b>`:i.valorEstimado?`<span style="color:var(--warm-gray)">~${fmt(i.valorEstimado)}</span>`:'—'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="abrirStatus(${i.id})">Atualizar</button>
+        <button class="btn btn-outline btn-sm" onclick="verLog(${i.id})">Log</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirIndicacao(${i.id})" title="Excluir indicação">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function verLog(id) {
+  const ind=state.indicacoes.find(i=>i.id===id);
+  if(!ind)return;
+  alert(`Log de ${ind.clienteNome}:\n\n`+ind.logs.map(l=>`[${l.data}] ${l.status}\n${l.nota}`).join('\n\n'));
+}
+
+function excluirIndicacao(id) {
+  const ind=state.indicacoes.find(i=>i.id===id);
+  if(!ind)return;
+  if(!confirm(`Excluir a indicação de "${ind.clienteNome}"?\nEsta ação não pode ser desfeita.`)) return;
+  state.indicacoes=state.indicacoes.filter(i=>i.id!==id);
+  save(); renderIndicacoes(); renderDashboard(); renderComissoes(); renderTrimestre();
+}
+
+// ══════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════
+function renderDashboard() {
+  const total=state.indicacoes.length;
+  const ativos=state.indicacoes.filter(i=>!['Fechado','Perdido'].includes(i.status)).length;
+  const fechados=state.indicacoes.filter(i=>i.status==='Fechado');
+  const totalComm=fechados.reduce((s,i)=>{const r=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);return s+(i.valorReal||0)*r;},0);
+  const taxa=total>0?Math.round(fechados.length/total*100):0;
+  const nCorr=state.corretores.length, nInflu=(state.influenciadores||[]).length, nConstr=(state.construtoras||[]).length;
+  const nParceiros=nCorr+nInflu+nConstr;
+
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Total de Leads</div><div class="kpi-value">${total}</div><div class="kpi-sub">${ativos} em andamento</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">Contratos Fechados</div><div class="kpi-value">${fechados.length}</div><div class="kpi-sub">Taxa de conversão: ${taxa}%</div></div>
+    <div class="kpi kpi-amber"><div class="kpi-label">Comissões a Pagar</div><div class="kpi-value">${fmt(totalComm)}</div><div class="kpi-sub">${fechados.length} contratos</div></div>
+    <div class="kpi"><div class="kpi-label">Parceiros</div><div class="kpi-value">${nParceiros}</div><div class="kpi-sub">${state.imobiliarias.length} imob · ${nCorr} corret · ${nInflu} influ · ${nConstr} constr</div></div>`;
+
+  const recentes=state.indicacoes.slice(-8).reverse();
+  const tbody=document.getElementById('tbodyDash');
+  tbody.innerHTML=recentes.map(i=>{
+    const c=getCorretor(i.corretorId);
+    const lastLog=i.logs[i.logs.length-1];
+    const dias=daysDiff(lastLog?lastLog.data:i.dataRegistro);
+    return `<tr>
+      <td><b>${i.clienteNome}</b><div style="font-size:11px;color:var(--warm-gray)">${i.tipoImovel||''}</div></td>
+      <td>${c?`<span class="corretor-chip"><div class="corretor-avatar">${c.nome[0]}</div>${c.nome}</span>`:'—'}</td>
+      <td>${badge(i.status)}</td>
+      <td>${i.status==='Fechado'||i.status==='Perdido'?'—':diasChip(dias)}</td>
+      <td style="font-size:12px">${i.valorReal?`<b style="color:var(--green)">${fmt(i.valorReal)}</b>`:i.valorEstimado?`~${fmt(i.valorEstimado)}`:'—'}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="abrirStatus(${i.id})">Atualizar</button></td>
+    </tr>`;
+  }).join('');
+
+  // Alertas trimestrais
+  const alertsEl=document.getElementById('alertsTrim');
+  let html='';
+  allParceiros().forEach(c=>{
+    const ciclo=getCicloAtual(c.id);
+    if(ciclo.contratos===1){
+      const diasRestantes=90-daysDiff(ciclo.inicio);
+      if(diasRestantes>0&&diasRestantes<=30)
+        html+=`<div class="alert alert-warn">⏰ <b>${c.nome}</b> tem 1 contrato fechado neste trimestre. Faltam <b>${diasRestantes} dias</b> para fechar o ciclo — mais 1 contrato garante bônus de <b>R$ 1.500</b>!</div>`;
+    }
+    if(ciclo.contratos>=2&&ciclo.contratos<3){
+      html+=`<div class="alert alert-success">🎯 <b>${c.nome}</b> tem ${ciclo.contratos} contratos este trimestre — bônus de <b>R$ 1.500</b> garantido! Mais 1 contrato sobe para <b>R$ 4.000</b>.</div>`;
+    }
+  });
+  alertsEl.innerHTML=html||'<div class="alert alert-success">✅ Nenhum alerta crítico no momento.</div>';
+}
+
+// ══════════════════════════════════════════════════
+// TRIMESTRE
+// ══════════════════════════════════════════════════
+function getCicloAtual(corretorId) {
+  const fechados=state.indicacoes.filter(i=>i.corretorId===corretorId&&i.status==='Fechado');
+  if(!fechados.length) return {contratos:0,inicio:null,bonus:0,comissoes:0,itens:[]};
+  fechados.sort((a,b)=>new Date(a.dataRegistro)-new Date(b.dataRegistro));
+  // Usa o período do primeiro bônus como janela (ou 90 dias default)
+  const periodoBase = state.config.bonus[0]?.periodo || 90;
+  const janelas=[];
+  let janela=[];
+  fechados.forEach(f=>{
+    if(!janela.length){janela.push(f);return;}
+    const d0=new Date(janela[0].dataRegistro);
+    const d1=new Date(f.dataRegistro);
+    if((d1-d0)/(1000*60*60*24)<=periodoBase) janela.push(f);
+    else{janelas.push(janela);janela=[f];}
+  });
+  if(janela.length) janelas.push(janela);
+  const atual=janelas[janelas.length-1]||[];
+  const comms=atual.reduce((s,i)=>{
+    const rate=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);
+    return s+(i.valorReal||0)*rate;
+  },0);
+  // Calcula bônus pelas regras configuradas
+  const regraBonus = [...state.config.bonus]
+    .sort((a,b)=>b.minContratos-a.minContratos)
+    .find(r=>atual.length>=r.minContratos);
+  const bonus = regraBonus ? regraBonus.valor : 0;
+  const periodo = regraBonus ? regraBonus.periodo : periodoBase;
+  return{contratos:atual.length,inicio:atual[0]?.dataRegistro||null,bonus,comissoes:comms,itens:atual,periodo:periodoBase};
+}
+
+function renderTrimestre() {
+  const el=document.getElementById('trimestreContent');
+  if(!el)return;
+  if(!allParceiros().length){el.innerHTML='<div class="empty"><div class="empty-icon">◷</div><p>Nenhum parceiro cadastrado.</p></div>';return;}
+  el.innerHTML=allParceiros().map(c=>{
+    const ciclo=getCicloAtual(c.id);
+    const pct=Math.min(100,ciclo.contratos/3*100);
+    const diasCiclo=ciclo.inicio?daysDiff(ciclo.inicio):0;
+    const diasRestantes=Math.max(0,90-diasCiclo);
+    return `
+    <div class="table-wrap" style="margin-bottom:20px">
+      <div class="table-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="corretor-avatar" style="width:36px;height:36px;font-size:14px">${c.nome[0]}</div>
+          <div>
+            <div style="font-weight:500;font-size:14px">${c.nome}</div>
+            <div style="font-size:11px;color:var(--warm-gray)">${c.imob||c._tipo||'Parceiro independente'}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--warm-gray)">Ciclo atual: ${ciclo.inicio||'—'}</div>
+          ${ciclo.inicio?`<div style="font-size:11px;margin-top:3px">${diasChip(diasRestantes,'restantes no ciclo')}</div>`:''}
+        </div>
+      </div>
+      <div style="padding:20px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px">
+          <div style="text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--brown)">${ciclo.contratos}</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--brown-lt)">Contratos</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--green)">${fmt(ciclo.comissoes)}</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--brown-lt)">Comissões</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:${ciclo.bonus>0?'var(--gold)':'var(--warm-gray)'}">${ciclo.bonus>0?fmt(ciclo.bonus):'—'}</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--brown-lt)">Bônus</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--brown)">${fmt(ciclo.comissoes+(ciclo.bonus||0))}</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--brown-lt)">Total a Pagar</div>
+          </div>
+        </div>
+        <div style="margin-bottom:6px;font-size:12px;color:var(--brown-lt)">Progresso do ciclo (${ciclo.contratos}/${state.config.bonus[state.config.bonus.length-1]?.minContratos||3} para bônus máximo)</div>
+        <div class="trim-bar"><div class="trim-fill ${ciclo.bonus>0?'bonus':''}" style="width:${pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--warm-gray);margin-top:4px">
+          <span>0 contratos</span>
+          ${state.config.bonus.map(r=>`<span style="color:${r===state.config.bonus[state.config.bonus.length-1]?'var(--green)':'var(--gold)'}">${r.minContratos}${r.maxContratos?'':'+'} → ${fmt(r.valor)}</span>`).join('')}
+        </div>
+        ${ciclo.itens&&ciclo.itens.length?`
+        <div style="margin-top:16px;font-size:12px;font-weight:500;color:var(--brown-lt);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Contratos no Ciclo</div>
+        <table style="width:100%"><thead><tr>
+          <th>Cliente</th><th>Data Fechamento</th><th>Valor</th><th>Comissão</th>
+        </tr></thead><tbody>${ciclo.itens.map(i=>`<tr>
+          <td>${i.clienteNome}</td>
+          <td style="font-size:12px;color:var(--warm-gray)">${i.logs.find(l=>l.status==='Fechado')?.data||i.dataRegistro}</td>
+          <td style="color:var(--green);font-weight:500">${fmt(i.valorReal)}</td>
+          <td style="color:var(--brown);font-weight:500">${(()=>{const r=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);return fmt((i.valorReal||0)*r)+' ('+fmtPct(r)+')';})()} </td>
+        </tr>`).join('')}</tbody></table>`:'<div style="color:var(--warm-gray);font-size:13px;padding:12px 0">Nenhum contrato fechado neste ciclo ainda.</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// CONFIGURAÇÕES DE COMISSÕES E BÔNUS
+// ══════════════════════════════════════════════════
+function abrirConfigComissoes() {
+  renderConfigFaixas();
+  renderConfigBonus();
+  openModal('modalConfig');
+}
+
+function renderConfigFaixas() {
+  const el = document.getElementById('configFaixas');
+  if(!el) return;
+  const faixas = state.config.faixas;
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">Faixa</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">Limite Superior (R$)</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">% Comissão</th>
+      </tr></thead>
+      <tbody>
+        ${faixas.map((f,i)=>`
+        <tr style="border-bottom:1px solid var(--cream-dk)">
+          <td style="padding:8px;font-size:12px;color:var(--warm-gray)">${i+1}ª faixa${f.ate===null?' (última — sem limite)':''}</td>
+          <td style="padding:8px">
+            ${f.ate===null
+              ? `<span style="font-size:12px;color:var(--warm-gray);font-style:italic">Sem limite (última faixa)</span>`
+              : `<div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:12px;color:var(--warm-gray)">R$</span>
+                  <input type="number" class="cf-ate" data-idx="${i}" value="${f.ate}" min="1"
+                    style="width:120px;padding:6px 10px;border:1px solid var(--cream-dk);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;background:var(--cream)">
+                </div>`
+            }
+          </td>
+          <td style="padding:8px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="number" class="cf-pct" data-idx="${i}" value="${f.pct}" min="0" max="100" step="0.5"
+                style="width:80px;padding:6px 10px;border:1px solid var(--cream-dk);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;background:var(--cream)">
+              <span style="font-size:13px;color:var(--brown-lt);font-weight:500">%</span>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderConfigBonus() {
+  const el = document.getElementById('configBonus');
+  if(!el) return;
+  const bonus = state.config.bonus;
+  if(!bonus.length){
+    el.innerHTML='<div style="color:var(--warm-gray);font-size:13px;padding:10px 0">Nenhuma regra de bônus configurada.</div>';return;
+  }
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">Mín. contratos</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">Período (dias)</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--brown-lt);padding:6px 8px;border-bottom:1px solid var(--cream-dk)">Valor do Bônus (R$)</th>
+        <th style="padding:6px 8px;border-bottom:1px solid var(--cream-dk)"></th>
+      </tr></thead>
+      <tbody>
+        ${bonus.map((r,i)=>`
+        <tr style="border-bottom:1px solid var(--cream-dk)">
+          <td style="padding:8px">
+            <input type="number" class="cb-min" data-idx="${i}" value="${r.minContratos}" min="1"
+              style="width:70px;padding:6px 10px;border:1px solid var(--cream-dk);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;background:var(--cream)">
+          </td>
+          <td style="padding:8px">
+            <input type="number" class="cb-per" data-idx="${i}" value="${r.periodo}" min="1"
+              style="width:80px;padding:6px 10px;border:1px solid var(--cream-dk);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;background:var(--cream)">
+          </td>
+          <td style="padding:8px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:12px;color:var(--warm-gray)">R$</span>
+              <input type="number" class="cb-val" data-idx="${i}" value="${r.valor}" min="0" step="100"
+                style="width:110px;padding:6px 10px;border:1px solid var(--cream-dk);border-radius:4px;font-family:'Jost',sans-serif;font-size:13px;background:var(--cream)">
+            </div>
+          </td>
+          <td style="padding:8px">
+            <button class="btn btn-danger btn-sm" onclick="removerRegraBonus(${i})">🗑</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function adicionarRegraBonus() {
+  const maxMin = state.config.bonus.reduce((m,r)=>Math.max(m,r.minContratos),1);
+  state.config.bonus.push({ minContratos: maxMin+1, maxContratos: null, periodo: 90, valor: 0 });
+  renderConfigBonus();
+}
+
+function removerRegraBonus(idx) {
+  state.config.bonus.splice(idx,1);
+  renderConfigBonus();
+}
+
+function salvarConfig() {
+  // Lê faixas
+  document.querySelectorAll('.cf-pct').forEach(inp=>{
+    const i=parseInt(inp.dataset.idx);
+    state.config.faixas[i].pct = parseFloat(inp.value)||0;
+  });
+  document.querySelectorAll('.cf-ate').forEach(inp=>{
+    const i=parseInt(inp.dataset.idx);
+    const v=parseFloat(inp.value)||0;
+    if(v>0) {
+      state.config.faixas[i].ate = v;
+      // Atualiza label
+      const prev = i===0?0:state.config.faixas[i-1].ate;
+      state.config.faixas[i].label = i===0?`Até R$ ${v.toLocaleString('pt-BR')}`:`R$ ${(prev+1).toLocaleString('pt-BR')} a R$ ${v.toLocaleString('pt-BR')}`;
+    }
+  });
+  // Atualiza label da última faixa
+  const last = state.config.faixas[state.config.faixas.length-1];
+  const prev2 = state.config.faixas.length>1?state.config.faixas[state.config.faixas.length-2].ate:0;
+  last.label = `Acima de R$ ${prev2.toLocaleString('pt-BR')}`;
+  // Lê bônus
+  document.querySelectorAll('.cb-min').forEach(inp=>{
+    const i=parseInt(inp.dataset.idx);
+    state.config.bonus[i].minContratos = parseInt(inp.value)||1;
+  });
+  document.querySelectorAll('.cb-per').forEach(inp=>{
+    const i=parseInt(inp.dataset.idx);
+    state.config.bonus[i].periodo = parseInt(inp.value)||90;
+  });
+  document.querySelectorAll('.cb-val').forEach(inp=>{
+    const i=parseInt(inp.dataset.idx);
+    state.config.bonus[i].valor = parseFloat(inp.value)||0;
+  });
+  // Ordena bônus por minContratos
+  state.config.bonus.sort((a,b)=>a.minContratos-b.minContratos);
+  save();
+  closeModal('modalConfig');
+  renderComissoes(); renderTrimestre(); renderDashboard();
+}
+
+
+let editingCommId = null;
+
+function abrirEditComm(indId) {
+  editingCommId = indId;
+  const ind = state.indicacoes.find(i=>i.id===indId);
+  const c = getCorretor(ind.corretorId);
+  document.getElementById('modalEditCommTitle').textContent = `Editar Comissão — ${ind.clienteNome}`;
+  document.getElementById('ecValor').value = ind.valorReal||'';
+  const rateAtual = ind.commRate!=null ? (ind.commRate*100) : (ind.valorReal ? COMM_RATE(ind.valorReal)*100 : '');
+  document.getElementById('ecPct').value = rateAtual||'';
+  atualizarPreviewComm();
+  openModal('modalEditComm');
+  // live preview
+  document.getElementById('ecValor').oninput = atualizarPreviewComm;
+  document.getElementById('ecPct').oninput   = atualizarPreviewComm;
+}
+
+function atualizarPreviewComm() {
+  const v = parseFloat(document.getElementById('ecValor').value)||0;
+  const pInput = parseFloat(document.getElementById('ecPct').value);
+  const rate = !isNaN(pInput) && pInput>0 ? pInput/100 : COMM_RATE(v);
+  const comm = v * rate;
+  const prev = document.getElementById('ecCommPreview');
+  const val  = document.getElementById('ecCommVal');
+  if(v>0){ prev.style.display='block'; val.textContent=`${fmt(comm)} (${(rate*100).toFixed(1)}%)`; }
+  else    { prev.style.display='none'; }
+}
+
+function salvarEditComm() {
+  const v = parseFloat(document.getElementById('ecValor').value)||0;
+  const pInput = parseFloat(document.getElementById('ecPct').value);
+  const rate = !isNaN(pInput) && pInput>0 ? pInput/100 : null;
+  const idx = state.indicacoes.findIndex(i=>i.id===editingCommId);
+  if(idx>-1){
+    if(v) state.indicacoes[idx].valorReal = v;
+    if(rate!==null) state.indicacoes[idx].commRate = rate;
+    else delete state.indicacoes[idx].commRate;
+  }
+  save(); closeModal('modalEditComm');
+  renderComissoes(); renderDashboard(); renderTrimestre();
+}
+
+function excluirIndicacaoComm(indId) {
+  const ind = state.indicacoes.find(i=>i.id===indId);
+  if(!confirm(`Excluir o registro de "${ind.clienteNome}" e sua comissão?\nEsta ação não pode ser desfeita.`)) return;
+  state.indicacoes = state.indicacoes.filter(i=>i.id!==indId);
+  save(); renderComissoes(); renderDashboard(); renderIndicacoes();
+}
+
+function renderComissoes() {
+  const el=document.getElementById('comissoesContent');
+  if(!el)return;
+  const fechados=state.indicacoes.filter(i=>i.status==='Fechado');
+  const totalComm=fechados.reduce((s,i)=>{
+    const r=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);
+    return s+(i.valorReal||0)*r;
+  },0);
+  const totalBonus=state.corretores.reduce((s,c)=>s+getCicloAtual(c.id).bonus,0);
+
+  el.innerHTML=`
+    <div class="comm-card" style="margin-bottom:24px">
+      <div class="comm-item"><span class="comm-val">${fmt(totalComm)}</span><span class="comm-lbl">Total Comissões</span></div>
+      <div class="comm-item"><span class="comm-val">${fmt(totalBonus)}</span><span class="comm-lbl">Bônus Trimestrais</span></div>
+      <div class="comm-item"><span class="comm-val">${fmt(totalComm+totalBonus)}</span><span class="comm-lbl">Total a Desembolsar</span></div>
+    </div>
+
+    <div class="section-title">Comissões por Contrato</div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>Cliente</th><th>Corretor</th><th>Data Fechamento</th>
+        <th>Valor Contrato</th><th>Taxa %</th><th>Comissão</th><th>Status</th><th>Ações</th>
+      </tr></thead><tbody>${
+    fechados.length?fechados.map(i=>{
+      const c=getCorretor(i.corretorId);
+      const logFech=i.logs.find(l=>l.status==='Fechado');
+      const rate=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);
+      const comm=(i.valorReal||0)*rate;
+      const isCustom=i.commRate!=null;
+      return `<tr>
+        <td><b>${i.clienteNome}</b></td>
+        <td style="font-size:12px">${c?c.nome:'—'}</td>
+        <td style="font-size:12px;color:var(--warm-gray)">${logFech?.data||'—'}</td>
+        <td style="font-weight:500;color:var(--green)">${fmt(i.valorReal)}</td>
+        <td>
+          <span style="font-weight:600;color:var(--brown)">${(rate*100).toFixed(1)}%</span>
+          ${isCustom?'<span style="font-size:10px;color:var(--gold);margin-left:4px">manual</span>':''}
+        </td>
+        <td style="font-weight:600;color:var(--brown)">${fmt(comm)}</td>
+        <td><span class="badge badge-fechado">A pagar</span></td>
+        <td><div style="display:flex;gap:5px">
+          <button class="btn btn-outline btn-sm" onclick="abrirEditComm(${i.id})" title="Editar valor e %">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="excluirIndicacaoComm(${i.id})" title="Excluir">🗑</button>
+        </div></td>
+      </tr>`;
+    }).join(''):'<tr><td colspan="8"><div class="empty"><p>Nenhum contrato fechado ainda.</p></div></td></tr>'
+  }</tbody></table></div>
+
+    <div class="section-title">Tabela de Referência (comissão automática)
+      <button class="btn btn-outline btn-sm" style="margin-left:12px;font-size:11px" onclick="abrirConfigComissoes()">⚙ Configurar</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Faixa do Projeto</th><th>Comissão padrão</th><th>Exemplo (valor médio da faixa)</th>
+    </tr></thead><tbody>${
+      state.config.faixas.map((f,idx)=>{
+        const prev = idx===0?0:state.config.faixas[idx-1].ate;
+        const exemploVal = f.ate ? (prev+f.ate)/2 : (prev||50000)*1.5;
+        const exemploComm = Math.round(exemploVal*(f.pct/100));
+        return `<tr>
+          <td>${f.label}</td>
+          <td><b style="color:var(--brown)">${f.pct}%</b></td>
+          <td style="color:var(--warm-gray)">${fmt(Math.round(exemploVal))} → ${fmt(exemploComm)}</td>
+        </tr>`;
+      }).join('')
+    }</tbody></table></div>
+
+    <div class="section-title">Regras de Bônus por Volume
+      <button class="btn btn-outline btn-sm" style="margin-left:12px;font-size:11px" onclick="abrirConfigComissoes()">⚙ Configurar</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Contratos no Período</th><th>Período (dias)</th><th>Bônus Fixo</th>
+    </tr></thead><tbody>
+      <tr><td>1 contrato</td><td>${state.config.bonus[0]?.periodo||90} dias</td><td style="color:var(--warm-gray)">Sem bônus</td></tr>
+      ${state.config.bonus.map(r=>`<tr>
+        <td><b>${r.minContratos}${r.maxContratos?'':`+`} contratos</b></td>
+        <td>${r.periodo} dias</td>
+        <td style="color:var(--gold);font-weight:600">${fmt(r.valor)}</td>
+      </tr>`).join('')}
+    </tbody></table></div>
+
+    <div class="section-title">Bônus Trimestral por Parceiro</div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Parceiro</th><th>Contratos no Ciclo</th><th>Comissões</th><th>Bônus</th><th>Total</th>
+    </tr></thead><tbody>${
+    allParceiros().map(c=>{
+      const ciclo=getCicloAtual(c.id);
+      return `<tr>
+        <td>${c.nome}</td>
+        <td><b>${ciclo.contratos}</b></td>
+        <td style="color:var(--green);font-weight:500">${fmt(ciclo.comissoes)}</td>
+        <td style="color:var(--gold);font-weight:500">${ciclo.bonus>0?fmt(ciclo.bonus):'—'}</td>
+        <td style="color:var(--brown);font-weight:600">${fmt(ciclo.comissoes+ciclo.bonus)}</td>
+      </tr>`;
+    }).join('')
+  }</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+document.getElementById('topbarDate').textContent =
+  new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'long',year:'numeric'});
+
+populateCorretorSelects();
+renderDashboard();
+</script>
+</body>
+</html>

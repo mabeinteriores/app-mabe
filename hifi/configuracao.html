@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuração · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="prc.css">
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="config">
+  <div class="body scroll">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="page-h">
+        <div><div class="crumb">Ajustes do sistema</div><h1>Configuração</h1></div>
+      </div>
+      <p style="margin:0;color:var(--ink-2);max-width:70ch;">Cadastros base do sistema. O que você define aqui vira opção nas telas de projeto e de oportunidade.</p>
+
+      <div class="cfg-grid">
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Tipos de Projeto</h3><span class="count" id="count_projetos"></span></div><span class="chip">cadastro do projeto</span></div>
+          <div class="crud-list" id="list_projetos"></div>
+          <div class="add-row" id="add_projetos"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Tipos de Serviço</h3><span class="count" id="count_servicos"></span></div><span class="chip">oportunidade</span></div>
+          <div class="crud-list" id="list_servicos"></div>
+          <div class="add-row" id="add_servicos"></div>
+          <p class="hint" style="margin:11px 2px 0;">O <b>RT % padrão</b> é uma sugestão pré-preenchida — muda em cada negociação.</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Responsáveis / equipe</h3><span class="count" id="count_responsaveis"></span></div><span class="chip">"quem fez"</span></div>
+          <div class="crud-list" id="list_responsaveis"></div>
+          <div class="add-row" id="add_responsaveis"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Etapas do funil</h3><span class="count" id="count_etapas"></span></div><span class="chip">ordem ↑↓</span></div>
+          <div class="crud-list" id="list_etapas"></div>
+          <div class="add-row" id="add_etapas"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Motivos de perda</h3><span class="count" id="count_motivos"></span></div><span class="chip lost"><span class="d"></span>oportunidade perdida</span></div>
+          <div class="crud-list" id="list_motivos"></div>
+          <div class="add-row" id="add_motivos"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h"><div class="sect-title"><h3>Formas de pagamento</h3><span class="count" id="count_pagamentos"></span></div><span class="chip">condição</span></div>
+          <div class="crud-list" id="list_pagamentos"></div>
+          <div class="add-row" id="add_pagamentos"></div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel-h"><div class="sect-title"><h3>Tabela de Precificação</h3></div><span class="chip">orçamentos por cômodo</span></div>
+        <p style="margin:0 0 14px;color:var(--ink-2);font-size:13.5px;max-width:70ch;">Gerencie os <b>segmentos</b> (tipos de projeto), os <b>cômodos</b> de cada um e defina se cada cômodo é cobrado <b>por m²</b> (faixas de tamanho) ou por <b>valor fixo</b>. Essa tabela alimenta a aba <a href="precificacao.html" style="color:var(--accent);font-weight:600">Precificação</a>.</p>
+        <button class="btn primary" onclick="PRC.openConfig()">⚙️ Configurar tabela</button>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- modal: configurar tabela de precificação (dentro de #app p/ herdar tokens do tema) -->
+  <div class="overlay prc-ov" id="prc-cfg-ov">
+  <div class="modal" style="max-width:660px">
+    <div class="modal-hdr"><h3>⚙️ Tabela de Precificação — Segmentos e Cômodos</h3><button class="modal-close" onclick="PRC.closeConfig()">✕</button></div>
+    <div id="prc-cfg-list"></div>
+    <button class="btn primary" style="width:100%;margin-top:8px" onclick="PRC.addSeg()">+ Adicionar segmento</button>
+    <div class="prc-note">Cada segmento tem cômodos próprios. Em cada cômodo escolha <b>Por m²</b> (faixas de tamanho) ou <b>Valor fixo</b> (por unidade). Os valores ficam só aqui — nunca aparecem ao montar o projeto.</div>
+  </div>
+  </div>
+</div>
+
+<script src="projects-data.js"></script>
+<script src="prc.js"></script>
+<script src="shell.js"></script>
+<script>
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+  var CORES = [['prospec','Areia'],['negoc','Ouro'],['prop','Âmbar'],['win','Oliva'],['lost','Ferrugem']];
+  var CORHEX = { prospec:'var(--st-prospec)', negoc:'var(--st-negoc)', prop:'var(--st-prop)', win:'var(--st-win)', lost:'var(--st-lost)' };
+
+  var cruds = {
+    projetos: { fields:[{prop:'nome',main:true,placeholder:'novo tipo… ex.: Corporativo'}],
+      data:[{nome:'Comercial'},{nome:'Residencial'},{nome:'Airbnb'},{nome:'Reforma'}] },
+    servicos: { fields:[{prop:'nome',main:true,placeholder:'novo serviço… ex.: Gesso / Drywall'},{prop:'rt',small:true,num:true,placeholder:'RT %'}],
+      badges:[{render:function(it){return 'RT '+it.rt+'%';}, cls:'rtpill-pill'}],
+      data:[{nome:'Pisos',rt:7.5},{nome:'Vidraçaria',rt:8},{nome:'Marcenaria',rt:9},{nome:'Móveis soltos',rt:10},{nome:'Iluminação',rt:8},{nome:'Climatização',rt:6},{nome:'Pintura',rt:5},{nome:'Paisagismo',rt:6},{nome:'Automação',rt:9}] },
+    responsaveis: { fields:[{prop:'nome',main:true,placeholder:'nome…'},{prop:'papel',med:true,placeholder:'função'}],
+      badges:[{render:function(it){return it.papel||'—';}, cls:'papel'}],
+      data:[{nome:'Você (Arq.)',papel:'Arquiteto responsável'},{nome:'Ana',papel:'Assistente'},{nome:'Rafael',papel:'Comercial'}] },
+    etapas: { ordered:true, colorField:'cor',
+      fields:[{prop:'nome',main:true,placeholder:'nova etapa…'},{prop:'cor',select:CORES}],
+      data:[{nome:'Prospecção',cor:'prospec'},{nome:'Em negociação',cor:'negoc'},{nome:'Proposta enviada',cor:'prop'},{nome:'Fechado / Ganho',cor:'win'},{nome:'Perdido',cor:'lost'}] },
+    motivos: { fields:[{prop:'nome',main:true,placeholder:'novo motivo de perda…'}],
+      data:[{nome:'Preço acima do concorrente'},{nome:'Prazo de entrega'},{nome:'Cliente desistiu'},{nome:'Escolheu concorrente'},{nome:'Sem retorno'}] },
+    pagamentos: { fields:[{prop:'nome',main:true,placeholder:'nova forma de pagamento…'}],
+      data:[{nome:'À vista'},{nome:'30/60/90 (3x)'},{nome:'Entrada + saldo na entrega'},{nome:'Parcelado em 6x'}] }
+  };
+  Object.keys(cruds).forEach(function(k){ cruds[k].edit = -1; });
+
+  // ---- persistência (localStorage) ----
+  var CFGKEY = 'mabe-config-v1';
+  function saveCfg(){
+    try{
+      var out={}; Object.keys(cruds).forEach(function(k){ out[k]=cruds[k].data; });
+      localStorage.setItem(CFGKEY, JSON.stringify(out));
+    }catch(e){}
+  }
+  (function loadCfg(){
+    try{
+      var raw=localStorage.getItem(CFGKEY); if(!raw) return;
+      var saved=JSON.parse(raw);
+      Object.keys(cruds).forEach(function(k){ if(Array.isArray(saved[k])) cruds[k].data = saved[k]; });
+    }catch(e){}
+  })();
+
+  function inputFor(f, scope, val){
+    val = (val==null) ? '' : val;
+    var ph = f.placeholder ? ' placeholder="'+f.placeholder+'"' : '';
+    if (f.select){
+      return '<select class="sel-real" data-prop="'+f.prop+'">'+f.select.map(function(o){
+        return '<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>'; }).join('')+'</select>';
+    }
+    var cls = scope==='edit' ? (f.main?'inp ed-name':f.med?'inp ed-med':'inp ed-rt')
+                             : (f.main?'inp':f.med?'inp med':'inp small');
+    return '<input class="'+cls+'" data-prop="'+f.prop+'" value="'+esc(val)+'"'+ph+'>';
+  }
+
+  function renderList(name){
+    var c = cruds[name];
+    document.getElementById('count_'+name).textContent = c.data.length + ' itens';
+    var el = document.getElementById('list_'+name);
+    if (!c.data.length){ el.innerHTML = '<div class="empty">Nada cadastrado ainda.</div>'; return; }
+    el.innerHTML = c.data.map(function(item, i){
+      if (i===c.edit){
+        var inputs = c.fields.map(function(f){ return inputFor(f,'edit',item[f.prop]); }).join('');
+        return '<div class="crow editing">'+inputs+'<div class="sp"></div><div class="acts">'+
+          '<button class="cbtn" title="salvar" onclick="saveEdit(\''+name+'\','+i+')">✓</button>'+
+          '<button class="cbtn" title="cancelar" onclick="cancelEdit(\''+name+'\')">✕</button></div></div>';
+      }
+      var lead = c.colorField ? '<span class="cdot" style="background:'+CORHEX[item[c.colorField]]+'"></span>' : '<span class="grip">⠿</span>';
+      var badges = (c.badges||[]).map(function(b){ return '<span class="'+b.cls+'">'+esc(b.render(item))+'</span>'; }).join('');
+      var move = c.ordered
+        ? '<button class="cbtn" title="subir" onclick="moveItem(\''+name+'\','+i+',-1)"'+(i===0?' disabled':'')+'>↑</button>'+
+          '<button class="cbtn" title="descer" onclick="moveItem(\''+name+'\','+i+',1)"'+(i===c.data.length-1?' disabled':'')+'>↓</button>'
+        : '';
+      return '<div class="crow"><span class="cn">'+lead+'&nbsp; '+esc(item.nome)+'</span>'+badges+
+        '<div class="sp"></div><div class="acts">'+move+
+        '<button class="cbtn" title="editar" onclick="startEdit(\''+name+'\','+i+')">✎</button>'+
+        '<button class="cbtn del" title="excluir" onclick="delItem(\''+name+'\','+i+')">🗑</button></div></div>';
+    }).join('');
+    var f = el.querySelector('.editing input, .editing select'); if (f) f.focus();
+  }
+
+  function renderAdd(name){
+    var c = cruds[name];
+    var inputs = c.fields.map(function(f){ return inputFor(f,'add', f.select?f.select[0][0]:''); }).join('');
+    document.getElementById('add_'+name).innerHTML = inputs + '<button class="btn primary" onclick="addItem(\''+name+'\')">+ Adicionar</button>';
+    var main = document.querySelector('#add_'+name+' input[data-prop]');
+    if (main) main.addEventListener('keydown', function(e){ if (e.key==='Enter') addItem(name); });
+  }
+
+  function readRow(container, fields){
+    var obj = {};
+    fields.forEach(function(f){
+      var node = container.querySelector('[data-prop="'+f.prop+'"]');
+      var v = node ? node.value : '';
+      if (f.num){ v = parseFloat(String(v).replace(',','.')); if (isNaN(v)) v = 0; }
+      else if (typeof v==='string') v = v.trim();
+      obj[f.prop] = v;
+    });
+    return obj;
+  }
+
+  function addItem(name){
+    var c = cruds[name], host = document.getElementById('add_'+name);
+    var obj = readRow(host, c.fields);
+    if (!obj.nome){ host.querySelector('[data-prop="nome"]').focus(); return; }
+    c.data.push(obj); saveCfg(); renderAdd(name); renderList(name);
+  }
+  function startEdit(name,i){ cruds[name].edit = i; renderList(name); }
+  function cancelEdit(name){ cruds[name].edit = -1; renderList(name); }
+  function saveEdit(name,i){
+    var c = cruds[name];
+    var row = document.getElementById('list_'+name).querySelectorAll('.crow')[i];
+    var obj = readRow(row, c.fields);
+    if (obj.nome) c.data[i] = obj;
+    c.edit = -1; saveCfg(); renderList(name);
+  }
+  function delItem(name,i){ var c=cruds[name]; if (confirm('Excluir "'+c.data[i].nome+'"?')){ c.data.splice(i,1); c.edit=-1; saveCfg(); renderList(name); } }
+  function moveItem(name,i,d){ var c=cruds[name], j=i+d; if (j<0||j>=c.data.length) return; var t=c.data[i]; c.data[i]=c.data[j]; c.data[j]=t; c.edit=-1; saveCfg(); renderList(name); }
+
+  Object.keys(cruds).forEach(function(name){ renderAdd(name); renderList(name); });
+</script>
+</body>
+</html>

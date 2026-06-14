@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script src="cloud.js"></script>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel · Mabe Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="mabe skin-studio" id="app" data-page="painel">
+  <div class="body scroll">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="page-h">
+        <div>
+          <div class="crumb">Visão geral</div>
+          <h1>Painel</h1>
+        </div>
+        <div class="seg">
+          <button onclick="setPeriodo('mes',this)">Mês</button>
+          <button class="on" onclick="setPeriodo('ano',this)">Ano</button>
+          <button onclick="setPeriodo('tudo',this)">Tudo</button>
+        </div>
+      </div>
+
+      <div class="sect-title" style="margin-bottom:-4px;display:flex;align-items:center;gap:12px">
+        <h3 id="scopeTitle">Projetos em aberto</h3><span class="count" id="openCount">—</span>
+        <span style="flex:1"></span>
+        <select id="scopeSel" onchange="setScope(this.value)" class="sel" style="width:auto;min-width:200px;font-size:13px;padding:7px 30px 7px 11px">
+          <option value="aberto">Projetos em aberto</option>
+          <option value="todos">Todos os projetos</option>
+          <option value="win">Projetos concluídos</option>
+          <option value="lost">Projetos perdidos</option>
+        </select>
+      </div>
+
+      <!-- KPIs consolidados (todos os projetos em aberto) -->
+      <div class="kpis k7">
+        <div class="kpi clk" onclick="location.href='projetos.html'">
+          <div class="kl"><span class="ml">Total dos projetos</span></div>
+          <div class="kv num" id="kProjVal">—</div>
+          <div class="kd" id="kProjValSub">valor das obras</div>
+        </div>
+        <div class="kpi clk" onclick="filtrar('win')">
+          <div class="kl"><span class="ml">Total investido</span></div>
+          <div class="kv num" id="kFech" style="color:var(--win)">—</div>
+          <div class="kd" id="kFechSub">—</div>
+        </div>
+        <div class="kpi clk" onclick="filtrar('prospec')">
+          <div class="kl"><span class="ml">Montando Orçamentos</span></div>
+          <div class="kv num" id="kNeg" style="color:var(--st-negoc)">—</div>
+          <div class="kd" id="kNegSub">—</div>
+        </div>
+        <div class="kpi clk" onclick="filtrar('lost')">
+          <div class="kl"><span class="ml">Total perdido</span></div>
+          <div class="kv num" id="kLost" style="color:var(--lost)">—</div>
+          <div class="kd" id="kLostSub">—</div>
+        </div>
+        <div class="kpi clk" onclick="filtrar('rt')">
+          <div class="kl"><span class="ml">RT realizado</span></div>
+          <div class="kv num" id="kRt" style="color:var(--accent)">—</div>
+          <div class="kd">comissão do fechado</div>
+        </div>
+        <div class="kpi hero clk" onclick="filtrar('ganho')">
+          <div class="kl"><span class="ml">Ganho possível</span><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></div>
+          <div class="kv num" id="kGanho">—</div>
+          <div class="kd" id="kGanhoSub">RT de todas as oportunidades (inclui perdidas)</div>
+        </div>
+        <div class="kpi clk" onclick="filtrar('pct')">
+          <div class="kl"><span class="ml">% Fechado</span></div>
+          <div class="kv num" id="kPct">—</div>
+          <div class="kd">RT realizada ÷ ganho possível</div>
+          <div class="kd"><div class="prog" style="width:100%;margin-top:2px"><i id="kPctBar" style="width:0%"></i></div></div>
+        </div>
+      </div>
+
+      <!-- funil + evolução -->
+      <div class="grid-2b" style="grid-template-columns:1.55fr 1fr;">
+        <div class="panel">
+          <div class="panel-h"><h3>Funil de oportunidades</h3><span class="meta">projetos em aberto · valor R$</span></div>
+          <div class="funnel" id="funnel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h3>Evolução no tempo</h3><div class="legend"><span><i style="background:var(--accent-soft)"></i>Negociado</span><span><i style="background:var(--st-win)"></i>Fechado</span></div></div>
+          <div class="chart">
+            <div class="cbar"><div class="stack" style="height:52%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:46%"></div></div><span class="ccap">Jan</span></div>
+            <div class="cbar"><div class="stack" style="height:64%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:52%"></div></div><span class="ccap">Fev</span></div>
+            <div class="cbar"><div class="stack" style="height:58%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:60%"></div></div><span class="ccap">Mar</span></div>
+            <div class="cbar"><div class="stack" style="height:80%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:55%"></div></div><span class="ccap">Abr</span></div>
+            <div class="cbar"><div class="stack" style="height:72%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:64%"></div></div><span class="ccap">Mai</span></div>
+            <div class="cbar"><div class="stack" style="height:95%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:60%"></div></div><span class="ccap">Jun</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ranking + responsável -->
+      <div class="grid-2b" style="grid-template-columns:1.4fr 1fr;">
+        <div class="panel">
+          <div class="panel-h"><h3>Ranking de fornecedores</h3><a class="btn ghost sm" href="fornecedores.html">ver todos</a></div>
+          <table class="tbl">
+            <thead><tr><th>Fornecedor</th><th>Serviço</th><th class="r">Fechado</th><th class="r">RT</th></tr></thead>
+            <tbody id="rankBody"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h3>Por responsável</h3><span class="meta">conversão</span></div>
+          <table class="tbl">
+            <thead><tr><th>Responsável</th><th class="r">Op.</th><th class="r">Conv.</th><th class="r">RT</th></tr></thead>
+            <tbody id="respBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DRAWER de detalhamento (filtro) -->
+  <div class="scrim" id="scrim" onclick="fecharFiltro()"></div>
+  <aside class="drawer wide" id="drawer" aria-hidden="true">
+    <div class="dh">
+      <div><h2 id="fTitle">—</h2><div class="dsub" id="fSub">—</div></div>
+      <button class="iconbtn" onclick="fecharFiltro()" title="Fechar">✕</button>
+    </div>
+    <div class="dtot">
+      <div><div class="tl">Valor total</div><div class="tv num" id="fTotVal">—</div></div>
+      <div><div class="tl">RT total</div><div class="tv num" id="fTotRt" style="color:var(--accent)">—</div></div>
+      <div><div class="tl">Oportunidades</div><div class="tv num" id="fTotN">—</div></div>
+    </div>
+    <div class="dbody" style="padding:0">
+      <table class="tbl" style="font-size:12.5px">
+        <thead><tr><th style="padding-left:22px">Projeto / serviço</th><th>Etapa</th><th class="r">Valor</th><th class="r" style="padding-right:22px">RT</th></tr></thead>
+        <tbody id="fBody"></tbody>
+      </table>
+      <div class="demt" id="fEmpty" style="display:none">Nenhuma oportunidade nesta categoria.</div>
+    </div>
+  </aside>
+</div>
+<script src="projects-data.js"></script>
+<script src="shell.js"></script>
+<script>
+  function fmtMil(v){
+    return 'R$ ' + Math.round(v||0).toLocaleString('pt-BR');
+  }
+
+  var SLAB = { prospec:'Prospecção', negoc:'Montando Orçamentos', prop:'Proposta', win:'Fechado', lost:'Perdido' };
+  var ALLO = [];   // oportunidades (do período) de todos os projetos
+  var PERIODO = 'ano';
+  var SCOPE = 'aberto';
+  var SCOPE_TITLE = { aberto:'Projetos em aberto', todos:'Todos os projetos', win:'Projetos concluídos', lost:'Projetos perdidos' };
+  function scopeInclui(cls){
+    if (SCOPE === 'aberto') return cls==='prospec' || cls==='negoc' || cls==='prop';
+    if (SCOPE === 'win') return cls==='win' || cls==='done';   // Concluídos = Concluído + Obra Entregue
+    if (SCOPE === 'lost') return cls==='lost';
+    return true;   // todos os projetos
+  }
+  function setScope(s){
+    SCOPE = s;
+    var t = document.getElementById('scopeTitle'); if (t) t.textContent = SCOPE_TITLE[s] || 'Projetos';
+    painelConsolidado();
+  }
+  function inPeriodo(dt){
+    if (PERIODO === 'tudo') return true;
+    if (!dt) return true;   // sem data: nunca some, conta em qualquer período
+    var d = new Date(dt + 'T00:00:00'), now = new Date();
+    if (PERIODO === 'ano') return d.getFullYear() === now.getFullYear();
+    if (PERIODO === 'mes') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    return true;
+  }
+  function setPeriodo(p, btn){
+    PERIODO = p;
+    document.querySelectorAll('.page-h .seg button').forEach(function(b){ b.classList.remove('on'); });
+    if (btn) btn.classList.add('on');
+    painelConsolidado();
+  }
+
+  function painelConsolidado(){
+    ALLO = [];
+    var projetos = MabeDB.loadProjects();
+    var STAGES = [
+      { k:'prospec', l:'Prospecção' }, { k:'negoc', l:'Montando Orçamentos' },
+      { k:'prop', l:'Proposta enviada' }, { k:'win', l:'Fechado / Ganho' }, { k:'lost', l:'Perdido' }
+    ];
+    var byStage = { prospec:{v:0,n:0}, negoc:{v:0,n:0}, prop:{v:0,n:0}, win:{v:0,n:0}, lost:{v:0,n:0} };
+    var fech=0, neg=0, lostRt=0, rtReal=0, ganhoAll=0, wonVal=0, pipeVal=0, nFech=0, nNeg=0, nLost=0, nAbertos=0, projVal=0;
+
+    projetos.forEach(function(p){
+      if (!scopeInclui(p.statusCls)) return;          // filtro do seletor (aberto/todos/concluídos/perdidos)
+      nAbertos++; projVal += (p.valor || 0);
+      MabeDB.loadOpps(p.id).forEach(function(o){
+        if (!inPeriodo(o.dt)) return;   // filtro de período (Mês / Ano / Tudo)
+        var rt = MabeDB.rtOf(o);
+        ganhoAll += rt;   // Ganho possível = RT de TODAS as oportunidades (inclusive perdidas)
+        ALLO.push({ proj:p.nome, projId:p.id, serv:o.serv, forn:o.forn, resp:o.resp, et:o.et, val:o.val, rt:o.rt, rtTipo:o.rtTipo, rtv:rt, prob:o.prob, motivo:o.motivo, aberto:true });
+        byStage[o.et].v += o.val; byStage[o.et].n++;
+        if (o.et==='win'){ fech+=o.val; rtReal+=rt; wonVal+=o.val; nFech++; }
+        if (o.et==='negoc'){ neg+=o.val; nNeg++; }
+        if (o.et==='lost'){ lostRt+=rt; nLost++; }   // Perdido = RT dos perdidos
+        if (o.et!=='lost'){ pipeVal+=o.val; }
+      });
+    });
+    var pct = ganhoAll ? Math.round(rtReal/ganhoAll*100) : 0;   // % = RT realizada ÷ ganho possível
+
+    document.getElementById('openCount').textContent = nAbertos + ' projetos';
+    document.getElementById('kProjVal').textContent = fmtMil(projVal);
+    document.getElementById('kProjValSub').textContent = nAbertos + (nAbertos===1?' obra':' obras');
+    document.getElementById('kFech').textContent = fmtMil(fech);
+    document.getElementById('kFechSub').textContent = nFech + ' oportunidades';
+    document.getElementById('kNeg').textContent = fmtMil(byStage.prospec.v);
+    document.getElementById('kNegSub').textContent = byStage.prospec.n + ' oportunidades';
+    document.getElementById('kLost').textContent = fmtMil(lostRt);
+    document.getElementById('kLostSub').textContent = 'RT de ' + nLost + ' perdidas';
+    document.getElementById('kRt').textContent = fmtMil(rtReal);
+    document.getElementById('kGanho').textContent = fmtMil(ganhoAll);
+    document.getElementById('kPct').textContent = pct + '%';
+    document.getElementById('kPctBar').style.width = pct + '%';
+
+    // funil consolidado (clicável) — projetos em aberto
+    var maxV = Math.max(1, byStage.prospec.v, byStage.negoc.v, byStage.prop.v, byStage.win.v, byStage.lost.v);
+    document.getElementById('funnel').innerHTML = STAGES.map(function(s){
+      var d = byStage[s.k];
+      var w = Math.max(6, Math.round(d.v / maxV * 100));
+      return '<div class="frow clk ' + s.k + '" onclick="filtrar(\'' + s.k + '\')"><div class="fl"><span class="dot ' + s.k + '"></span>' + s.l + '</div>' +
+        '<div class="ftrack"><div class="fbar ' + s.k + '" style="width:' + w + '%"><span class="num">' + fmtMil(d.v) + '</span></div></div>' +
+        '<div class="fn num">' + d.n + ' op.</div></div>';
+    }).join('');
+
+    // ranking de fornecedores (do período) — clicável
+    var forn = {};
+    ALLO.forEach(function(o){
+      var f = forn[o.forn] || (forn[o.forn] = { nome:o.forn, serv:o.serv, fech:0, rt:0, n:0 });
+      f.n++;
+      if (o.et==='win'){ f.fech += o.val; f.rt += o.rtv; }
+    });
+    var rank = Object.keys(forn).map(function(k){ return forn[k]; })
+      .sort(function(a,b){ return b.fech - a.fech || b.n - a.n; }).slice(0, 6);
+    document.getElementById('rankBody').innerHTML = rank.length ? rank.map(function(f){
+      return '<tr class="click" onclick="filtrarFornecedor(\'' + encodeURIComponent(f.nome) + '\')">' +
+        '<td><div class="who"><span class="sw">' + (f.nome[0]||'?') + '</span>' + f.nome + '</div></td>' +
+        '<td style="color:var(--ink-2)">' + f.serv + '</td>' +
+        '<td class="r num">' + (f.fech?fmtMil(f.fech):'—') + '</td>' +
+        '<td class="r num rtpill">' + (f.rt?fmtMil(f.rt):'—') + '</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--ink-3);padding:18px">Sem dados no período.</td></tr>';
+
+    // por responsável (do período) — clicável
+    var resp = {};
+    ALLO.forEach(function(o){
+      var r = resp[o.resp] || (resp[o.resp] = { nome:o.resp||'—', n:0, won:0, rt:0 });
+      r.n++;
+      if (o.et==='win'){ r.won++; r.rt += o.rtv; }
+    });
+    var resps = Object.keys(resp).map(function(k){ return resp[k]; })
+      .sort(function(a,b){ return b.n - a.n; }).slice(0, 6);
+    document.getElementById('respBody').innerHTML = resps.length ? resps.map(function(r){
+      var conv = r.n ? Math.round(r.won / r.n * 100) : 0;
+      return '<tr class="click" onclick="filtrarResponsavel(\'' + encodeURIComponent(r.nome) + '\')">' +
+        '<td><div class="who"><span class="sw">' + (r.nome[0]||'?') + '</span>' + r.nome + '</div></td>' +
+        '<td class="r num">' + r.n + '</td>' +
+        '<td class="r num">' + conv + '%</td>' +
+        '<td class="r num rtpill">' + (r.rt?fmtMil(r.rt):'—') + '</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--ink-3);padding:18px">Sem dados no período.</td></tr>';
+  }
+
+  // ---------- filtro / detalhamento ----------
+  var FILTROS = {
+    win:    { tit:'Fechado / Ganho',  sub:'oportunidades fechadas em projetos em aberto', test:function(o){ return o.aberto && o.et==='win'; } },
+    negoc:  { tit:'Montando Orçamentos', sub:'oportunidades em negociação',               test:function(o){ return o.aberto && o.et==='negoc'; } },
+    prop:   { tit:'Proposta enviada', sub:'propostas enviadas aguardando retorno',        test:function(o){ return o.aberto && o.et==='prop'; } },
+    prospec:{ tit:'Montando Orçamentos', sub:'oportunidades na Prospecção (montando orçamento)', test:function(o){ return o.aberto && o.et==='prospec'; } },
+    lost:   { tit:'Perdido · RT perdida', sub:'RT que se perdeu nos itens perdidos',       test:function(o){ return o.aberto && o.et==='lost'; } },
+    rt:     { tit:'RT realizado',      sub:'comissão das oportunidades já fechadas',       test:function(o){ return o.aberto && o.et==='win'; } },
+    ganho:  { tit:'Ganho possível',    sub:'RT de todas as oportunidades (inclui perdidas)', test:function(o){ return true; } },
+    pct:    { tit:'% Fechado',         sub:'apenas as oportunidades fechadas',             test:function(o){ return o.aberto && o.et==='win'; } }
+  };
+
+  function chip(et){ return '<span class="chip ' + et + '"><span class="d"></span>' + SLAB[et] + '</span>'; }
+
+  function filtrar(kind){
+    var f = FILTROS[kind]; if (!f) return;
+    abrirDrawer(f.tit, f.sub, ALLO.filter(f.test));
+  }
+  function abrirDrawer(tit, sub, list){
+    list = list.slice().sort(function(a,b){ return b.val - a.val; });
+    document.getElementById('fTitle').textContent = tit;
+    document.getElementById('fSub').textContent = sub;
+
+    var totV = list.reduce(function(a,o){ return a+o.val; }, 0);
+    var totR = list.reduce(function(a,o){ return a+o.rtv; }, 0);
+    document.getElementById('fTotVal').textContent = fmtMil(totV);
+    document.getElementById('fTotRt').textContent = fmtMil(totR);
+    document.getElementById('fTotN').textContent = list.length;
+
+    document.getElementById('fBody').innerHTML = list.map(function(o){
+      return '<tr>' +
+        '<td style="padding-left:22px"><div class="tcell-strong">' + o.serv + '</div>' +
+          '<div style="font-size:11.5px;color:var(--ink-3)"><span class="flink" onclick="irProjeto(' + o.projId + ')">' + o.proj + '</span> · ' + o.forn + (o.et==='lost'&&o.motivo?(' · '+o.motivo):'') + '</div></td>' +
+        '<td>' + chip(o.et) + '</td>' +
+        '<td class="r num">' + fmtMil(o.val) + '</td>' +
+        '<td class="r num rtpill" style="padding-right:22px">' + (o.rtv?fmtMil(o.rtv):'—') + '</td>' +
+        '</tr>';
+    }).join('');
+    document.getElementById('fEmpty').style.display = list.length ? 'none' : 'block';
+
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+  }
+  function fecharFiltro(){
+    document.getElementById('scrim').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
+  }
+  function irProjeto(id){ location.href = 'projeto.html?id=' + id; }
+
+  function filtrarFornecedor(nome){
+    var n = decodeURIComponent(nome);
+    abrirDrawer('Fornecedor · ' + n, 'todas as oportunidades com ' + n, ALLO.filter(function(o){ return o.forn === n; }));
+  }
+  function filtrarResponsavel(nome){
+    var n = decodeURIComponent(nome);
+    abrirDrawer('Responsável · ' + n, 'todas as oportunidades de ' + n, ALLO.filter(function(o){ return o.resp === n; }));
+  }
+  document.addEventListener('keydown', function(e){ if (e.key==='Escape') fecharFiltro(); });
+
+  painelConsolidado();
+</script>
+</body>
+</html>
