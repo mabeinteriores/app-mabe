@@ -9,6 +9,7 @@
     { id: 'clientes',     t: 'Clientes',     href: 'clientes.html' },
     { id: 'fornecedores', t: 'Fornecedores', href: 'fornecedores.html' },
     { id: 'indicacoes',   t: 'Indicações',   href: 'indicacoes.html' },
+    { id: 'lead',         t: 'Lead',         href: 'lead.html' },
     { id: 'usuarios',     t: 'Usuários',     href: 'usuarios.html' },
     { id: 'config',       t: 'Configuração', href: 'configuracao.html' }
   ];

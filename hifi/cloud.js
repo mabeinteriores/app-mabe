@@ -169,16 +169,16 @@
   // ---------- 5) fluxo principal ----------
   // ---------- permissões de abas por usuário ----------
   var perms = { admin: false, abas: [] };
-  var ALL_TABS = ['painel', 'precificacao', 'projetos', 'clientes', 'fornecedores', 'indicacoes', 'config'];
+  var ALL_TABS = ['painel', 'precificacao', 'projetos', 'clientes', 'fornecedores', 'indicacoes', 'lead', 'config'];
   var FILE_TAB = {
-    'painel.html': 'painel', 'precificacao.html': 'precificacao',
+    'painel.html': 'painel', 'lead.html': 'lead', 'precificacao.html': 'precificacao',
     'projetos.html': 'projetos', 'projeto.html': 'projetos', 'oportunidade.html': 'projetos',
     'clientes.html': 'clientes', 'cliente.html': 'clientes',
     'fornecedores.html': 'fornecedores', 'fornecedor.html': 'fornecedores',
     'indicacoes.html': 'indicacoes', 'configuracao.html': 'config', 'usuarios.html': 'usuarios'
   };
   var TAB_FILE = {
-    painel: 'painel.html', precificacao: 'precificacao.html', projetos: 'projetos.html',
+    painel: 'painel.html', lead: 'lead.html', precificacao: 'precificacao.html', projetos: 'projetos.html',
     clientes: 'clientes.html', fornecedores: 'fornecedores.html', indicacoes: 'indicacoes.html', config: 'configuracao.html'
   };
   function tabAllowed(tab) {
