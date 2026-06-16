@@ -122,7 +122,7 @@
         var u = window.MabeCloud.responsaveis();
         if (u && u.length) return u.slice();
       }
-      var arr = this.loadConfigList('responsaveis', [{nome:'Você (Arq.)'},{nome:'Ana'},{nome:'Rafael'}]);
+      var arr = this.loadConfigList('responsaveis', []);
       return arr.map(function(r){ return r.nome; }).filter(Boolean);
     },
     loadServicos: function(){
