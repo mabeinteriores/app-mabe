@@ -129,6 +129,20 @@
       var arr = this.loadConfigList('servicos', [{nome:'Pisos'},{nome:'Vidraçaria'},{nome:'Marcenaria'},{nome:'Móveis soltos'},{nome:'Iluminação'},{nome:'Climatização'},{nome:'Pintura'},{nome:'Paisagismo'},{nome:'Automação'}]);
       return arr.map(function(s){ return s.nome; }).filter(Boolean);
     },
+    loadConfigNames: function(name, fallback){
+      return this.loadConfigList(name, fallback||[]).map(function(x){ return x.nome; }).filter(Boolean);
+    },
+    // preenche um <select> com os nomes da Configuração (mantém o valor já selecionado)
+    fillSelectFromConfig: function(id, name, fallback, placeholder){
+      var sel = document.getElementById(id); if(!sel) return;
+      var cur = sel.value;
+      var nomes = this.loadConfigNames(name, fallback);
+      if(!nomes.length) return;
+      var html = placeholder ? '<option value="">'+placeholder+'</option>' : '';
+      html += nomes.map(function(n){ return '<option>'+String(n).replace(/</g,'&lt;')+'</option>'; }).join('');
+      sel.innerHTML = html;
+      if(cur && (cur==='' || nomes.indexOf(cur)>=0)) sel.value = cur;
+    },
     addFornecedor: function(f){
       var arr = this.loadFornecedores();
       f.id = arr.reduce(function(m,x){ return Math.max(m, x.id||0); }, 0) + 1;
