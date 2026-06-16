@@ -775,8 +775,10 @@
     return evs;
   })();
   function getEventos(){
-    try{ var raw=localStorage.getItem('mabe_lead_eventos'); var arr=raw?JSON.parse(raw):[]; if(Array.isArray(arr)&&arr.length) return {evs:arr, sample:false}; }catch(_){}
-    return {evs:SAMPLE_EVENTOS, sample:true};
+    // Funil & Fugas RESETADO: sem amostra fictícia e limpando dados de teste antigos.
+    // Volta a ter dados quando o rastreio real (tabela lead_eventos) for ativado.
+    try{ localStorage.removeItem('mabe_lead_eventos'); }catch(_){}
+    return {evs:[], sample:false};
   }
   function computeFunil(evs){
     var sess={};
@@ -825,9 +827,9 @@
       '<div class="funstep"><div class="fk">Enviou</div><div class="fv">'+f.enviou+'</div><div class="fp'+(f.enviou<f.comecou?' drop':'')+'">'+pc(f.enviou,f.abriu)+'% de conversão</div></div>';
     document.getElementById('lFunilDrop').innerHTML = mapHbars(f.dropoff);
     document.getElementById('lFunilOrigem').innerHTML = mapHbars(f.origem);
-    document.getElementById('lFunilHint').textContent = src.sample
-      ? 'Dados de exemplo — vira real quando o rastreio no banco (lead_eventos) for ativado.'
-      : 'Dados de teste capturados pelo formulário (localStorage) — não gravados no banco.';
+    document.getElementById('lFunilHint').textContent = (src.evs && src.evs.length)
+      ? 'Dados de teste (localStorage) — não gravados no banco.'
+      : 'Funil zerado — será preenchido quando o rastreio no banco (lead_eventos) for ativado.';
   }
 
   // ---------- drawer ----------
