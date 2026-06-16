@@ -141,6 +141,10 @@
       if (f) { Object.assign(f, patch); this.saveFornecedores(arr); }
       return f;
     },
+    deleteFornecedor: function(id){
+      var arr = this.loadFornecedores().filter(function(x){ return String(x.id)!==String(id); });
+      this.saveFornecedores(arr);
+    },
     getProject: function(id){ ensureSeed(); return read(PKEY, []).find(function(p){ return String(p.id) === String(id); }) || null; },
     addProject: function(p){
       var arr = this.loadProjects();
