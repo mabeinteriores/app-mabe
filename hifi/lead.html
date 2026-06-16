@@ -492,6 +492,7 @@
   var LEADS = [];
   var CUR = null;
   var DEL_LEAD = null;
+  var DEL_FUGA = null;
   var VIEW = localStorage.getItem('mabe_lead_view') || 'kanban';
   var DB_WRITE = true; // grava as etapas do Kanban no Supabase (respostas.status) — migração aplicada 2026-06
   var STAGEMAP = JSON.parse(localStorage.getItem('mabe_lead_stage') || '{}');   // {id: 'Etapa'}
@@ -1031,11 +1032,8 @@
   }
   window.__verFuga=function(id){ var el=document.getElementById('fgqa'+id); if(el) el.classList.toggle('open'); };
   window.__delFuga=function(id){
-    if(!confirm('Excluir esta fuga?')) return;
-    var c=window.MabeCloud && window.MabeCloud.client(); if(!c) return;
-    c.from('fugas').delete().eq('id',id).then(function(){
-      FUGAS=FUGAS.filter(function(f){ return String(f.id)!==String(id); }); renderFunil(); renderKanban();
-    }, function(){});
+    var f = FUGAS.filter(function(x){ return String(x.id)===String(id); })[0] || { id:id, nome:'' };
+    openDelFugaModal(f);
   };
   function fetchFugas(){
     var c=window.MabeCloud && window.MabeCloud.client(); if(!c) return;
@@ -1305,9 +1303,9 @@
   document.getElementById('lScrim').addEventListener('click', closeLead);
   document.getElementById('dPrint').addEventListener('click', function(){ printLead(CUR); });
 
-  // ---------- excluir lead (admin + reconfirmar senha) ----------
+  // ---------- excluir lead / fuga (admin + reconfirmar senha) ----------
   function openDelModal(L){
-    DEL_LEAD = L;
+    DEL_LEAD = L; DEL_FUGA = null;
     document.getElementById('delNome').textContent = L.nome || 'este lead';
     document.getElementById('delPwd').value = '';
     document.getElementById('delErr').textContent = '';
@@ -1315,10 +1313,19 @@
     document.getElementById('delModal').classList.add('open');
     setTimeout(function(){ try{ document.getElementById('delPwd').focus(); }catch(_){} }, 60);
   }
-  function closeDelModal(){ document.getElementById('delModal').classList.remove('open'); DEL_LEAD = null; }
+  function openDelFugaModal(f){
+    DEL_FUGA = f; DEL_LEAD = null;
+    document.getElementById('delNome').textContent = (f.nome ? (f.nome + ' (fuga)') : 'esta fuga');
+    document.getElementById('delPwd').value = '';
+    document.getElementById('delErr').textContent = '';
+    document.getElementById('delConfirm').disabled = false;
+    document.getElementById('delModal').classList.add('open');
+    setTimeout(function(){ try{ document.getElementById('delPwd').focus(); }catch(_){} }, 60);
+  }
+  function closeDelModal(){ document.getElementById('delModal').classList.remove('open'); DEL_LEAD = null; DEL_FUGA = null; }
 
   function doDelete(){
-    var L = DEL_LEAD; if(!L) return;
+    var L = DEL_LEAD, F = DEL_FUGA; if(!L && !F) return;
     var pwd = document.getElementById('delPwd').value;
     var errEl = document.getElementById('delErr');
     var btn = document.getElementById('delConfirm');
@@ -1332,13 +1339,22 @@
       c.auth.signInWithPassword({ email: email, password: pwd }).then(function(res){
         if(res.error){ errEl.textContent = 'Senha incorreta. Tente novamente.'; btn.disabled=false; return; }
         errEl.textContent = 'Excluindo…';
-        c.from('respostas').delete().eq('id', L.id).then(function(out){
-          if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
-          LEADS = LEADS.filter(function(x){ return String(x.id) !== String(L.id); });
-          render();
-          closeDelModal();
-          closeLead();
-        }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
+        if(F){
+          c.from('fugas').delete().eq('id', F.id).then(function(out){
+            if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
+            FUGAS = FUGAS.filter(function(x){ return String(x.id) !== String(F.id); });
+            renderFunil(); renderKanban();
+            closeDelModal();
+          }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
+        } else {
+          c.from('respostas').delete().eq('id', L.id).then(function(out){
+            if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
+            LEADS = LEADS.filter(function(x){ return String(x.id) !== String(L.id); });
+            render();
+            closeDelModal();
+            closeLead();
+          }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
+        }
       }, function(){ errEl.textContent = 'Não foi possível verificar a senha.'; btn.disabled=false; });
     }, function(){ errEl.textContent = 'Sessão inválida.'; btn.disabled=false; });
   }
