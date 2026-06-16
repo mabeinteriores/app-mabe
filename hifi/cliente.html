@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202606161849"></script>
+<script src="cloud.js?v=202606161933"></script>
 <style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
 </script>
 
@@ -49,17 +49,12 @@
         </div>
       </section>
 
-      <!-- Contato -->
+      <!-- Contatos (até 3) -->
       <section class="panel">
-        <div class="panel-h"><h3>Contato</h3><span class="meta">como falar com o cliente</span></div>
-        <div class="form-grid">
-          <div class="field"><label>Telefone</label><input class="inp" id="cTel" placeholder="(11) 0000-0000" inputmode="tel"></div>
-          <div class="field"><label>Celular / WhatsApp</label><input class="inp" id="cCel" placeholder="(11) 90000-0000" inputmode="tel"></div>
-          <div class="field"><label>E-mail</label><input class="inp" id="cEmail" type="email" placeholder="cliente@email.com"></div>
-          <div class="field"><label>Instagram</label><input class="inp" id="cInsta" placeholder="@cliente"></div>
-          <div class="field"><label>Data de nascimento</label><input class="inp" id="cNasc" type="date"></div>
-          <div class="field"><label>Profissão</label><input class="inp" id="cProf" placeholder="ex.: Médica"></div>
-        </div>
+        <style>#ctWrap .ct-bloco + .ct-bloco{border-top:1px dashed var(--hair);padding-top:16px;margin-top:6px}</style>
+        <div class="panel-h"><h3>Contatos</h3><span class="meta">até 3 pessoas · aniversário opcional</span></div>
+        <div id="ctWrap"></div>
+        <button type="button" class="btn" id="btnAddContato" style="margin-top:8px">+&nbsp; Adicionar contato</button>
       </section>
 
       <!-- Endereço -->
@@ -108,8 +103,8 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202606161849"></script>
-<script src="shell.js?v=202606161849"></script>
+<script src="projects-data.js?v=202606161933"></script>
+<script src="shell.js?v=202606161933"></script>
 <script>
   // PF/PJ alterna rótulos
   document.querySelectorAll('#tipoPessoa .opt').forEach(function(o){
@@ -141,8 +136,11 @@
       var ie = (j.estabelecimento && j.estabelecimento.inscricoes_estaduais && j.estabelecimento.inscricoes_estaduais[0] && j.estabelecimento.inscricoes_estaduais[0].inscricao_estadual) || '';
       set('cIE', ie || 'ISENTO');
       var tel = j.ddd_telefone_1 || '';
-      if(tel) set('cTel', tel.replace(/^(\d{2})(\d{4,5})(\d{4})$/,'($1) $2-$3'));
-      set('cEmail', j.email || '');
+      var ct0 = document.querySelector('#ctWrap .ct-bloco');
+      if(ct0){
+        if(tel){ var _t=ct0.querySelector('.ct-tel'); if(_t) _t.value = tel.replace(/^(\d{2})(\d{4,5})(\d{4})$/,'($1) $2-$3'); }
+        if(j.email){ var _e=ct0.querySelector('.ct-email'); if(_e) _e.value = j.email; }
+      }
       set('lograd', [j.descricao_tipo_de_logradouro, j.logradouro].filter(Boolean).join(' ').trim());
       set('num', j.numero || '');
       set('bairro', j.bairro || '');
@@ -217,6 +215,45 @@
   function setV(id,v){ var e=document.getElementById(id); if(e) e.value=(v==null?'':v); }
   var editId = new URLSearchParams(location.search).get('id');
 
+  // ---------- contatos (até 3, com aniversário opcional) ----------
+  function ctEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+  function contatoHTML(d){
+    d = d || {};
+    return '<div class="ct-bloco" style="position:relative">' +
+      '<button type="button" class="ct-del" title="Remover contato" style="position:absolute;right:0;top:6px;background:none;border:none;color:var(--lost);cursor:pointer;font-size:12.5px;font-weight:600">✕ remover</button>' +
+      '<div class="form-grid">' +
+        '<div class="field"><label>Nome do contato</label><input class="inp ct-nome" placeholder="ex.: nome da pessoa" value="'+ctEsc(d.nome)+'"></div>' +
+        '<div class="field"><label>Telefone</label><input class="inp ct-tel" placeholder="(11) 0000-0000" inputmode="tel" value="'+ctEsc(d.tel)+'"></div>' +
+        '<div class="field"><label>Celular / WhatsApp</label><input class="inp ct-cel" placeholder="(11) 90000-0000" inputmode="tel" value="'+ctEsc(d.cel)+'"></div>' +
+        '<div class="field"><label>E-mail</label><input class="inp ct-email" type="email" placeholder="cliente@email.com" value="'+ctEsc(d.email)+'"></div>' +
+        '<div class="field"><label>Instagram</label><input class="inp ct-insta" placeholder="@cliente" value="'+ctEsc(d.instagram)+'"></div>' +
+        '<div class="field"><label>Profissão</label><input class="inp ct-prof" placeholder="ex.: Médica" value="'+ctEsc(d.profissao)+'"></div>' +
+        '<div class="field"><label>Aniversário <span style="color:#9a8d7d;font-weight:400">(opcional)</span></label><input class="inp ct-aniv" type="date" value="'+ctEsc(d.aniversario)+'"></div>' +
+      '</div></div>';
+  }
+  function ctUpdateUI(){
+    var wrap=document.getElementById('ctWrap'); if(!wrap) return;
+    var blocos=wrap.querySelectorAll('.ct-bloco');
+    Array.prototype.forEach.call(blocos, function(b){ var del=b.querySelector('.ct-del'); if(del) del.style.display = blocos.length>1?'':'none'; });
+    var add=document.getElementById('btnAddContato'); if(add) add.style.display = blocos.length>=3?'none':'';
+  }
+  function addContato(d){
+    var wrap=document.getElementById('ctWrap'); if(!wrap || wrap.querySelectorAll('.ct-bloco').length>=3) return;
+    var tmp=document.createElement('div'); tmp.innerHTML=contatoHTML(d||{});
+    var bloco=tmp.firstChild; wrap.appendChild(bloco);
+    bloco.querySelector('.ct-del').addEventListener('click', function(){ if(bloco.parentNode) bloco.parentNode.removeChild(bloco); ctUpdateUI(); });
+    ctUpdateUI();
+  }
+  function getContatos(){
+    var wrap=document.getElementById('ctWrap'); var out=[]; if(!wrap) return out;
+    Array.prototype.forEach.call(wrap.querySelectorAll('.ct-bloco'), function(b){
+      function g(c){ var e=b.querySelector(c); return e?(e.value||'').trim():''; }
+      var o={ nome:g('.ct-nome'), tel:g('.ct-tel'), cel:g('.ct-cel'), email:g('.ct-email'), instagram:g('.ct-insta'), profissao:g('.ct-prof'), aniversario:g('.ct-aniv') };
+      if(o.nome||o.tel||o.cel||o.email||o.instagram||o.profissao||o.aniversario) out.push(o);
+    });
+    return out;
+  }
+
   // popula o select de responsável a partir da Configuração
   (function(){
     if(!MabeDB.loadResponsaveis) return;
@@ -236,8 +273,6 @@
     var opt = document.querySelector('#tipoPessoa .opt[data-t="'+tp+'"]'); if(opt) opt.click();
     setV('cNome', c.nome); setV('cConjuge', c.conjuge); setV('doc', c.doc); setV('cIE', c.ie);
     setV('cInteresse', c.interesse);
-    setV('cTel', c.tel); setV('cCel', c.cel); setV('cEmail', c.email); setV('cInsta', c.instagram);
-    setV('cNasc', c.nascimento); setV('cProf', c.profissao);
     setV('cep', c.cep); setV('lograd', c.logradouro); setV('num', c.numero); setV('bairro', c.bairro);
     setV('cidade', c.cidade); setV('uf', c.uf);
     setV('cOrigem', c.origem); setV('cPerfil', c.perfil); setV('cResp', c.responsavel); setV('cAval', c.avaliacao);
@@ -248,18 +283,31 @@
     if(sopt){ var grp=sopt.parentNode; grp.querySelectorAll('.opt').forEach(function(x){x.classList.remove('on');}); sopt.classList.add('on'); }
   })();
 
+  // inicializa os contatos (carrega os salvos ou migra do formato antigo / começa com 1 vazio)
+  (function initContatos(){
+    var wrap=document.getElementById('ctWrap'); if(!wrap) return;
+    var add=document.getElementById('btnAddContato'); if(add) add.addEventListener('click', function(){ addContato({}); });
+    var c = (editId && MabeDB.getCliente) ? MabeDB.getCliente(editId) : null;
+    var cts = (c && c.contatos && c.contatos.length) ? c.contatos
+            : (c && (c.tel||c.cel||c.email||c.instagram||c.nascimento||c.profissao) ? [{nome:c.nome, tel:c.tel, cel:c.cel, email:c.email, instagram:c.instagram, profissao:c.profissao, aniversario:c.nascimento}] : []);
+    if(cts.length){ cts.slice(0,3).forEach(function(x){ addContato(x); }); }
+    else { addContato({}); }
+  })();
+
   function salvar(){
     var nome = val('cNome');
     if(!nome){ alert('Informe o nome do cliente.'); document.getElementById('cNome').focus(); return; }
     var pf = (document.querySelector('#tipoPessoa .opt.on')||{}).dataset ? document.querySelector('#tipoPessoa .opt.on').dataset.t : 'pf';
     var ender = [val('lograd'), val('num')].filter(Boolean).join(', ');
     var loc = [val('cidade'), val('uf')].filter(Boolean).join('/');
+    var contatos = getContatos(); var c0 = contatos[0] || {};
     var dados = {
       nome: nome, tipoPessoa: pf, doc: val('doc'), ie: val('cIE'), conjuge: val('cConjuge'),
       interesse: val('cInteresse'),
       status: ((document.querySelector('.choice .opt.on[data-s]')||{}).dataset||{}).s === 'off' ? 'Inativo' : 'Ativo',
-      tel: val('cTel'), cel: val('cCel'), email: val('cEmail'), instagram: val('cInsta'),
-      nascimento: val('cNasc'), profissao: val('cProf'),
+      contatos: contatos,
+      tel: c0.tel||'', cel: c0.cel||'', email: c0.email||'', instagram: c0.instagram||'',
+      nascimento: c0.aniversario||'', profissao: c0.profissao||'',
       cep: val('cep'), logradouro: val('lograd'), numero: val('num'), bairro: val('bairro'),
       endereco: ender, cidade: val('cidade'), uf: val('uf'), localizacao: loc,
       origem: val('cOrigem'), perfil: val('cPerfil'), responsavel: val('cResp'),
