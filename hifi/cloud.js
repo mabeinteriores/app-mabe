@@ -376,6 +376,10 @@
     scheduleLive();
   }
   function setupRealtime() {
+    // DESATIVADO temporariamente: a atualização ao vivo entrava em loop de
+    // recarregamento porque algumas telas regravam dados no banco ao carregar.
+    // Será reativada com um modelo seguro (aviso para atualizar, sem recarregar sozinho).
+    return;
     if (liveOn || isChild || !sb) return;
     liveOn = true;
     try {
