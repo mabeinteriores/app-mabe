@@ -301,13 +301,94 @@
     ready = true;
     if (!enforcePageAccess()) return;   // redireciona/bloqueia se a aba não for permitida
     if (sessionStorage.getItem('mabe_cloud_hydrated') === '1') {
-      revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); flush(); return;
+      revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); flush(); setupRealtime(); return;
     }
     hydrate(function (err) {
       sessionStorage.setItem('mabe_cloud_hydrated', '1');
-      if (err) { revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); return; }
+      if (err) { revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); setupRealtime(); return; }
       location.reload(); // recarrega para as telas renderizarem com os dados da nuvem
     });
+  }
+
+  // ---------- 5b) atualizações AO VIVO (Supabase Realtime) ----------
+  // Ouve mudanças no banco (kv_store/respostas/profiles) e atualiza a tela
+  // quase em tempo real. Se o usuário estiver digitando, adia e mostra um aviso.
+  var liveOn = false, liveTimer = null, livePending = false, liveBanner = null;
+
+  function isBusyEditing() {
+    try {
+      var a = document.activeElement;
+      if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return true;
+      if (document.querySelector('.drawer.open, .scrim.open, #delModal.open, #mabeCloudOv')) return true;
+    } catch (e) {}
+    return false;
+  }
+  function showLiveBanner() {
+    if (liveBanner || isChild) return;
+    liveBanner = document.createElement('div');
+    liveBanner.innerHTML = '🔄&nbsp; Há atualizações novas <button id="mabeLiveBtn">Atualizar</button>';
+    liveBanner.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:2147483600;background:#3a3128;color:#fff;font-family:Archivo,system-ui,sans-serif;font-size:13px;padding:10px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px';
+    var b = liveBanner.querySelector('#mabeLiveBtn');
+    b.style.cssText = 'background:#C0653A;color:#fff;border:none;border-radius:8px;padding:6px 11px;font:inherit;font-weight:600;cursor:pointer';
+    b.onclick = function () { doLiveRefresh(); };
+    (document.body || document.documentElement).appendChild(liveBanner);
+  }
+  function scheduleLive() {
+    livePending = true;
+    clearTimeout(liveTimer);
+    liveTimer = setTimeout(tryLive, 1200);
+  }
+  function tryLive() {
+    if (!livePending) return;
+    if (isBusyEditing()) { showLiveBanner(); return; }
+    doLiveRefresh();
+  }
+  function doLiveRefresh() {
+    livePending = false;
+    if (!sb) { location.reload(); return; }
+    // re-hidrata o kv_store (pega o estado novo) e recarrega UMA vez para renderizar
+    sb.from('kv_store').select('key,value').eq('workspace', WORKSPACE).then(function (res) {
+      try {
+        if (!res.error) {
+          var remote = {};
+          (res.data || []).forEach(function (row) {
+            if (!shouldSync(row.key)) return;
+            remote[row.key] = 1;
+            try { _set(row.key, typeof row.value === 'string' ? row.value : JSON.stringify(row.value)); } catch (e) {}
+          });
+          Object.keys(localStorage).forEach(function (k) { if (shouldSync(k) && !remote[k]) { try { _remove(k); } catch (e) {} } });
+        }
+      } catch (e) {}
+      location.reload();
+    }, function () { location.reload(); });
+  }
+  function onRemoteChange(payload) {
+    try {
+      // ignora o próprio eco: se o valor recebido já é igual ao local, não faz nada
+      if (payload && payload.table === 'kv_store' && payload['new'] && payload['new'].key) {
+        var k = payload['new'].key;
+        if (!shouldSync(k)) return;
+        var incoming = typeof payload['new'].value === 'string' ? payload['new'].value : JSON.stringify(payload['new'].value);
+        var cur = null; try { cur = localStorage.getItem(k); } catch (e) {}
+        if (cur === incoming) return;
+      }
+    } catch (e) {}
+    scheduleLive();
+  }
+  function setupRealtime() {
+    if (liveOn || isChild || !sb) return;
+    liveOn = true;
+    try {
+      // Leads (respostas) já têm atualização ao vivo própria na tela de Leads;
+      // aqui cuidamos do RESTANTE do app (dados em kv_store) e das permissões (profiles).
+      sb.channel('mabe-live')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'kv_store', filter: 'workspace=eq.' + WORKSPACE }, onRemoteChange)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, onRemoteChange)
+        .subscribe();
+    } catch (e) {}
+    document.addEventListener('focusout', function () { setTimeout(tryLive, 400); });
+    window.addEventListener('focus', function () { setTimeout(tryLive, 200); });
+    setInterval(function () { if (livePending) tryLive(); }, 5000);
   }
 
   function afterAuth() {
