@@ -66,11 +66,33 @@
     </div>
   </div>
 </div>
+<style>
+  .cli-st{font:inherit;font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;border:1px solid var(--line,#e7e0d3);background:var(--surface,#fff);cursor:pointer;max-width:170px}
+  .cli-st:hover{border-color:var(--accent,#b8902f)}
+  .cli-st.prospec{color:#8a8166}
+  .cli-st.negoc{color:#b8902f}
+  .cli-st.prop{color:#c2772f}
+  .cli-st.win{color:#4f6f3b}
+  .cli-st.lost{color:#a3422f}
+</style>
 <script src="projects-data.js?v=202606162110"></script>
 <script src="shell.js?v=202606162110"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
   function inicial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
+  function escAttr(s){ return String(s||'').replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
+
+  // status manual da carteira (etapas do funil) — salvo por nome do cliente
+  var ETAPAS_FALLBACK = [{cor:'prospec',nome:'Prospecção'},{cor:'negoc',nome:'Em negociação'},{cor:'prop',nome:'Proposta enviada'},{cor:'win',nome:'Fechado / Ganho'},{cor:'lost',nome:'Perdido'}];
+  function etapasCfg(){ var l=(MabeDB.loadConfigList?MabeDB.loadConfigList('etapas',[]):[]); return (l&&l.length)?l:ETAPAS_FALLBACK; }
+  function loadCliStatus(){ try { return JSON.parse(localStorage.getItem('mabe-clientes-status-v1')||'{}')||{}; } catch(_){ return {}; } }
+  function saveCliStatus(map){ localStorage.setItem('mabe-clientes-status-v1', JSON.stringify(map)); }
+  function setCliStatus(sel){ var m=loadCliStatus(); m[sel.getAttribute('data-cli')]=sel.value; saveCliStatus(m); render(); }
+  function statusSelect(nameKey, val){
+    return '<select class="cli-st ' + val + '" data-cli="' + escAttr(nameKey) + '" onclick="event.stopPropagation()" onchange="setCliStatus(this)">' +
+      etapasCfg().map(function(e){ return '<option value="' + e.cor + '"' + (e.cor===val?' selected':'') + '>' + e.nome + '</option>'; }).join('') +
+    '</select>';
+  }
 
   // agrega projetos por cliente (fonte: MabeDB)
   function carteira(){
@@ -115,18 +137,19 @@
     var body = document.getElementById('cliBody');
     if (!lista.length){
       body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente encontrado.</td></tr>';
-    } else body.innerHTML = lista.map(function(c){
-      var st = c.concluido ? '<span class="chip win"><span class="d"></span>Cliente</span>'
-                           : '<span class="chip negoc"><span class="d"></span>Em negociação</span>';
+    } else { var ovr = loadCliStatus(); body.innerHTML = lista.map(function(c){
+      var nameKey = (c.nome||'').toLowerCase();
+      var defSt = c.concluido ? 'win' : (c.negoc>0 ? 'negoc' : 'prospec');
+      var st = ovr[nameKey] || defSt;
       return '<tr class="click" onclick="location.href=\'cliente.html' + (c.id?('?id='+c.id):'') + '\'">' +
         '<td><div class="who"><span class="sw">' + inicial(c.nome) + '</span>' + c.nome + '</div></td>' +
         '<td style="color:var(--ink-2)">' + (c.cidade||'—') + (c.uf?(' · '+c.uf):'') + '</td>' +
         '<td class="r num">' + c.projetos + '</td>' +
         '<td class="r num">' + brl(c.contratado) + '</td>' +
         '<td class="r num rtpill">' + brl(c.negoc) + '</td>' +
-        '<td>' + st + '</td>' +
+        '<td>' + statusSelect(nameKey, st) + '</td>' +
         '</tr>';
-    }).join('');
+    }).join(''); }
 
     // totais
     var tProj=0, tCon=0, tNeg=0, ativos=0;
