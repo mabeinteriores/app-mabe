@@ -82,7 +82,7 @@
 /* ---------- topbar ---------- */
 .mabe .top {
   display: flex; align-items: center; gap: 16px;
-  padding: 16px 28px; border-bottom: 1px solid var(--hair);
+  padding: 16px 56px 16px 28px; border-bottom: 1px solid var(--hair);
   background: var(--surface);
 }
 .mabe .brand { display: flex; align-items: center; gap: 11px; }
