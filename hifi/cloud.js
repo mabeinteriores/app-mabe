@@ -17,7 +17,7 @@
   function shouldSync(k) { return SYNC_RE.test(k) && !SKIP[k] && k.indexOf('mabe-auth') !== 0 && k.indexOf('sb-') !== 0; }
 
   var isChild = !!(window.parent && window.parent !== window); // iframe (indicações)
-  var sb = null, ready = false, pending = {}, pushTimer = null;
+  var sb = null, ready = false, pending = {}, pushTimer = null, lastStamp = null;
 
   // ---------- 1) intercepta localStorage IMEDIATAMENTE ----------
   var _set = localStorage.setItem.bind(localStorage);
@@ -41,13 +41,15 @@
     var keys = Object.keys(pending);
     if (!keys.length) return Promise.resolve();
     var batch = pending; pending = {};
+    var ts = new Date().toISOString();
+    lastStamp = ts;   // marca como escrita própria p/ o polling não recarregar a si mesmo
     var ops = keys.map(function (k) {
       var raw = batch[k];
       if (raw === null) {
         return sb.from('kv_store').delete().eq('workspace', WORKSPACE).eq('key', k).then(function () {});
       } else {
         var val; try { val = JSON.parse(raw); } catch (e) { val = raw; }
-        return sb.from('kv_store').upsert({ workspace: WORKSPACE, key: k, value: val, updated_at: new Date().toISOString() },
+        return sb.from('kv_store').upsert({ workspace: WORKSPACE, key: k, value: val, updated_at: ts },
           { onConflict: 'workspace,key' }).then(function () {});
       }
     });
@@ -158,12 +160,15 @@
   function hydrate(cb) {
     showSpinner('Carregando seus dados…');
     sb.from('kv_store').select('key,value').eq('workspace', WORKSPACE).then(function (res) {
-      if (res.error) { cb(res.error); return; }
+      if (res.error) { cb(res.error, 0); return; }
+      var changed = 0;
       (res.data || []).forEach(function (row) {
-        if (!shouldSync(row.key)) return;   // ignora chaves de auth porventura gravadas antes
-        try { _set(row.key, typeof row.value === 'string' ? row.value : JSON.stringify(row.value)); } catch (e) {}
+        if (!shouldSync(row.key)) return;            // ignora chaves de auth porventura gravadas antes
+        if (pending[row.key] !== undefined) return;  // edição local ainda não enviada: não sobrescreve
+        var incoming = typeof row.value === 'string' ? row.value : JSON.stringify(row.value);
+        try { if (localStorage.getItem(row.key) !== incoming) { _set(row.key, incoming); changed++; } } catch (e) {}
       });
-      cb(null);
+      cb(null, changed);
     });
   }
 
@@ -301,13 +306,23 @@
   function proceed() {
     ready = true;
     if (!enforcePageAccess()) return;   // redireciona/bloqueia se a aba não for permitida
-    if (sessionStorage.getItem('mabe_cloud_hydrated') === '1') {
-      revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); flush(); setupRealtime(); return;
-    }
-    hydrate(function (err) {
+    var first = sessionStorage.getItem('mabe_cloud_hydrated') !== '1';
+    var done = function () {
+      sessionStorage.removeItem('mabe_reload_guard');
+      revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); flush(); setupLivePolling();
+    };
+    hydrate(function (err, changed) {
       sessionStorage.setItem('mabe_cloud_hydrated', '1');
-      if (err) { revealApp(); removeOverlay(); applyNavPerms(); applyUserUI(); fetchResponsaveis(); setupRealtime(); return; }
-      location.reload(); // recarrega para as telas renderizarem com os dados da nuvem
+      if (err) { done(); return; }
+      // recarrega para as telas renderizarem com os dados novos da nuvem;
+      // só quando há mudança real, com trava p/ nunca entrar em loop
+      var guard = parseInt(sessionStorage.getItem('mabe_reload_guard') || '0', 10);
+      if ((first || changed) && guard < 2) {
+        sessionStorage.setItem('mabe_reload_guard', String(guard + 1));
+        location.reload();
+        return;
+      }
+      done();
     });
   }
 
@@ -376,6 +391,30 @@
     } catch (e) {}
     scheduleLive();
   }
+  // ---------- 5c) atualização entre usuários SEM Realtime (polling leve) ----------
+  // Verifica só o maior updated_at do workspace; se mudou (outro usuário salvou),
+  // dispara o mesmo fluxo seguro (banner se estiver editando, senão atualiza).
+  function checkForUpdates() {
+    if (!sb || !ready || isChild) return;
+    if (currentFile() === 'precificacao.html') return;   // não interrompe um orçamento em montagem
+    sb.from('kv_store').select('updated_at').eq('workspace', WORKSPACE)
+      .order('updated_at', { ascending: false }).limit(1)
+      .then(function (res) {
+        if (res.error || !res.data || !res.data.length) return;
+        var stamp = res.data[0].updated_at;
+        if (lastStamp === null) { lastStamp = stamp; return; }   // 1ª leitura = referência
+        if (stamp !== lastStamp) { lastStamp = stamp; scheduleLive(); }
+      }, function () {});
+  }
+  function setupLivePolling() {
+    if (isChild || window.__mabeLiveSet) return;
+    window.__mabeLiveSet = true;
+    checkForUpdates();   // referência inicial
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') checkForUpdates(); });
+    window.addEventListener('focus', function () { checkForUpdates(); });
+    setInterval(checkForUpdates, 18000);
+  }
+
   function setupRealtime() {
     // DESATIVADO temporariamente: a atualização ao vivo entrava em loop de
     // recarregamento porque algumas telas regravam dados no banco ao carregar.
