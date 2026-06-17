@@ -90,14 +90,7 @@
         </div>
         <div class="panel">
           <div class="panel-h"><h3>Evolução no tempo</h3><div class="legend"><span><i style="background:var(--accent-soft)"></i>Negociado</span><span><i style="background:var(--st-win)"></i>Fechado</span></div></div>
-          <div class="chart">
-            <div class="cbar"><div class="stack" style="height:52%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:46%"></div></div><span class="ccap">Jan</span></div>
-            <div class="cbar"><div class="stack" style="height:64%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:52%"></div></div><span class="ccap">Fev</span></div>
-            <div class="cbar"><div class="stack" style="height:58%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:60%"></div></div><span class="ccap">Mar</span></div>
-            <div class="cbar"><div class="stack" style="height:80%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:55%"></div></div><span class="ccap">Abr</span></div>
-            <div class="cbar"><div class="stack" style="height:72%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:64%"></div></div><span class="ccap">Mai</span></div>
-            <div class="cbar"><div class="stack" style="height:95%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:60%"></div></div><span class="ccap">Jun</span></div>
-          </div>
+          <div class="chart" id="chartEvol"></div>
         </div>
       </div>
 
@@ -274,6 +267,37 @@
         '<td class="r num">' + conv + '%</td>' +
         '<td class="r num rtpill">' + (r.rt?fmtMil(r.rt):'—') + '</td></tr>';
     }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--ink-3);padding:18px">Sem dados no período.</td></tr>';
+
+    // evolução no tempo — Negociado x Fechado por mês (últimos 6 meses, dado real)
+    var elEvol = document.getElementById('chartEvol');
+    if (elEvol) {
+      var now = new Date();
+      var mesNomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      var meses = [];
+      for (var i = 5; i >= 0; i--) {
+        var dm = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        meses.push({ y: dm.getFullYear(), m: dm.getMonth(), cap: mesNomes[dm.getMonth()], neg: 0, fech: 0 });
+      }
+      projetos.forEach(function(p){
+        if (!scopeInclui(p.statusCls)) return;
+        MabeDB.loadOpps(p.id).forEach(function(o){
+          if (!o.dt) return;
+          var od = new Date(o.dt + 'T00:00:00');
+          var b = null;
+          for (var j = 0; j < meses.length; j++){ if (meses[j].y === od.getFullYear() && meses[j].m === od.getMonth()) { b = meses[j]; break; } }
+          if (!b) return;
+          if (o.et === 'win') b.fech += (o.val || 0);
+          else if (o.et !== 'lost') b.neg += (o.val || 0);
+        });
+      });
+      var maxTot = Math.max(1, Math.max.apply(null, meses.map(function(b){ return b.neg + b.fech; })));
+      elEvol.innerHTML = meses.map(function(b){
+        var tot = b.neg + b.fech;
+        var h = tot > 0 ? Math.max(4, Math.round(tot / maxTot * 92)) : 0;
+        var s2 = tot > 0 ? Math.round(b.fech / tot * 100) : 0;
+        return '<div class="cbar"><div class="stack" style="height:' + h + '%;"><div class="s1" style="flex:1"></div><div class="s2" style="height:' + s2 + '%"></div></div><span class="ccap">' + b.cap + '</span></div>';
+      }).join('');
+    }
   }
 
   // ---------- filtro / detalhamento ----------
