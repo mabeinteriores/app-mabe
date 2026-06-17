@@ -561,8 +561,20 @@ window.PRC = (function(){
     salvarPropostas();
     proj=[]; desc=0; imovelData=null; var _dvs=el('prc-desc-val'); if(_dvs)_dvs.value=''; renderItems(); refresh(); updateImovelBtn();
     try{renderPropostas();}catch(e){}
-    // vai automaticamente para a aba Projetos
-    setTimeout(function(){ location.href='projetos.html'; }, 650);
+    // vai automaticamente para a aba Projetos (após garantir o envio ao banco)
+    setTimeout(function(){ irPara('projetos.html'); }, 400);
+  }
+
+  // navega só depois de confirmar o envio das pendências ao banco
+  function irPara(url){
+    var done=false, go=function(){ if(done) return; done=true; location.href=url; };
+    try {
+      if (window.MabeCloud && MabeCloud.flush){
+        var p = MabeCloud.flush();
+        if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
+      }
+    } catch(e){}
+    go();
   }
 
   // mapeia o segmento da precificação para o "tipo de projeto" do app

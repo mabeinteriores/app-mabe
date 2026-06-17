@@ -37,20 +37,21 @@
     pushTimer = setTimeout(flush, 300);
   }
   function flush() {
-    if (!sb || !ready) return;
+    if (!sb || !ready) return Promise.resolve();
     var keys = Object.keys(pending);
-    if (!keys.length) return;
+    if (!keys.length) return Promise.resolve();
     var batch = pending; pending = {};
-    keys.forEach(function (k) {
+    var ops = keys.map(function (k) {
       var raw = batch[k];
       if (raw === null) {
-        sb.from('kv_store').delete().eq('workspace', WORKSPACE).eq('key', k).then(function () {});
+        return sb.from('kv_store').delete().eq('workspace', WORKSPACE).eq('key', k).then(function () {});
       } else {
         var val; try { val = JSON.parse(raw); } catch (e) { val = raw; }
-        sb.from('kv_store').upsert({ workspace: WORKSPACE, key: k, value: val, updated_at: new Date().toISOString() },
+        return sb.from('kv_store').upsert({ workspace: WORKSPACE, key: k, value: val, updated_at: new Date().toISOString() },
           { onConflict: 'workspace,key' }).then(function () {});
       }
     });
+    return Promise.all(ops);
   }
 
   // ---------- 2) overlay (esconde a UI até estar pronto) ----------
@@ -454,6 +455,12 @@
       try { sb.auth.signOut({ scope: 'local' }).then(done, done); } catch (e) { done(); }
     },
     client: function () { return sb; },
-    responsaveis: function () { return respList; }
+    responsaveis: function () { return respList; },
+    // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
+    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush(); },
+    pendente: function () { return Object.keys(pending).length > 0; }
   };
+
+  // rede de segurança: tenta enviar pendências antes da página sair
+  window.addEventListener('pagehide', function () { try { clearTimeout(pushTimer); flush(); } catch (e) {} });
 })();
