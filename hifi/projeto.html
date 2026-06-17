@@ -416,9 +416,11 @@
   function saveOpp(){
     var d = readDrawer();
     if (!d.serv){ document.getElementById('dwServ').focus(); return; }
+    var wasWin = false;
     if (editing === null){ d.id = seq++; if(!d.dt) d.dt = new Date().toISOString().slice(0,10); opps.unshift(d); }
-    else { var o = opps.find(function(x){ return x.id===editing; }); Object.assign(o, d); }
+    else { var o = opps.find(function(x){ return x.id===editing; }); wasWin = (o.et === 'win'); Object.assign(o, d); }
     render(); closeEdit();
+    if (d.et === 'win' && !wasWin){ try { celebrar(meuNome()); } catch(_){} }
   }
   function delOpp(){
     if (editing == null) return;
@@ -484,6 +486,79 @@
       o.prob = Math.max(0, Math.min(100, parseInt(v,10)||0));
     }
     render();
+    if (stage === 'win' && prevEt !== 'win'){ try { celebrar(meuNome()); } catch(_){} }
+  }
+
+  // ---------- comemoração ao Fechar (fogos + mensagem) ----------
+  function celebrar(nome){
+    if (document.getElementById('celebra')) return;   // evita sobrepor
+    nome = (nome || '').trim() || 'campeão';
+    if (!document.getElementById('celebraCSS')){
+      var st = document.createElement('style'); st.id = 'celebraCSS';
+      st.textContent =
+        '#celebra{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden}' +
+        '#celebraCanvas{position:absolute;inset:0;width:100%;height:100%}' +
+        '.celebra-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.6);text-align:center;opacity:0;animation:celebraIn .5s cubic-bezier(.18,.89,.32,1.28) forwards;background:rgba(22,17,12,.82);backdrop-filter:blur(5px);padding:30px 48px;border-radius:18px;border:1px solid rgba(255,255,255,.16);box-shadow:0 22px 64px rgba(0,0,0,.5)}' +
+        '.celebra-emoji{font-size:48px;line-height:1;margin-bottom:10px;animation:celebraBounce 1s ease-in-out infinite}' +
+        '.celebra-tit{font-size:31px;font-weight:800;color:#fff;letter-spacing:-.01em}' +
+        '.celebra-sub{font-size:17px;font-weight:600;color:#ffd479;margin-top:7px}' +
+        '@keyframes celebraIn{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}' +
+        '@keyframes celebraOut{to{opacity:0;transform:translate(-50%,-50%) scale(.85)}}' +
+        '@keyframes celebraBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}';
+      document.head.appendChild(st);
+    }
+    var ov = document.createElement('div'); ov.id = 'celebra';
+    ov.innerHTML = '<canvas id="celebraCanvas"></canvas>' +
+      '<div class="celebra-msg"><div class="celebra-emoji">🎉🏆🎉</div>' +
+      '<div class="celebra-tit">Parabéns, ' + esc(nome) + '!</div>' +
+      '<div class="celebra-sub">Você é o melhor em vendas!</div></div>';
+    document.body.appendChild(ov);
+
+    var cv = document.getElementById('celebraCanvas'), ctx = cv.getContext('2d');
+    function resize(){ cv.width = window.innerWidth; cv.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    var parts = [], rockets = [], running = true, t0 = null, lastLaunch = 0;
+    var cores = ['#ff5252','#ffd740','#69f0ae','#40c4ff','#e040fb','#ffab40','#fff176'];
+    function rnd(a,b){ return a + Math.random()*(b-a); }
+    function pick(){ return cores[Math.floor(Math.random()*cores.length)]; }
+    function explode(x,y){
+      var n = 38 + Math.floor(Math.random()*24), cor = pick();
+      for (var i=0;i<n;i++){
+        var ang = (Math.PI*2)*(i/n), sp = rnd(1.5,5.5);
+        parts.push({ x:x, y:y, vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp, life:1, cor: Math.random()<.3?pick():cor, sz:rnd(1.5,3.5) });
+      }
+    }
+    function launch(){ rockets.push({ x:rnd(cv.width*0.15,cv.width*0.85), y:cv.height, ty:rnd(cv.height*0.16,cv.height*0.48), vy:rnd(-12,-9), cor:pick() }); }
+    function frame(ts){
+      if (t0===null) t0 = ts;
+      var elapsed = ts - t0;
+      ctx.clearRect(0,0,cv.width,cv.height);
+      if (elapsed < 3600 && ts - lastLaunch > 260){ launch(); if (Math.random()<.5) launch(); lastLaunch = ts; }
+      for (var i=rockets.length-1;i>=0;i--){
+        var r = rockets[i]; r.y += r.vy; r.vy += 0.12;
+        ctx.fillStyle = r.cor; ctx.beginPath(); ctx.arc(r.x, r.y, 2.4, 0, Math.PI*2); ctx.fill();
+        if (r.y <= r.ty || r.vy >= 0){ explode(r.x, r.y); rockets.splice(i,1); }
+      }
+      for (var j=parts.length-1;j>=0;j--){
+        var p = parts[j];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.055; p.vx *= 0.985; p.vy *= 0.985; p.life -= 0.012;
+        if (p.life <= 0){ parts.splice(j,1); continue; }
+        ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.cor;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (running && (elapsed < 5200 || parts.length)) requestAnimationFrame(frame);
+      else fim();
+    }
+    function fim(){
+      if (!running) return; running = false;
+      window.removeEventListener('resize', resize);
+      var m = ov.querySelector('.celebra-msg'); if (m) m.style.animation = 'celebraOut .5s ease forwards';
+      setTimeout(function(){ if (ov && ov.parentNode) ov.parentNode.removeChild(ov); }, 500);
+    }
+    for (var b=0;b<3;b++){ explode(rnd(cv.width*0.25,cv.width*0.75), rnd(cv.height*0.25,cv.height*0.5)); }
+    requestAnimationFrame(frame);
+    setTimeout(function(){ fim(); }, 6200);
   }
 
   // ---------- menu "mover" (toque/celular e clique) ----------
