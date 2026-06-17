@@ -35,6 +35,13 @@
   window.salvarPropostas = function(){ wr(PKEY, window.propostas); };
 
   window.CFG = window.CFG || { user: 'Você (Arq.)' };
+  // responsável padrão = nome do usuário logado (substitui "Você (Arq.)")
+  (function setPrcUser(tries){
+    tries = tries || 0;
+    var n = window.__mabeProfile && window.__mabeProfile.nome;
+    if (n) { window.CFG = window.CFG || {}; window.CFG.user = n; return; }
+    if (tries < 40) setTimeout(function(){ setPrcUser(tries+1); }, 200);
+  })(0);
 
   /* ---- formatação ---- */
   window.fmt = window.fmt || function(n){ return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}); };
