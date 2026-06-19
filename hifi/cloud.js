@@ -314,14 +314,11 @@
     hydrate(function (err, changed) {
       sessionStorage.setItem('mabe_cloud_hydrated', '1');
       if (err) { done(); return; }
-      // recarrega para as telas renderizarem com os dados novos da nuvem;
-      // só quando há mudança real, com trava p/ nunca entrar em loop
-      var guard = parseInt(sessionStorage.getItem('mabe_reload_guard') || '0', 10);
-      if ((first || changed) && guard < 2) {
-        sessionStorage.setItem('mabe_reload_guard', String(guard + 1));
-        location.reload();
-        return;
-      }
+      // só recarrega na 1ª carga da sessão (p/ as telas renderizarem com os dados da nuvem).
+      // NÃO recarregar por "changed": telas como projeto.html regravam dados ao carregar
+      // e isso causaria loop de recarregamento. Atualização entre usuários fica a cargo
+      // do polling leve (setupLivePolling), que tem trava de própria-gravação e banner.
+      if (first) { location.reload(); return; }
       done();
     });
   }
@@ -396,7 +393,10 @@
   // dispara o mesmo fluxo seguro (banner se estiver editando, senão atualiza).
   function checkForUpdates() {
     if (!sb || !ready || isChild) return;
-    if (currentFile() === 'precificacao.html') return;   // não interrompe um orçamento em montagem
+    // telas que regravam dados ao carregar (recalc/persist) NÃO entram no auto-update,
+    // senão o reload as faz regravar de novo e vira loop. Atualizam só com F5 manual.
+    var _f = currentFile();
+    if (_f === 'precificacao.html' || _f === 'projeto.html' || _f === 'oportunidade.html') return;
     sb.from('kv_store').select('updated_at').eq('workspace', WORKSPACE)
       .order('updated_at', { ascending: false }).limit(1)
       .then(function (res) {
