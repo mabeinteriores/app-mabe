@@ -1,5 +1,5 @@
 // =====================================================================
-// Camber Comercial — Camada de Nuvem (Supabase)
+// Gestão Camber — Camada de Nuvem (Supabase)
 // Adiciona LOGIN e sincroniza todos os dados do app (localStorage) com a
 // nuvem, compartilhados por toda a equipe. Não altera a lógica das telas:
 // intercepta localStorage e espelha as chaves "mabe-*"/"mabe_*".
@@ -103,7 +103,7 @@
   function showLogin(msg) {
     var o = overlay(); if (!o) return;
     o.querySelector('.box').innerHTML =
-      '<div class="mk">C</div><h1>Camber Comercial</h1><p>Entre para acessar o sistema</p>' +
+      '<div class="mk">C</div><h1>Gestão Camber</h1><p>Entre para acessar o sistema</p>' +
       '<input id="mcNome" type="text" placeholder="Seu nome" autocomplete="name" style="display:none">' +
       '<input id="mcEmail" type="email" placeholder="E-mail" autocomplete="username">' +
       '<input id="mcPass" type="password" placeholder="Senha" autocomplete="current-password">' +

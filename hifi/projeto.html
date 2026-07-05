@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202607051618"></script>
+<script src="cloud.js?v=202607051623"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Residência Alphaville · Camber Comercial</title>
+<title>Residência Alphaville · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -188,9 +188,9 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=202607051618"></script>
-<script src="ct.js?v=202607051618"></script>
-<script src="shell.js?v=202607051618"></script>
+<script src="projects-data.js?v=202607051623"></script>
+<script src="ct.js?v=202607051623"></script>
+<script src="shell.js?v=202607051623"></script>
 <script>
   var STAGES = [
     { k:'prospec', l:'Prospecção' },
@@ -217,7 +217,7 @@
     if (PROJ){
       document.getElementById('crumbName').textContent = PROJ.nome;
       document.getElementById('projName').textContent = PROJ.nome;
-      document.title = PROJ.nome + ' · Camber Comercial';
+      document.title = PROJ.nome + ' · Gestão Camber';
       document.getElementById('mvCliente').textContent = PROJ.cliente || '—';
       document.getElementById('mvLocal').textContent = (PROJ.cidade || '—') + ' · ' + (PROJ.uf || '');
       document.getElementById('mvResp').textContent = normResp(PROJ.resp) || '—';
@@ -629,7 +629,7 @@
     var html =
       '<div style="font-family:Archivo,Helvetica,Arial,sans-serif;color:#1b1a17">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b1a17;padding-bottom:12px;margin-bottom:16px">' +
-          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Camber Comercial · Balanço de oportunidades</div>' +
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Gestão Camber · Balanço de oportunidades</div>' +
           '<div style="font-size:24px;font-weight:700;margin-top:4px">' + esc(PROJ ? PROJ.nome : '') + '</div>' +
           '<div style="font-size:12px;color:#666;margin-top:4px">' + esc(PROJ?PROJ.cliente:'') + ' · ' + esc(PROJ?(PROJ.cidade+'/'+PROJ.uf):'') + ' · Obra ' + (PROJ&&PROJ.valor?brl(PROJ.valor):'—') + ' · Resp.: ' + esc(PROJ?normResp(PROJ.resp):'') + '</div></div>' +
           '<div style="text-align:right;font-size:11px;color:#888">Emitido em<br><b style="color:#333;font-size:13px">' + hoje + '</b></div>' +
@@ -708,7 +708,7 @@
     var html =
       '<div style="font-family:Archivo,Helvetica,Arial,sans-serif;color:#1b1a17">'+
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b1a17;padding-bottom:12px;margin-bottom:18px">'+
-          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Camber Comercial · Lucro do Projeto</div>'+
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c0673f;font-weight:700">Gestão Camber · Lucro do Projeto</div>'+
           '<div style="font-size:23px;font-weight:700;margin-top:4px">'+esc(PROJ?PROJ.nome:'')+'</div>'+
           '<div style="font-size:12px;color:#666;margin-top:4px">'+esc(PROJ?PROJ.cliente:'')+' · '+esc(PROJ?(PROJ.cidade+'/'+PROJ.uf):'')+'</div></div>'+
           '<div style="text-align:right;font-size:11px;color:#888">Emitido em<br><b style="color:#333;font-size:13px">'+hoje+'</b></div>'+
@@ -745,7 +745,7 @@
           '<tfoot><tr style="border-top:2px solid #1b1a17;font-weight:700"><td colspan="5" style="padding:8px">Total de custos de terceiros</td>'+
             '<td style="padding:8px;text-align:right;font-variant-numeric:tabular-nums;color:#b45309">'+money(terceiros)+'</td></tr></tfoot>'+
         '</table>'+
-        '<div style="margin-top:20px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px;text-align:center">Camber Comercial · Arquitetura &amp; Design</div>'+
+        '<div style="margin-top:20px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px;text-align:center">Gestão Camber · Arquitetura &amp; Design</div>'+
       '</div>';
 
     var w=window.open('','_blank');

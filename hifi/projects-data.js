@@ -1,4 +1,4 @@
-// Camber Comercial — base de dados compartilhada (protótipo, persistida no navegador).
+// Gestão Camber — base de dados compartilhada (protótipo, persistida no navegador).
 // Liga a lista de Projetos ao Detalhe do projeto e guarda as oportunidades de cada obra.
 (function () {
   var PKEY = 'mabe-projects-v3';

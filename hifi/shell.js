@@ -1,4 +1,4 @@
-// Camber Comercial — shell de app hi-fi.
+// Gestão Camber — shell de app hi-fi.
 // Injeta a topbar (marca + navegação + busca + tema) em todas as telas.
 // Tema persiste em localStorage. Pele fixa: Studio.
 (function () {
@@ -46,7 +46,7 @@
     '<div class="brandwrap">' +
       '<a class="brand" href="painel.html" style="text-decoration:none;color:inherit">' +
         '<div class="mark">C</div>' +
-        '<div><div class="bn">Camber Comercial</div><div class="bs">Oportunidades</div></div>' +
+        '<div><div class="bn">Gestão Camber</div><div class="bs">Oportunidades</div></div>' +
       '</a>' +
       '<div class="brandmenu"><button type="button" class="brandmenu-item" id="mabeSairBtn">↪&nbsp;Sair do app</button></div>' +
     '</div>' +
