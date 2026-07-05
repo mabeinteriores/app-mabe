@@ -1,5 +1,5 @@
 // =====================================================================
-// Mabe Comercial — Camada de Nuvem (Supabase)
+// Camber Comercial — Camada de Nuvem (Supabase)
 // Adiciona LOGIN e sincroniza todos os dados do app (localStorage) com a
 // nuvem, compartilhados por toda a equipe. Não altera a lógica das telas:
 // intercepta localStorage e espelha as chaves "mabe-*"/"mabe_*".
@@ -80,13 +80,13 @@
     if (isChild) return null; // dentro do iframe não mostramos login
     if (ov) return ov;
     ov = document.createElement('div'); ov.id = 'mabeCloudOv';
-    ov.innerHTML = '<div class="box"><div class="mk">M</div><div class="spin"></div></div>';
+    ov.innerHTML = '<div class="box"><div class="mk">C</div><div class="spin"></div></div>';
     (document.body || document.documentElement).appendChild(ov);
     return ov;
   }
   function showSpinner(txt) {
     var o = overlay(); if (!o) return;
-    o.querySelector('.box').innerHTML = '<div class="mk">M</div><div class="spin"></div>' +
+    o.querySelector('.box').innerHTML = '<div class="mk">C</div><div class="spin"></div>' +
       (txt ? '<p style="margin-top:14px">' + txt + '</p>' : '');
   }
   function removeOverlay() { if (ov && ov.parentNode) ov.parentNode.removeChild(ov); ov = null; }
@@ -103,7 +103,7 @@
   function showLogin(msg) {
     var o = overlay(); if (!o) return;
     o.querySelector('.box').innerHTML =
-      '<div class="mk">M</div><h1>Mabe Comercial</h1><p>Entre para acessar o sistema</p>' +
+      '<div class="mk">C</div><h1>Camber Comercial</h1><p>Entre para acessar o sistema</p>' +
       '<input id="mcNome" type="text" placeholder="Seu nome" autocomplete="name" style="display:none">' +
       '<input id="mcEmail" type="email" placeholder="E-mail" autocomplete="username">' +
       '<input id="mcPass" type="password" placeholder="Senha" autocomplete="current-password">' +
@@ -264,7 +264,7 @@
   function showNoAccess() {
     var o = overlay(); if (!o) return;
     o.querySelector('.box').innerHTML =
-      '<div class="mk">M</div><h1>Sem acesso</h1>' +
+      '<div class="mk">C</div><h1>Sem acesso</h1>' +
       '<p style="margin:8px 0 18px">Sua conta ainda não tem nenhuma área liberada. Fale com o administrador.</p>' +
       '<button id="mcOut" class="alt">Sair</button>';
     o.querySelector('#mcOut').onclick = function () { window.MabeCloud.signOut(); };
@@ -293,7 +293,7 @@
     ready = false;
     var o = overlay(); if (!o) return;
     o.querySelector('.box').innerHTML =
-      '<div class="mk">M</div><h1>Cadastro recebido!</h1>' +
+      '<div class="mk">C</div><h1>Cadastro recebido!</h1>' +
       '<p style="margin:8px 0 18px">Sua conta está <b>aguardando autorização</b> do administrador. ' +
       'Assim que liberar, é só entrar de novo.</p>' +
       '<button id="mcRecheck">Já fui autorizado — entrar</button>' +

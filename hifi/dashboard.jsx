@@ -1,4 +1,4 @@
-// Painel "A" (KPIs + funil) da Mabe Comercial — hi-fi.
+// Painel "A" (KPIs + funil) da Camber Comercial — hi-fi.
 // Mesma estrutura, renderizada em 3 peles (paper/studio/tech) e 2 temas.
 // Exporta MabeDashboard para window.
 (function () {
@@ -58,7 +58,7 @@
       h('div', { className: 'brand' },
         h('div', { className: 'mark' }, 'M'),
         h('div', null,
-          h('div', { className: 'bn' }, 'Mabe Comercial'),
+          h('div', { className: 'bn' }, 'Camber Comercial'),
           h('div', { className: 'bs' }, 'Oportunidades'))),
       h('nav', { className: 'nav' },
         h('a', { className: 'on' }, 'Painel'),

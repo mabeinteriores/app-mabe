@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202606191339"></script>
+<script src="cloud.js?v=202607051618"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lead · Mabe Comercial</title>
+<title>Lead · Camber Comercial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="painel.css?v=202606162131">
 <link rel="stylesheet" href="app.css?v=202606162131">
 <style>
-  /* aba Lead do app: largura ampla; o shell (cloud.js?v=202606191339/shell.js?v=202606191339) cuida do resto do layout */
+  /* aba Lead do app: largura ampla; o shell (cloud.js?v=202607051618/shell.js?v=202607051618) cuida do resto do layout */
   #app.mabe .wrap{ max-width:min(1760px, 95vw); margin:0 auto; }
 
   #app[data-page="lead"] .lhead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -394,14 +394,14 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=202606191339"></script>
-<script src="shell.js?v=202606191339"></script>
+<script src="projects-data.js?v=202607051618"></script>
+<script src="shell.js?v=202607051618"></script>
 <script>
-// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202606191339/shell.js?v=202606191339) já fornece MabeCloud, nav, perms e auth.
+// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202607051618/shell.js?v=202607051618) já fornece MabeCloud, nav, perms e auth.
 (function(){ return;
   var SUPABASE_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
-  var APP = 'https://app.mabeinteriores.com.br/hifi/';
+  var APP = location.origin + '/hifi/';
   var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
   // shim do MabeCloud usado pela aba Lead
   window.MabeCloud = { client: function(){ return sb; } };
@@ -435,8 +435,8 @@
     $('appTop').innerHTML =
       '<div class="brandwrap" style="position:relative">' +
         '<a class="brand" href="'+APP+'painel.html" style="text-decoration:none;color:inherit">' +
-          '<div class="mark">M</div>' +
-          '<div><div class="bn">Mabe Comercial</div><div class="bs">'+(nome||'Comercial')+'</div></div>' +
+          '<div class="mark">C</div>' +
+          '<div><div class="bn">Camber Comercial</div><div class="bs">'+(nome||'Comercial')+'</div></div>' +
         '</a>' +
       '</div>' +
       '<nav class="nav">' + nav + '</nav>' +
@@ -1109,7 +1109,7 @@
       (isAdmin ? '<div class="dsec"><button type="button" class="dellead" id="dDelete">🗑&nbsp; Excluir este lead</button></div>' : '');
 
     var wpp = document.getElementById('dWpp');
-    if(fone){ wpp.style.display=''; wpp.href = 'https://wa.me/'+(fone.length<=11?('55'+fone):fone)+'?text='+encodeURIComponent('Olá '+(L.nome||'')+'! Aqui é da Mabē Interiores 🌿'); }
+    if(fone){ wpp.style.display=''; wpp.href = 'https://wa.me/'+(fone.length<=11?('55'+fone):fone)+'?text='+encodeURIComponent('Olá '+(L.nome||'')+'! Aqui é da Camber Interiores 🌿'); }
     else wpp.style.display='none';
     var mail = document.getElementById('dMail');
     if(email && email.indexOf('@')>0){ mail.style.display=''; mail.href='mailto:'+email; }
@@ -1173,7 +1173,7 @@
       estrHtml;
     var wpp = document.getElementById('dWpp');
     var tel = (f.telefone||'').replace(/\D/g,'');
-    if(tel.length>=10){ wpp.style.display=''; wpp.href = waLink(f.telefone)+'?text='+encodeURIComponent('Olá '+(f.nome||'')+'! Aqui é da Mabē Interiores 🌿'); }
+    if(tel.length>=10){ wpp.style.display=''; wpp.href = waLink(f.telefone)+'?text='+encodeURIComponent('Olá '+(f.nome||'')+'! Aqui é da Camber Interiores 🌿'); }
     else wpp.style.display='none';
     document.getElementById('dMail').style.display='none';
     var pv=document.getElementById('dPrintView'); if(pv) pv.style.display='none';
@@ -1209,7 +1209,7 @@
         '<div class="pchips"><span>'+r.tempLabel+'</span><span>'+esc(r.inv.label)+'</span>'+(r.inv.opp?'<span class="opp">Oportunidade &gt; R$ 300 mil</span>':'')+'</div>'+
         '<h2>Lead Score — '+r.score+'/100 · '+r.tempLabel+'</h2><ul class="phl">'+hl+'</ul>'+
         '<h2>Respostas do formulário</h2><div class="pgrid '+view+'">'+boxes+'</div>'+
-        '<div class="pfoot">Mabē Interiores · documento gerado pelo Mabe Comercial</div>'+
+        '<div class="pfoot">Camber Interiores · documento gerado pelo Camber Comercial</div>'+
       '</div>';
     window.print();
   }

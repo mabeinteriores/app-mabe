@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   Precificação (PRC) — portado do app MABE para o Mabe Comercial.
+   Precificação (PRC) — portado do app MABE para o Camber Comercial.
    Camada de compatibilidade (shims) + módulo window.PRC original.
    Os ganchos do app antigo (clientes, propostas, PDF, alertas) foram
    reimplementados de forma autônoma, persistindo em localStorage.
