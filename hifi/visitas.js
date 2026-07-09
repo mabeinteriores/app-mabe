@@ -43,7 +43,16 @@
   }
   function checkout(id) {
     var v = load(), it = v.find(function (x) { return x.id === id; });
-    if (it && !it.out) { it.out = Date.now(); save(v); }
+    if (it && !it.out) {
+      it.out = Date.now(); save(v);
+      // GPS na saída — não bloqueia; anexa a localização quando (e se) chegar
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var arr = load(), x = arr.find(function (y) { return y.id === id; });
+          if (x && !x.locOut) { x.locOut = { lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6) }; save(arr); render(); }
+        }, function () {}, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+      }
+    }
     render();
   }
 
@@ -65,14 +74,45 @@
 
   // ---------- abrir / fechar a gaveta ----------
   function open() {
-    var s = document.getElementById('visDrawerScrim'), d = document.getElementById('visDrawer');
-    if (s) s.classList.add('open'); if (d) d.classList.add('open');
+    var d = document.getElementById('visDrawer');
+    if (d) d.classList.add('open');
     render();
+    if (d) {  // centraliza ao abrir; depois pode arrastar pelo cabeçalho
+      var w = d.offsetWidth, h = d.offsetHeight;
+      d.style.left = Math.max(6, Math.round((window.innerWidth - w) / 2)) + 'px';
+      d.style.top = Math.max(6, Math.round((window.innerHeight - h) / 2)) + 'px';
+    }
   }
   function close() {
     var s = document.getElementById('visDrawerScrim'), d = document.getElementById('visDrawer');
     if (s) s.classList.remove('open'); if (d) d.classList.remove('open');
     if (tick) { clearInterval(tick); tick = null; }
+  }
+  // arrastar a janela pelo cabeçalho (mouse e toque)
+  function initDrag() {
+    var d = document.getElementById('visDrawer');
+    var h = d ? d.querySelector('.vis-drawer-h') : null;
+    if (!d || !h) return;
+    var dragging = false, ox = 0, oy = 0;
+    h.addEventListener('pointerdown', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.vis-drawer-x')) return;
+      dragging = true;
+      var r = d.getBoundingClientRect();
+      ox = e.clientX - r.left; oy = e.clientY - r.top;
+      d.classList.add('dragging');
+      try { h.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault();
+    });
+    h.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var w = d.offsetWidth, ht = d.offsetHeight;
+      var x = Math.max(6, Math.min(e.clientX - ox, window.innerWidth - w - 6));
+      var y = Math.max(6, Math.min(e.clientY - oy, window.innerHeight - ht - 6));
+      d.style.left = x + 'px'; d.style.top = y + 'px';
+    });
+    var end = function (e) { if (dragging) { dragging = false; d.classList.remove('dragging'); try { h.releasePointerCapture(e.pointerId); } catch (_) {} } };
+    h.addEventListener('pointerup', end);
+    h.addEventListener('pointercancel', end);
   }
 
   // ---------- render ----------
@@ -142,9 +182,10 @@
   function repTexto() {
     var c = concluidas(), prev = prevQtd(), tot = c.reduce(function (a, x) { return a + (x.out - x.in); }, 0);
     var linhas = c.map(function (x, i) {
-      var loc = x.loc ? ('\n   📍 https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng) : '';
+      var locIn = x.loc ? ('\n   📍 Chegada: https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng) : '';
+      var locOut = x.locOut ? ('\n   📍 Saída: https://maps.google.com/?q=' + x.locOut.lat + ',' + x.locOut.lng) : '';
       var obs = x.obs ? ('\n   „' + x.obs + '“') : '';
-      return (i + 1) + ') ' + x.user + '\n   ' + fDataFull(x.in) + ' · ' + fHora(x.in) + '→' + fHora(x.out) + ' · ' + fmtDur(x.out - x.in) + obs + loc;
+      return (i + 1) + ') ' + x.user + '\n   ' + fDataFull(x.in) + ' · ' + fHora(x.in) + '→' + fHora(x.out) + ' · ' + fmtDur(x.out - x.in) + obs + locIn + locOut;
     });
     return '*RELATÓRIO DE VISITAS*\n' + (PROJ ? PROJ.nome : '') + '\n\n' +
       'Previstas: ' + prev + '  |  Realizadas: ' + c.length + '\n' +
@@ -155,7 +196,9 @@
   function repHTML() {
     var c = concluidas(), prev = prevQtd(), tot = c.reduce(function (a, x) { return a + (x.out - x.in); }, 0);
     var rows = c.map(function (x, i) {
-      var loc = x.loc ? ('<a href="https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng + '">ver</a>') : '—';
+      var linkIn = x.loc ? ('<a href="https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng + '">chegada</a>') : '';
+      var linkOut = x.locOut ? ('<a href="https://maps.google.com/?q=' + x.locOut.lat + ',' + x.locOut.lng + '">saída</a>') : '';
+      var loc = (linkIn || linkOut) ? [linkIn, linkOut].filter(Boolean).join(' · ') : '—';
       return '<tr><td>' + (i + 1) + '</td><td>' + esc(x.user) + '</td><td>' + fDataFull(x.in) + '</td><td>' + fHora(x.in) + ' → ' + fHora(x.out) + '</td><td>' + esc(x.obs || '—') + '</td><td>' + loc + '</td><td class="r">' + fmtDur(x.out - x.in) + '</td></tr>';
     }).join('');
     return '<h1>Relatório de Visitas</h1><div class="s">' + esc(PROJ ? PROJ.nome : '') + ' · emitido em ' + fDataFull(Date.now()) + '</div>' +
@@ -188,18 +231,20 @@
   css.textContent =
     // gaveta
     '.vis-scrim{position:fixed;inset:0;background:rgba(30,22,14,.42);opacity:0;visibility:hidden;transition:.18s;z-index:54}.vis-scrim.open{opacity:1;visibility:visible}' +
-    '.vis-drawer{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:var(--bg);border-radius:18px 18px 0 0;max-height:90vh;display:flex;flex-direction:column;transform:translateY(100%);transition:.24s;z-index:55;box-shadow:0 -8px 30px rgba(0,0,0,.22)}' +
-    '.vis-drawer.open{transform:translateY(0)}' +
-    '.vis-drawer-h{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;flex:0 0 auto}' +
-    '.vis-drawer-h h2{margin:0;font-size:17px;letter-spacing:-.01em}' +
+    '.vis-drawer{position:fixed;left:0;top:0;width:calc(100% - 32px);max-width:440px;background:var(--bg);border:1px solid var(--hair);border-radius:16px;max-height:86vh;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .16s,visibility .16s;z-index:56;box-shadow:0 20px 60px rgba(0,0,0,.3)}' +
+    '.vis-drawer.open{opacity:1;visibility:visible}' +
+    '.vis-drawer.dragging{box-shadow:0 26px 70px rgba(0,0,0,.42)}' +
+    '.vis-drawer-h{display:flex;align-items:center;gap:8px;padding:13px 16px 8px;flex:0 0 auto;cursor:move;touch-action:none;user-select:none}' +
+    '.vis-drawer-h h2{margin:0;font-size:17px;letter-spacing:-.01em;flex:1}' +
+    '.vis-grip{color:var(--ink-3);font-size:15px;line-height:1;letter-spacing:-2px}' +
     '.vis-drawer-x{background:none;border:none;font-size:20px;color:var(--ink-3);cursor:pointer;line-height:1}' +
     '.vis-drawer-b{padding:6px 16px calc(20px + env(safe-area-inset-bottom));overflow-y:auto}' +
     // conteúdo
     '.vis-prev{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);padding:13px 14px;margin-bottom:10px;box-shadow:var(--shadow-sm)}' +
     '.vis-prev .h{display:flex;align-items:flex-end;gap:16px;margin-bottom:10px}' +
     '.vis-prev .bl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:4px}' +
-    '.vis-prev .bv{font-size:21px;font-weight:700;letter-spacing:-.02em;line-height:1}.vis-prev .bv.done{color:var(--win)}' +
-    '.vis-prev .pin{width:48px;font-family:inherit;font-size:18px;font-weight:700;text-align:center;border:1px solid var(--hair-2);border-radius:8px;padding:3px;background:var(--bg);color:var(--ink)}' +
+    '.vis-prev .bv{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1;height:28px;display:flex;align-items:center}.vis-prev .bv.done{color:var(--win)}' +
+    '.vis-prev .pin{width:52px;height:28px;box-sizing:border-box;font-family:inherit;font-size:19px;font-weight:700;text-align:center;border:1px solid var(--hair-2);border-radius:8px;padding:0 4px;background:var(--bg);color:var(--ink);line-height:1}' +
     '.vis-prev .pct{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;color:var(--accent)}' +
     '.vis-bar{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}.vis-bar>i{display:block;height:100%;background:var(--win);border-radius:999px;transition:width .3s}' +
     '.vis-prev .foot{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin-top:10px}' +
@@ -234,9 +279,10 @@
 
   var dScrim = document.createElement('div'); dScrim.className = 'vis-scrim'; dScrim.id = 'visDrawerScrim'; dScrim.onclick = close;
   var drawer = document.createElement('div'); drawer.className = 'vis-drawer'; drawer.id = 'visDrawer';
-  drawer.innerHTML = '<div class="vis-drawer-h"><h2>Controle de visitas</h2><button class="vis-drawer-x" onclick="Visitas.close()">✕</button></div><div class="vis-drawer-b" id="visDrawerBody"></div>';
+  drawer.innerHTML = '<div class="vis-drawer-h"><span class="vis-grip" title="Arraste para mover">⠿</span><h2>Controle de visitas</h2><button class="vis-drawer-x" onclick="Visitas.close()">✕</button></div><div class="vis-drawer-b" id="visDrawerBody"></div>';
   app.appendChild(dScrim); app.appendChild(drawer);
   mount = document.getElementById('visDrawerBody');
+  initDrag();
 
   var scrim = document.createElement('div'); scrim.className = 'vsheet-scrim'; scrim.id = 'visScrim'; scrim.onclick = closeReport;
   var sheet = document.createElement('div'); sheet.className = 'vsheet'; sheet.id = 'visSheet';
