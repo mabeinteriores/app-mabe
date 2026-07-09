@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Gestão Camber</title>
+<script>
+(function () {
+  var p = location.pathname;
+  // links antigos com /hifi/ → redireciona para o mesmo caminho sem a pasta
+  if (p.indexOf('/hifi/') === 0) {
+    location.replace(p.replace('/hifi/', '/') + location.search + location.hash);
+    return;
+  }
+  // qualquer outra página inexistente → volta para o painel
+  location.replace('/painel.html');
+})();
+</script>
+</head><body>Redirecionando…</body></html>
