@@ -34,25 +34,34 @@
     var v = load();
     var nova = { id: (v.reduce(function (a, x) { return Math.max(a, x.id); }, 0) + 1), user: eu(), in: Date.now(), out: null, obs: motivo || '', loc: null };
     v.push(nova); save(v); render();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (pos) {
-        var arr = load(), it = arr.find(function (x) { return x.id === nova.id; });
-        if (it && !it.loc) { it.loc = { lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6) }; save(arr); render(); }
-      }, function () {}, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
-    }
+    capturarGPS(nova.id, 'loc');
+  }
+  // captura a localização (não bloqueia) e guarda o status para dar retorno ao usuário
+  function capturarGPS(id, campo) {
+    if (!navigator.geolocation) { setGps(id, campo, 'no'); return; }
+    setGps(id, campo, 'pending');
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var arr = load(), it = arr.find(function (x) { return x.id === id; });
+      if (it) { it[campo] = { lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6) }; it[campo + 'St'] = 'ok'; save(arr); render(); }
+    }, function (err) {
+      setGps(id, campo, (err && err.code === 1) ? 'denied' : 'fail');
+    }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 });
+  }
+  function setGps(id, campo, st) {
+    var arr = load(), it = arr.find(function (x) { return x.id === id; });
+    if (it) { it[campo + 'St'] = st; save(arr); render(); }
+  }
+  function gpsLinha(v, campo) {
+    var loc = v[campo], st = v[campo + 'St'];
+    if (loc) return '<div class="vis-gps ok">📍 Local registrado · <a href="https://maps.google.com/?q=' + loc.lat + ',' + loc.lng + '" target="_blank" rel="noopener">ver no mapa</a></div>';
+    if (st === 'pending') return '<div class="vis-gps">📍 Obtendo localização…</div>';
+    if (st === 'denied') return '<div class="vis-gps err">📍 Localização bloqueada — permita no navegador/celular · <a onclick="Visitas.gps(' + v.id + ',\'' + campo + '\')">tentar de novo</a></div>';
+    if (st === 'fail' || st === 'no') return '<div class="vis-gps err">📍 Sem localização · <a onclick="Visitas.gps(' + v.id + ',\'' + campo + '\')">tentar de novo</a></div>';
+    return '<div class="vis-gps"><a onclick="Visitas.gps(' + v.id + ',\'' + campo + '\')">📍 Registrar localização</a></div>';
   }
   function checkout(id) {
     var v = load(), it = v.find(function (x) { return x.id === id; });
-    if (it && !it.out) {
-      it.out = Date.now(); save(v);
-      // GPS na saída — não bloqueia; anexa a localização quando (e se) chegar
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (pos) {
-          var arr = load(), x = arr.find(function (y) { return y.id === id; });
-          if (x && !x.locOut) { x.locOut = { lat: +pos.coords.latitude.toFixed(6), lng: +pos.coords.longitude.toFixed(6) }; save(arr); render(); }
-        }, function () {}, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
-      }
-    }
+    if (it && !it.out) { it.out = Date.now(); save(v); capturarGPS(id, 'locOut'); }
     render();
   }
 
@@ -156,7 +165,8 @@
       var atrasada = (Date.now() - ativa.in) > LIMITE_ABERTA_MS;
       stHtml = '<div class="vis-st ' + (atrasada ? 'warn' : 'live') + '">' +
         '<div class="r1"><span class="dot"></span><span class="st">Em visita — ' + esc(ativa.user) + '</span></div>' +
-        '<div class="sub">Chegou às ' + fHora(ativa.in) + ' · ' + fData(ativa.in) + (ativa.loc ? ' · 📍 local registrado' : '') + '</div>' +
+        '<div class="sub">Chegou às ' + fHora(ativa.in) + ' · ' + fData(ativa.in) + '</div>' +
+        gpsLinha(ativa, 'loc') +
         (ativa.obs ? '<div class="sub" style="color:var(--ink);font-weight:600">📝 ' + esc(ativa.obs) + '</div>' : '') +
         (atrasada ? '<div class="sub" style="color:var(--lost);font-weight:600">⏰ Aberta há mais de 6h — esqueceu o check-out?</div>' : '') +
         '<div class="timer" id="visTimer">00:00:00</div>' +
@@ -254,6 +264,7 @@
     '.vis-st.idle .dot{background:var(--ink-3)}.vis-st.live .dot{background:var(--win);animation:vpz 1.4s infinite}.vis-st.warn .dot{background:var(--lost)}' +
     '@keyframes vpz{0%,100%{opacity:1}50%{opacity:.35}}' +
     '.vis-st .st{font-weight:700;font-size:14px}.vis-st .sub{font-size:12.5px;color:var(--ink-2);margin-bottom:10px}' +
+    '.vis-gps{font-size:12px;color:var(--ink-2);margin:-4px 0 10px}.vis-gps.ok{color:var(--win)}.vis-gps.err{color:var(--lost)}.vis-gps a{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}' +
     '.vis-st .timer{font-family:"IBM Plex Mono",monospace;font-size:23px;font-weight:600;margin:2px 0 10px}' +
     '.vis-big{width:100%;border:none;border-radius:11px;padding:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px}' +
     '.vis-big.in{background:var(--accent);color:#fff}.vis-big.out{background:var(--lost);color:#fff}.vis-big:active{transform:translateY(1px)}' +
@@ -290,7 +301,7 @@
   var printd = document.createElement('div'); printd.id = 'visPrint';
   app.appendChild(scrim); app.appendChild(sheet); app.appendChild(printd);
 
-  window.Visitas = { open: open, close: close, render: render, startCheckin: startCheckin, cancelCheckin: cancelCheckin, pick: pick, confirmOutro: confirmOutro, countOutro: countOutro, checkout: checkout, setPrev: setPrev, openReport: openReport, closeReport: closeReport, whats: whats, pdf: pdf };
+  window.Visitas = { open: open, close: close, render: render, startCheckin: startCheckin, cancelCheckin: cancelCheckin, pick: pick, confirmOutro: confirmOutro, countOutro: countOutro, checkout: checkout, gps: capturarGPS, setPrev: setPrev, openReport: openReport, closeReport: closeReport, whats: whats, pdf: pdf };
 
   render(); // define o indicador no botão "Mais" mesmo com a gaveta fechada
 })();
