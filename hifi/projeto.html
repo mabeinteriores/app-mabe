@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202607051623"></script>
+<script src="cloud.js?v=202607092000"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Residência Alphaville · Gestão Camber</title>
@@ -17,6 +17,49 @@
   #printReport { display: none; }
   #app .statline > div { padding: 0 14px; }
   #app .statline .sv { font-size: 19px; white-space: nowrap; }
+  /* ---- "+" para nova oportunidade em cada coluna do Kanban ---- */
+  #app .kanban .kh-r { display: flex; align-items: center; gap: 6px; }
+  #app .kanban .kadd { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: var(--surface); border: 1px solid var(--hair-2); color: var(--ink-2); font-size: 15px; font-weight: 700; text-decoration: none; line-height: 1; flex: 0 0 auto; }
+  #app .kanban .kadd:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  /* ---- menu "Mais" (agrupa impressões, custos e visitas) ---- */
+  .mais-wrap { position: relative; }
+  .mais-badge { width: 8px; height: 8px; border-radius: 50%; background: var(--win); display: inline-block; margin-left: 4px; vertical-align: middle; }
+  .mais-menu { position: absolute; top: 100%; left: 0; margin-top: 6px; background: var(--surface); border: 1px solid var(--hair-2); border-radius: 12px; box-shadow: var(--shadow-md); padding: 6px; min-width: 212px; z-index: 45; display: none; }
+  .mais-menu.open { display: block; }
+  .mais-item { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: transparent; border: none; padding: 10px 12px; border-radius: 8px; font-family: inherit; font-size: 13.5px; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .mais-item:hover { background: var(--surface-2); }
+  /* ---- localização clicável (Maps / Waze) ---- */
+  .loc-cell { position: relative; }
+  #app .loc-clik { cursor: pointer; color: var(--accent); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+  #app .loc-clik::after { content: '›'; color: var(--ink-3); font-weight: 700; }
+  .loc-pop { position: absolute; top: 100%; left: 0; margin-top: 6px; background: var(--surface); border: 1px solid var(--hair-2); border-radius: 10px; box-shadow: var(--shadow-md); padding: 6px; min-width: 180px; z-index: 46; display: none; }
+  .loc-pop.open { display: block; }
+  .loc-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; font-size: 13.5px; color: var(--ink); text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .loc-item:hover { background: var(--surface-2); }
+  /* ---- Kanban no celular: colunas lado a lado (rolagem horizontal), mais compactas ---- */
+  @media (max-width: 880px) {
+    #app #vFunil.kanban {
+      display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 10px;
+      padding-bottom: 10px;
+      scroll-snap-type: x proximity;
+    }
+    #app #vFunil.kanban .kcol {
+      flex: 0 0 auto;
+      width: 47vw;
+      max-width: 260px;
+      min-width: 150px;
+      min-height: 84px;
+      padding: 10px;
+      scroll-snap-align: start;
+    }
+    #app #vFunil.kanban .opp { padding: 9px 10px; margin-bottom: 8px; }
+    #app #vFunil.kanban .opp .ot { font-size: 12.5px; }
+    #app #vFunil.kanban .opp .om { margin-top: 8px; padding-right: 30px; }
+    #app #vFunil.kanban .kcol .kh { margin-bottom: 9px; }
+  }
   @media print {
     @page { margin: 14mm; size: A4; }
     body { background: #fff !important; }
@@ -40,17 +83,27 @@
           <h1 id="projName">—</h1>
         </div>
         <div class="btnbar" style="display:flex;gap:10px;align-items:center">
-          <button class="btn" onclick="imprimirLucro()" title="Imprimir lucro do projeto">🧮&nbsp; Imprimir Lucro</button>
-          <button class="btn" onclick="imprimir()" title="Imprimir balanço"><span style="font-size:15px">⎣</span>&nbsp; Imprimir</button>
-          <button class="btn" id="btnCustos" title="Custos de terceiros">💸&nbsp; Custos de Terceiros</button>
-          <a class="btn primary" id="btnNovaOpp" href="oportunidade.html" data-comment-anchor="9b41777129-button">+&nbsp; Nova oportunidade</a>
+          <div class="mais-wrap">
+            <button class="btn" id="btnMais" type="button" onclick="toggleMais(event)">☰&nbsp; Mais<span class="mais-badge" id="maisBadge" style="display:none" title="Visita em andamento"></span></button>
+            <div class="mais-menu" id="maisMenu">
+              <button class="mais-item" id="miLucro" onclick="fecharMais();imprimirLucro()">🧮&nbsp; Imprimir Lucro</button>
+              <button class="mais-item" onclick="fecharMais();imprimir()">⎣&nbsp; Imprimir</button>
+              <button class="mais-item" id="btnCustos">💸&nbsp; Custos de Terceiros</button>
+              <button class="mais-item" onclick="fecharMais();Visitas.open()">📍&nbsp; Controle de Visitas</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="phead">
         <div class="meta-row">
           <div><div class="mlab">Cliente</div><div class="mval" id="mvCliente">—</div></div>
-          <div><div class="mlab">Localização</div><div class="mval" id="mvLocal">—</div></div>
+          <div class="loc-cell"><div class="mlab">Localização</div><div class="mval loc-clik" id="mvLocal" onclick="abrirLocal(event)" title="Como chegar">—</div>
+            <div class="loc-pop" id="locPop">
+              <a class="loc-item" id="locMaps" target="_blank" rel="noopener">🗺&nbsp; Google Maps</a>
+              <a class="loc-item" id="locWaze" target="_blank" rel="noopener">🚗&nbsp; Waze</a>
+            </div>
+          </div>
           <div><div class="mlab">Responsável</div><div class="mval" id="mvResp">—</div></div>
           <div><div class="mlab">Tipo</div><div class="mval" id="mvTipo">—</div></div>
           <div><div class="mlab">Valor do projeto</div><div class="mval" id="mvValor" style="text-align: center">—</div></div>
@@ -75,6 +128,7 @@
           <button class="on" id="segFunil" onclick="viewOpp('funil')">Funil</button>
           <button id="segTab" onclick="viewOpp('tab')">Tabela</button>
         </div>
+        <a class="btn primary" id="btnNovaOpp" href="oportunidade.html" style="margin-left:10px;display:none">+&nbsp; Nova</a>
       </div>
 
       <div id="vFunil" class="kanban"></div>
@@ -226,7 +280,7 @@
       var bn = document.getElementById('btnNovaOpp');
       if (bn) bn.href = 'oportunidade.html?proj=' + PROJ.id;
       var bc = document.getElementById('btnCustos');
-      if (bc) bc.onclick = function(){ CT.open(PROJ.id, function(){ if(typeof render==='function') render(); }); };
+      if (bc) bc.onclick = function(){ fecharMais(); CT.open(PROJ.id, function(){ if(typeof render==='function') render(); }); };
     }
   })();
 
@@ -249,6 +303,36 @@
     return (n||'').trim();
   }
   function normResp(r){ r=(r||'').trim(); if(!r || /^você/i.test(r)){ return meuNome() || (r||'—'); } return r; }
+
+  // menu "Mais" (agrupa impressões, custos e visitas)
+  function toggleMais(e){ if(e){ e.stopPropagation(); } var m=document.getElementById('maisMenu'); if(m){ m.classList.toggle('open'); if(m.classList.contains('open')) aplicarPermLucro(); } }
+  // "Imprimir Lucro": só administradores. Esconde o item para não-admin quando as permissões já carregaram.
+  function aplicarPermLucro(){ var el=document.getElementById('miLucro'); if(!el) return; el.style.display = (window.__mabePerms && !window.__mabePerms.admin) ? 'none' : ''; }
+  function fecharMais(){ var m=document.getElementById('maisMenu'); if(m) m.classList.remove('open'); }
+  document.addEventListener('click', function(e){ var w = e.target.closest && e.target.closest('.mais-wrap'); if(!w) fecharMais(); });
+
+  // localização clicável → Maps / Waze (rota "como chegar")
+  function enderecoProjeto(){
+    var p = PROJ || {}; var partes = [];
+    if (p.logradouro) partes.push(p.logradouro + (p.numero ? ', ' + p.numero : ''));
+    if (p.bairro) partes.push(p.bairro);
+    if (p.cidade && p.cidade !== '—') partes.push(p.cidade);
+    if (p.uf) partes.push(p.uf);
+    if (p.cep) partes.push(p.cep);
+    return partes.join(', ');
+  }
+  function abrirLocal(e){
+    if (e){ e.stopPropagation(); }
+    var end = enderecoProjeto();
+    var pop = document.getElementById('locPop'); if (!pop) return;
+    if (!end){ return; }   // sem endereço: não abre
+    var q = encodeURIComponent(end + ', Brasil');
+    var maps = document.getElementById('locMaps'); if (maps) maps.href = 'https://www.google.com/maps/dir/?api=1&destination=' + q;
+    var waze = document.getElementById('locWaze'); if (waze) waze.href = 'https://waze.com/ul?q=' + q + '&navigate=yes';
+    pop.classList.toggle('open');
+  }
+  function fecharLocal(){ var p=document.getElementById('locPop'); if(p) p.classList.remove('open'); }
+  document.addEventListener('click', function(e){ var w = e.target.closest && e.target.closest('.loc-cell'); if(!w) fecharLocal(); });
 
   // cor pela probabilidade de fechamento: 0% = vermelho (perder), 100% = verde (fechar)
   function probColor(p){
@@ -283,7 +367,8 @@
           '<div class="om"><span class="ov num">' + brl(o.val) + '</span>' + trail + '</div></div>';
       }).join('');
       return '<div class="kcol" data-stage="' + s.k + '"><div class="kh"><span class="kt"><span class="dot ' + s.k + '"></span>' + s.l +
-        '</span><span class="kc">' + list.length + '</span></div>' + cards + '<div class="kdrop">soltar aqui</div></div>';
+        '</span><span class="kh-r"><span class="kc">' + list.length + '</span>' +
+        '<a class="kadd" title="Nova oportunidade em ' + s.l + '" href="oportunidade.html?proj=' + PROJ.id + '&et=' + s.k + '">+</a></span></div>' + cards + '<div class="kdrop">soltar aqui</div></div>';
     }).join('');
     document.getElementById('vFunil').innerHTML = html;
 
@@ -426,10 +511,12 @@
   }
 
   function viewOpp(v){
-    document.getElementById('vFunil').style.display = v==='funil'?'grid':'none';
+    document.getElementById('vFunil').style.display = v==='funil'?'':'none';
     document.getElementById('vTab').style.display = v==='tab'?'block':'none';
     document.getElementById('segFunil').classList.toggle('on', v==='funil');
     document.getElementById('segTab').classList.toggle('on', v==='tab');
+    // "+ Nova" só na visão Tabela (no Funil, as colunas já têm o "+")
+    var bn = document.getElementById('btnNovaOpp'); if (bn) bn.style.display = v==='tab' ? '' : 'none';
   }
 
   document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeEdit(); });
@@ -676,6 +763,7 @@
   // ---------- imprimir lucro do projeto ----------
   // Lucro = Valor do projeto + Comissões realizadas (RT de fechadas) − Custos de terceiros
   function imprimirLucro(){
+    if (window.__mabePerms && !window.__mabePerms.admin){ alert('Apenas administradores podem imprimir o lucro.'); return; }
     var valProjeto = (PROJ && PROJ.valor) ? PROJ.valor : 0;
     var comissao = opps.filter(function(o){ return o.et==='win'; }).reduce(function(a,o){ return a + rtv(o); }, 0);
     var custos = (PROJ && Array.isArray(PROJ.custos)) ? PROJ.custos : [];
@@ -804,5 +892,6 @@
 
   render();
 </script>
+<script src="visitas.js?v=202607092004"></script>
 </body>
 </html>

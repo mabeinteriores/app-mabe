@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202607051623"></script>
+<script src="cloud.js?v=202607092000"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nova oportunidade · Gestão Camber</title>
@@ -269,6 +269,17 @@
     }
     sel.addEventListener('change', syncProj);
     if (qProj) syncProj(); else syncProj();
+  })();
+
+  // pré-seleciona a etapa quando vem da coluna do Kanban (?et=)
+  (function initEtapa(){
+    var qEt = new URLSearchParams(location.search).get('et');
+    if (!qEt) return;
+    var opt = document.querySelector('#etapas .opt[data-et="' + qEt + '"]');
+    if (!opt) return;
+    document.querySelectorAll('#etapas .opt').forEach(function(x){ x.classList.remove('on'); });
+    opt.classList.add('on');
+    var mw = document.getElementById('motivoWrap'); if (mw) mw.style.display = qEt === 'lost' ? 'block' : 'none';
   })();
 
   // navega só depois de garantir o envio ao banco (evita perder o registro recém-salvo)

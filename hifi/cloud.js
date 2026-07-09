@@ -13,8 +13,20 @@
   var WORKSPACE = 'mabe';
   var SYNC_RE = /^mabe[-_]/;                 // chaves de dados do app
   var SKIP = { 'mabe-theme': 1 };            // preferências locais (não sincronizam)
-  // NUNCA sincronizar a sessão de login (mabe-auth*) nem chaves de auth — é por usuário e secreto
-  function shouldSync(k) { return SYNC_RE.test(k) && !SKIP[k] && k.indexOf('mabe-auth') !== 0 && k.indexOf('sb-') !== 0; }
+
+  // ============================================================
+  // TRAVA DE SEGURANÇA — o ambiente LOCAL nunca toca a nuvem.
+  // Quando o app roda em localhost / 127.0.0.1 / file:// (preview de
+  // desenvolvimento), desligamos TODA a sincronização com o Supabase:
+  // não lê e não grava nada. Assim, testes de layout jamais alteram os
+  // dados reais de produção. Em produção (domínio real) nada muda.
+  // ============================================================
+  var LOCAL_ONLY = (location.protocol === 'file:') ||
+    /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/i.test(location.hostname);
+
+  // NUNCA sincronizar a sessão de login (mabe-auth*) nem chaves de auth — é por usuário e secreto.
+  // Em modo LOCAL_ONLY, shouldSync sempre retorna false → nada é enviado à nuvem.
+  function shouldSync(k) { return !LOCAL_ONLY && SYNC_RE.test(k) && !SKIP[k] && k.indexOf('mabe-auth') !== 0 && k.indexOf('sb-') !== 0; }
 
   var isChild = !!(window.parent && window.parent !== window); // iframe (indicações)
   var sb = null, ready = false, pending = {}, pushTimer = null, lastStamp = null;
@@ -480,7 +492,17 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { if (!ready && !isChild) overlay(); });
   }
-  loadLib(boot);
+
+  if (LOCAL_ONLY) {
+    // Modo LOCAL: nenhum acesso à nuvem. Revela o app com os dados locais,
+    // sem login e sem sincronização — protege os testes de desenvolvimento.
+    ready = true;                 // impede o overlay de login/spinner
+    revealApp();
+    removeOverlay();
+    try { console.info('%c[Gestão Camber] MODO LOCAL — sincronização com a nuvem DESLIGADA. Dados de teste não afetam a produção.', 'color:#C0653A;font-weight:bold'); } catch (e) {}
+  } else {
+    loadLib(boot);
+  }
 
   // API auxiliar para a UI (ex.: botão Sair)
   window.MabeCloud = {
