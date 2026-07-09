@@ -189,32 +189,49 @@
 
   // ---------- relatório ----------
   function concluidas() { return load().filter(function (x) { return x.out; }).slice().sort(function (a, b) { return a.in - b.in; }); }
+  function mapUrl(l) { return 'https://maps.google.com/?q=' + l.lat + ',' + l.lng; }
+  function fmtDataHora(ts) { return fDataFull(ts) + ' ' + fHora(ts); }
+  function fmtDurLongo(ms) {
+    var min = Math.max(0, Math.round(ms / 60000)), h = Math.floor(min / 60), m = min % 60;
+    if (h === 0) return m + (m === 1 ? ' minuto' : ' minutos');
+    var s = h + (h === 1 ? ' hora' : ' horas');
+    if (m > 0) s += ' e ' + m + (m === 1 ? ' minuto' : ' minutos');
+    return s;
+  }
   function repTexto() {
     var c = concluidas(), prev = prevQtd(), tot = c.reduce(function (a, x) { return a + (x.out - x.in); }, 0);
-    var linhas = c.map(function (x, i) {
-      var locIn = x.loc ? ('\n   📍 Chegada: https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng) : '';
-      var locOut = x.locOut ? ('\n   📍 Saída: https://maps.google.com/?q=' + x.locOut.lat + ',' + x.locOut.lng) : '';
-      var obs = x.obs ? ('\n   „' + x.obs + '“') : '';
-      return (i + 1) + ') ' + x.user + '\n   ' + fDataFull(x.in) + ' · ' + fHora(x.in) + '→' + fHora(x.out) + ' · ' + fmtDur(x.out - x.in) + obs + locIn + locOut;
+    var sep = '━━━━━━━━━━━━━';
+    var blocos = c.map(function (x, i) {
+      return '*Visita ' + (i + 1) + '*\n' +
+        '👤 Colaborador: ' + x.user + '\n' +
+        (x.obs ? ('📝 Motivo: ' + x.obs + '\n') : '') +
+        '🟢 Entrada: ' + fmtDataHora(x.in) + (x.loc ? ('\n📍 Local: ' + mapUrl(x.loc)) : '') + '\n' +
+        '🔴 Saída: ' + fmtDataHora(x.out) + (x.locOut ? ('\n📍 Local: ' + mapUrl(x.locOut)) : '') + '\n' +
+        '⏱️ Duração: ' + fmtDurLongo(x.out - x.in);
     });
-    return '*RELATÓRIO DE VISITAS*\n' + (PROJ ? PROJ.nome : '') + '\n\n' +
-      'Previstas: ' + prev + '  |  Realizadas: ' + c.length + '\n' +
-      'Tempo total em obra: ' + (c.length ? fmtDur(tot) : '0min') + '\n\n' +
-      '*Visitas:*\n' + (linhas.length ? linhas.join('\n') : '(nenhuma)') + '\n\n' +
+    return '📋 *RELATÓRIO DE VISITAS*\n🏗️ ' + (PROJ ? PROJ.nome : '') + '\n\n' +
+      '📊 Previstas: ' + prev + '   ·   Realizadas: ' + c.length + '\n' +
+      '⏱️ Tempo total em obra: ' + (c.length ? fmtDurLongo(tot) : '0 minutos') + '\n' +
+      sep + '\n' +
+      (blocos.length ? blocos.join('\n' + sep + '\n') : '(nenhuma visita registrada)') + '\n' +
+      sep + '\n\n' +
       '_Gerado pelo app Gestão Camber_';
   }
   function repHTML() {
     var c = concluidas(), prev = prevQtd(), tot = c.reduce(function (a, x) { return a + (x.out - x.in); }, 0);
-    var rows = c.map(function (x, i) {
-      var linkIn = x.loc ? ('<a href="https://maps.google.com/?q=' + x.loc.lat + ',' + x.loc.lng + '">chegada</a>') : '';
-      var linkOut = x.locOut ? ('<a href="https://maps.google.com/?q=' + x.locOut.lat + ',' + x.locOut.lng + '">saída</a>') : '';
-      var loc = (linkIn || linkOut) ? [linkIn, linkOut].filter(Boolean).join(' · ') : '—';
-      return '<tr><td>' + (i + 1) + '</td><td>' + esc(x.user) + '</td><td>' + fDataFull(x.in) + '</td><td>' + fHora(x.in) + ' → ' + fHora(x.out) + '</td><td>' + esc(x.obs || '—') + '</td><td>' + loc + '</td><td class="r">' + fmtDur(x.out - x.in) + '</td></tr>';
+    var cards = c.map(function (x, i) {
+      var locIn = x.loc ? (' · <a href="' + mapUrl(x.loc) + '">ver local</a>') : '';
+      var locOut = x.locOut ? (' · <a href="' + mapUrl(x.locOut) + '">ver local</a>') : '';
+      return '<div class="rv">' +
+        '<div class="rv-h"><span class="rv-n">Visita ' + (i + 1) + '</span><span class="rv-d">⏱️ ' + fmtDurLongo(x.out - x.in) + '</span></div>' +
+        '<div class="rv-l"><b>Colaborador:</b> ' + esc(x.user) + (x.obs ? ('&nbsp;&nbsp;·&nbsp;&nbsp;<b>Motivo:</b> ' + esc(x.obs)) : '') + '</div>' +
+        '<div class="rv-l"><span class="rvd g"></span><b>Entrada:</b> ' + fmtDataHora(x.in) + locIn + '</div>' +
+        '<div class="rv-l"><span class="rvd r"></span><b>Saída:</b> ' + fmtDataHora(x.out) + locOut + '</div>' +
+        '</div>';
     }).join('');
     return '<h1>Relatório de Visitas</h1><div class="s">' + esc(PROJ ? PROJ.nome : '') + ' · emitido em ' + fDataFull(Date.now()) + '</div>' +
-      '<div class="k"><div><b>' + prev + '</b><span>Previstas</span></div><div><b>' + c.length + '</b><span>Realizadas</span></div><div><b>' + (c.length ? fmtDur(tot) : '0min') + '</b><span>Tempo total</span></div></div>' +
-      '<table><thead><tr><th>#</th><th>Responsável</th><th>Data</th><th>Entrada → Saída</th><th>Observação</th><th>Local</th><th class="r">Duração</th></tr></thead><tbody>' +
-      (rows || '<tr><td colspan="7">Nenhuma visita registrada.</td></tr>') + '</tbody></table>';
+      '<div class="k"><div><b>' + prev + '</b><span>Previstas</span></div><div><b>' + c.length + '</b><span>Realizadas</span></div><div><b>' + (c.length ? fmtDurLongo(tot) : '0 min') + '</b><span>Tempo total</span></div></div>' +
+      (cards || '<div class="rv">Nenhuma visita registrada.</div>');
   }
   function openReport() {
     document.getElementById('visSheetSub').textContent = PROJ ? PROJ.nome : '';
@@ -282,7 +299,7 @@
     '.vsheet .pv{background:var(--bg);border:1px solid var(--hair);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;white-space:pre-wrap;max-height:180px;overflow:auto;color:var(--ink-2);margin-bottom:14px;font-family:"IBM Plex Mono",monospace}' +
     '.vsheet .acts{display:flex;gap:10px}.vsheet .acts button{flex:1;border:none;border-radius:11px;padding:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;min-height:50px}' +
     '.vsheet .wa{background:#25D366;color:#fff}.vsheet .pdf{background:var(--ink);color:#fff}.vsheet .cx{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:var(--ink-3);cursor:pointer}' +
-    '@media print{body.pv-print *{visibility:hidden!important}body.pv-print #visPrint,body.pv-print #visPrint *{visibility:visible!important}#visPrint{display:none}body.pv-print #visPrint{display:block!important;position:absolute;top:0;left:0;width:100%;padding:24px;color:#000;font-family:Archivo,sans-serif}#visPrint h1{font-size:20px;margin:0 0 2px}#visPrint .s{color:#555;font-size:13px;margin-bottom:16px}#visPrint .k{display:flex;gap:26px;margin-bottom:18px}#visPrint .k b{display:block;font-size:22px}#visPrint .k span{font-size:11px;text-transform:uppercase;color:#777}#visPrint table{width:100%;border-collapse:collapse;font-size:12.5px}#visPrint th,#visPrint td{text-align:left;padding:7px 8px;border-bottom:1px solid #ddd}#visPrint th{font-size:10px;text-transform:uppercase;color:#777}#visPrint td.r,#visPrint th.r{text-align:right}}';
+    '@media print{body.pv-print *{visibility:hidden!important}body.pv-print #visPrint,body.pv-print #visPrint *{visibility:visible!important}#visPrint{display:none}body.pv-print #visPrint{display:block!important;position:absolute;top:0;left:0;width:100%;padding:24px;color:#111;font-family:Archivo,sans-serif}#visPrint h1{font-size:22px;margin:0 0 2px}#visPrint .s{color:#666;font-size:13px;margin-bottom:18px}#visPrint .k{display:flex;gap:26px;margin-bottom:20px}#visPrint .k b{display:block;font-size:22px}#visPrint .k span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888}#visPrint .rv{border:1px solid #e2ddd2;border-radius:10px;padding:12px 15px;margin-bottom:10px;page-break-inside:avoid}#visPrint .rv-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #eee}#visPrint .rv-n{font-weight:700;font-size:14px}#visPrint .rv-d{font-size:12.5px;color:#a44e29;font-weight:700}#visPrint .rv-l{font-size:13px;margin:5px 0;color:#333}#visPrint .rv-l b{color:#111}#visPrint .rvd{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}#visPrint .rvd.g{background:#5d7e49}#visPrint .rvd.r{background:#b1503f}#visPrint a{color:#1a56b3;text-decoration:underline}}';
   document.head.appendChild(css);
 
   // ---------- monta gaveta + sheet do relatório (dentro de #app p/ herdar as cores) ----------
