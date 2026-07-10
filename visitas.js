@@ -6,7 +6,11 @@
 // A meta "visitas previstas" fica no próprio projeto (PROJ.visitasPrev).
 // =====================================================================
 (function () {
-  if (typeof projId === 'undefined' || projId == null) return;
+  // Só aborta se a página nem tem contexto de projeto (projId não declarado).
+  // Se projId está declarado mas ainda null (dados chegando da nuvem), inicializa
+  // mesmo assim: as funções leem projId de forma tardia e o relatório passa a
+  // funcionar assim que o projeto carrega — sem "Visitas is not defined".
+  if (typeof projId === 'undefined') return;
 
   var LIMITE_ABERTA_MS = 6 * 3600000; // aviso de check-out esquecido: 6h
   var mount = null;                    // corpo da gaveta (definido na montagem)
@@ -299,6 +303,7 @@
     '.vsheet .pv{background:var(--bg);border:1px solid var(--hair);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;white-space:pre-wrap;max-height:180px;overflow:auto;color:var(--ink-2);margin-bottom:14px;font-family:"IBM Plex Mono",monospace}' +
     '.vsheet .acts{display:flex;gap:10px}.vsheet .acts button{flex:1;border:none;border-radius:11px;padding:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;min-height:50px}' +
     '.vsheet .wa{background:#25D366;color:#fff}.vsheet .pdf{background:var(--ink);color:#fff}.vsheet .cx{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:var(--ink-3);cursor:pointer}' +
+    '#visPrint{display:none}' +
     '@media print{body.pv-print *{visibility:hidden!important}body.pv-print #visPrint,body.pv-print #visPrint *{visibility:visible!important}#visPrint{display:none}body.pv-print #visPrint{display:block!important;position:absolute;top:0;left:0;width:100%;padding:24px;color:#111;font-family:Archivo,sans-serif}#visPrint h1{font-size:22px;margin:0 0 2px}#visPrint .s{color:#666;font-size:13px;margin-bottom:18px}#visPrint .k{display:flex;gap:26px;margin-bottom:20px}#visPrint .k b{display:block;font-size:22px}#visPrint .k span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888}#visPrint .rv{border:1px solid #e2ddd2;border-radius:10px;padding:12px 15px;margin-bottom:10px;page-break-inside:avoid}#visPrint .rv-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #eee}#visPrint .rv-n{font-weight:700;font-size:14px}#visPrint .rv-d{font-size:12.5px;color:#a44e29;font-weight:700}#visPrint .rv-l{font-size:13px;margin:5px 0;color:#333}#visPrint .rv-l b{color:#111}#visPrint .rvd{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}#visPrint .rvd.g{background:#5d7e49}#visPrint .rvd.r{background:#b1503f}#visPrint a{color:#1a56b3;text-decoration:underline}}';
   document.head.appendChild(css);
 
