@@ -21,6 +21,12 @@
   #app .kanban .kh-r { display: flex; align-items: center; gap: 6px; }
   #app .kanban .kadd { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: var(--surface); border: 1px solid var(--hair-2); color: var(--ink-2); font-size: 15px; font-weight: 700; text-decoration: none; line-height: 1; flex: 0 0 auto; }
   #app .kanban .kadd:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  /* ---- selo de data prevista de fechamento ---- */
+  #app .prazo-badge { display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 9px; line-height: 1; white-space: nowrap; }
+  #app .prazo-badge.hoje { background: #fff4d6; color: #8a6100; border: 1px solid #f0c44c; }
+  #app .prazo-badge.atrasada { background: var(--lost-soft, #fde8e8); color: var(--lost, #c0392b); border: 1px solid var(--lost, #e07a7a); }
+  #app .prazo-badge.fut { background: var(--surface); color: var(--ink-2); border: 1px solid var(--hair-2); }
+  #app .field .prazo-hint-prop { display: none; margin-top: 6px; font-size: 11.5px; color: #8a6100; background: #fff4d6; border: 1px solid #f0c44c; border-radius: 8px; padding: 6px 9px; }
   /* ---- menu "Mais" (agrupa impressões, custos e visitas) ---- */
   .mais-wrap { position: relative; }
   .mais-badge { width: 8px; height: 8px; border-radius: 50%; background: var(--win); display: inline-block; margin-left: 4px; vertical-align: middle; }
@@ -182,6 +188,12 @@
           <span class="opt" data-et="lost">Perdido</span>
         </div>
         <span class="hint">mude aqui para mover a oportunidade no funil</span>
+      </div>
+
+      <div class="field" id="dwPrazoWrap">
+        <label>Data prevista de fechamento</label>
+        <input class="inp" type="date" id="dwPrazo">
+        <div class="prazo-hint-prop" id="dwPrazoHint">📌 Na etapa <b>Proposta enviada</b>, no dia dessa data às 09:00 é enviado um e-mail avisando que a proposta tem previsão de fechamento hoje.</div>
       </div>
 
       <div class="field" id="dwMotivoWrap" style="display:none;background:var(--lost-soft);border:1px solid var(--lost);border-radius:12px;padding:12px 14px;">
@@ -350,6 +362,19 @@
     };
   }
 
+  // ---- data prevista de fechamento ----
+  function hojeStr(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function diasEntre(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000); }
+  function fmtDataBR(s){ if(!s) return ''; var p=s.split('-'); return p[2]+'/'+p[1]; }
+  function prazoBadgeHtml(o){
+    if (!o.prazo || o.et==='win' || o.et==='lost') return '';
+    var hoje = hojeStr();
+    if (o.prazo < hoje){ var d = diasEntre(o.prazo, hoje); return '<div><span class="prazo-badge atrasada">⏰ atrasada ' + d + (d===1?' dia':' dias') + '</span></div>'; }
+    if (o.prazo === hoje){ return '<div><span class="prazo-badge hoje">🔔 fecha hoje</span></div>'; }
+    var dd = diasEntre(hoje, o.prazo);
+    return '<div><span class="prazo-badge fut">📅 ' + fmtDataBR(o.prazo) + (dd<=7? ' · faltam '+dd+(dd===1?' dia':' dias') : '') + '</span></div>';
+  }
+
   function render(){
     // kanban
     var html = STAGES.map(function(s){
@@ -364,7 +389,7 @@
           '<button class="opp-move" title="Mover para outra etapa" onclick="event.stopPropagation();abrirMover(event,' + o.id + ')">⇄</button>' +
           '<span class="opp-prob" title="Probabilidade de fechamento" style="position:absolute;top:7px;left:8px;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:11px;border:1px solid ' + pc.bd + ';background:' + pc.bg + ';color:' + pc.fg + '">' + (parseInt(o.prob,10)||0) + '%</span>' +
           '<div class="ot">' + esc(o.serv) + '</div><div class="of">' + esc(o.forn) + '</div>' +
-          '<div class="om"><span class="ov num">' + brl(o.val) + '</span>' + trail + '</div></div>';
+          '<div class="om"><span class="ov num">' + brl(o.val) + '</span>' + trail + '</div>' + prazoBadgeHtml(o) + '</div>';
       }).join('');
       return '<div class="kcol" data-stage="' + s.k + '"><div class="kh"><span class="kt"><span class="dot ' + s.k + '"></span>' + s.l +
         '</span><span class="kh-r"><span class="kc">' + list.length + '</span>' +
@@ -423,6 +448,7 @@
     var prevK = prev ? prev.dataset.et : null;
     document.querySelectorAll('#dwEtapas .opt').forEach(function(o){ o.classList.toggle('on', o.dataset.et===k); });
     document.getElementById('dwMotivoWrap').style.display = k==='lost' ? 'block' : 'none';
+    var ph = document.getElementById('dwPrazoHint'); if (ph) ph.style.display = k==='prop' ? 'block' : 'none';
     var probEl = document.getElementById('dwProb'), lab = document.getElementById('dwProbLab');
     if (k==='win'){ probEl.value = 100; lab.textContent = '100%'; }
     else if (prevK==='win' && k!=='win' && k!=='lost'){
@@ -456,7 +482,7 @@
   function openEdit(id){
     editing = id;
     var isNew = id === null;
-    var o = isNew ? { serv:'', forn:'a definir', resp:(meuNome()||'Você (Arq.)'), val:'', rt:'', rtTipo:'pct', prob:50, et:'prospec', motivo:'Preço acima do concorrente', obs:'' }
+    var o = isNew ? { serv:'', forn:'a definir', resp:(meuNome()||'Você (Arq.)'), val:'', rt:'', rtTipo:'pct', prob:50, et:'prospec', motivo:'Preço acima do concorrente', obs:'', prazo:'' }
                   : opps.find(function(x){ return x.id===id; });
     document.getElementById('dwTitle').textContent = isNew ? 'Nova oportunidade' : 'Editar oportunidade';
     document.getElementById('dwServ').value = o.serv;
@@ -469,6 +495,7 @@
     document.getElementById('dwProb').value = o.prob; document.getElementById('dwProbLab').textContent = o.prob + '%';
     document.getElementById('dwMotivo').value = o.motivo || 'Preço acima do concorrente';
     document.getElementById('dwObs').value = o.obs || '';
+    document.getElementById('dwPrazo').value = o.prazo || '';
     setEtapa(o.et);
     dwCalc();
     document.getElementById('dwDel').style.display = isNew ? 'none' : '';
@@ -492,7 +519,8 @@
       prob: parseInt(document.getElementById('dwProb').value,10),
       et: et,
       motivo: et==='lost' ? document.getElementById('dwMotivo').value : undefined,
-      obs: document.getElementById('dwObs').value.trim()
+      obs: document.getElementById('dwObs').value.trim(),
+      prazo: document.getElementById('dwPrazo').value || ''
     };
   }
   function saveOpp(){

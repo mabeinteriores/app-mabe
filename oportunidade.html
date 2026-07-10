@@ -91,6 +91,10 @@
               <label style="color:var(--lost)">Motivo da perda <span class="req">*</span></label>
               <select class="sel" id="wMotivo"><option>Preço acima do concorrente</option><option>Prazo de entrega</option><option>Cliente desistiu</option><option>Escolheu concorrente</option><option>Sem retorno</option></select>
             </div>
+            <div class="field full"><label>Data prevista de fechamento</label>
+              <input class="inp" type="date" id="wPrazo">
+              <div id="wPrazoHint" style="display:none;margin-top:6px;font-size:11.5px;color:#8a6100;background:#fff4d6;border:1px solid #f0c44c;border-radius:8px;padding:6px 9px;">📌 Na etapa <b>Proposta enviada</b>, no dia dessa data às 09:00 é enviado um e-mail avisando que a proposta tem previsão de fechamento hoje.</div>
+            </div>
             <div class="form-grid">
               <div class="field full"><label>Probabilidade de fechamento — <b id="probLab">70%</b></label>
                 <input type="range" id="prob" min="0" max="100" value="70" style="width:100%;accent-color:var(--accent)"></div>
@@ -179,6 +183,7 @@
       document.querySelectorAll('#etapas .opt').forEach(function(x){ x.classList.remove('on'); });
       o.classList.add('on');
       document.getElementById('motivoWrap').style.display = o.dataset.et==='lost' ? 'block' : 'none';
+      document.getElementById('wPrazoHint').style.display = o.dataset.et==='prop' ? 'block' : 'none';
     });
   });
   // probabilidade
@@ -280,6 +285,7 @@
     document.querySelectorAll('#etapas .opt').forEach(function(x){ x.classList.remove('on'); });
     opt.classList.add('on');
     var mw = document.getElementById('motivoWrap'); if (mw) mw.style.display = qEt === 'lost' ? 'block' : 'none';
+    var ph = document.getElementById('wPrazoHint'); if (ph) ph.style.display = qEt === 'prop' ? 'block' : 'none';
   })();
 
   // navega só depois de garantir o envio ao banco (evita perder o registro recém-salvo)
@@ -309,7 +315,9 @@
       et: et,
       motivo: et==='lost' ? document.getElementById('wMotivo').value : undefined,
       obs: document.getElementById('wObs').value.trim(),
-      titulo: document.getElementById('wTitulo').value.trim()
+      titulo: document.getElementById('wTitulo').value.trim(),
+      prazo: document.getElementById('wPrazo').value || '',
+      dt: (function(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })(new Date())
     };
     if (!opp.val){ alert('Informe o valor do serviço.'); cur = 1; render(); return; }
     var list = MabeDB.loadOpps(projId);
