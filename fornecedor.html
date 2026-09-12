@@ -329,6 +329,46 @@
     else { addContato({}); }
   })();
 
+  // modo "criar a partir de convite": abre o cadastro completo JA PREENCHIDO com o que o fornecedor enviou pelo link
+  var conviteToken = new URLSearchParams(location.search).get('convite');
+  if (conviteToken){
+    (function(){
+      var t=0, iv=setInterval(function(){
+        t++;
+        var sb=null; try{ sb = window.MabeCloud && MabeCloud.client && MabeCloud.client(); }catch(e){}
+        if(sb){ clearInterval(iv); prefillConvite(sb); }
+        else if(t>25){ clearInterval(iv); }
+      }, 400);
+    })();
+  }
+  async function prefillConvite(sb){
+    try{
+      var r = await sb.from('fornecedor_convites').select('dados,status').eq('token', conviteToken).single();
+      if(r.error || !r.data){ return; }
+      if(r.data.status==='cadastrado'){ alert('Este convite já virou fornecedor.'); return; }
+      var d = r.data.dados || {};
+      try{
+        document.querySelector('.page-h .crumb').innerHTML = '<a href="fornecedores.html" style="color:var(--ink-3)">Fornecedores</a> › Novo fornecedor (do link)';
+        document.querySelector('.page-h h1').textContent = 'Novo fornecedor (preenchido pelo fornecedor)';
+      }catch(e){}
+      var opt = document.querySelector('#tipoPessoa .opt[data-t="pj"]'); if(opt) opt.click();
+      fsetV('fRazao', d.nome||''); fsetV('fFant', d.fantasia||''); fsetV('doc', d.doc||'');
+      if(d.categoria){
+        try{ setCats([d.categoria]); }catch(e){}
+        if(!document.querySelector('#catServ .opt.on')){
+          var grp=document.getElementById('catServ');
+          if(grp){ var chip=document.createElement('span'); chip.className='opt on'; chip.setAttribute('data-cat', d.categoria); chip.textContent=d.categoria; grp.appendChild(chip); }
+        }
+      }
+      var c0=document.querySelector('#ctWrap .ct-bloco');
+      if(c0){
+        var n=c0.querySelector('.ct-nome');  if(n)  n.value  = d.contato||'';
+        var tl=c0.querySelector('.ct-tel');  if(tl) tl.value = d.tel||'';
+        var em=c0.querySelector('.ct-email');if(em) em.value = d.email||'';
+      }
+    }catch(e){}
+  }
+
   // navega só depois de garantir o envio ao banco (evita perder cadastro recém-salvo)
   function irPara(url){
     var done=false, go=function(){ if(done) return; done=true; location.href=url; };
@@ -361,6 +401,16 @@
     };
     if(editId && MabeDB.updateFornecedor){ MabeDB.updateFornecedor(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); MabeDB.addFornecedor(dados); }
+    // veio de um convite? marca como "cadastrado" (some o botao Criar fornecedor) antes de navegar
+    if(conviteToken){
+      var sb=null; try{ sb = window.MabeCloud && MabeCloud.client && MabeCloud.client(); }catch(e){}
+      if(sb){
+        var done=false, go=function(){ if(done) return; done=true; irPara('fornecedores.html'); };
+        try{ sb.from('fornecedor_convites').update({status:'cadastrado'}).eq('token', conviteToken).then(go, go); }catch(e){ go(); }
+        setTimeout(go, 2500);
+        return;
+      }
+    }
     irPara('fornecedores.html');
   }
 

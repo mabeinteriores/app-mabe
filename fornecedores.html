@@ -45,7 +45,7 @@
       <div class="panel" id="convPanel" style="display:none">
         <div class="panel-h"><h3>Convites de fornecedor</h3><span class="meta" id="convMeta"></span></div>
         <table class="tbl">
-          <thead><tr><th>Referência</th><th>Criado</th><th>Status</th></tr></thead>
+          <thead><tr><th>Referência</th><th>Criado</th><th>Status</th><th class="r"></th></tr></thead>
           <tbody id="convBody"></tbody>
         </table>
       </div>
@@ -276,19 +276,27 @@
   async function carregarConvites(){
     var sb=_sbc(); if(!sb) return;
     try{
-      var r = await sb.from('fornecedor_convites').select('nome_hint,status,created_at').order('created_at',{ascending:false}).limit(40);
+      var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').order('created_at',{ascending:false}).limit(40);
       if(r.error || !r.data) return;
       var rows=r.data, panel=document.getElementById('convPanel');
       if(!rows.length){ panel.style.display='none'; return; }
       panel.style.display='';
-      var pend = rows.filter(function(c){ return c.status!=='respondido'; }).length;
-      document.getElementById('convMeta').textContent = pend + ' pendente' + (pend===1?'':'s') + ' · ' + rows.length + ' no total';
+      var aguard = rows.filter(function(c){ return c.status==='pendente'; }).length;
+      var criar  = rows.filter(function(c){ return c.status==='respondido'; }).length;
+      document.getElementById('convMeta').textContent =
+        (criar ? (criar + ' para criar · ') : '') + aguard + ' aguardando · ' + rows.length + ' no total';
       document.getElementById('convBody').innerHTML = rows.map(function(c){
         var dt = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') : '—';
-        var badge = c.status==='respondido'
-          ? '<span class="chip win"><span class="d"></span>Respondido</span>'
-          : '<span class="chip negoc"><span class="d"></span>Pendente</span>';
-        return '<tr><td>'+(c.nome_hint||'—')+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td></tr>';
+        var badge, acao='';
+        if(c.status==='respondido'){
+          badge='<span class="chip win"><span class="d"></span>Respondido</span>';
+          acao='<a class="btn primary sm" href="fornecedor.html?convite='+encodeURIComponent(c.token)+'">Criar fornecedor</a>';
+        } else if(c.status==='cadastrado'){
+          badge='<span class="chip" style="opacity:.65"><span class="d"></span>Cadastrado</span>';
+        } else {
+          badge='<span class="chip negoc"><span class="d"></span>Pendente</span>';
+        }
+        return '<tr><td>'+(c.nome_hint||'—')+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
       }).join('');
     }catch(e){}
   }
