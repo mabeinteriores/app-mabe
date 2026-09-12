@@ -84,3 +84,80 @@
     this.innerHTML = now === 'dark' ? sun : moon;
   });
 })();
+
+// ============================================================
+// Confirmação de exclusão com SENHA (reutilizável em todas as telas).
+// window.pedirSenhaExcluir(nomeItem, onConfirmado): mostra um modal, re-verifica
+// a senha de login do usuário (Supabase signInWithPassword) e, se correta,
+// chama onConfirmado(). Usado para excluir fornecedor e cliente.
+// ============================================================
+(function(){
+  var CB = null;
+  function build(){
+    if (document.getElementById('senhaExclModal')) return;
+    var st = document.createElement('style');
+    st.textContent =
+      '#senhaExclModal{display:none;position:fixed;inset:0;z-index:2147483300;background:rgba(20,16,12,.5);align-items:center;justify-content:center}' +
+      '#senhaExclModal.open{display:flex}' +
+      '#senhaExclModal .sxcard{background:#fff;border-radius:16px;padding:22px;width:min(420px,92vw);box-shadow:0 22px 60px rgba(0,0,0,.32)}' +
+      '#senhaExclModal h3{margin:0 0 6px;font-size:18px;font-weight:700;color:#b3402a}' +
+      '#senhaExclModal p{margin:0 0 14px;font-size:13.5px;color:#555;line-height:1.45}' +
+      '#senhaExclModal p b{color:#2a2620}' +
+      '#senhaExclModal input{width:100%;padding:11px 13px;border:1px solid #e0d8cb;border-radius:10px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none}' +
+      '#senhaExclModal input:focus{border-color:#b3402a}' +
+      '#senhaExclModal .sxerr{color:#b3402a;font-size:12.5px;min-height:16px;margin:8px 2px 0}' +
+      '#senhaExclModal .sxbtns{display:flex;justify-content:flex-end;gap:9px;margin-top:8px}' +
+      '#senhaExclModal .sxbtn{padding:9px 15px;border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid #e0d8cb;background:#fff;color:#555}' +
+      '#senhaExclModal .sxbtn.danger{background:#b3402a;border-color:#b3402a;color:#fff}' +
+      '#senhaExclModal .sxbtn.danger:disabled{opacity:.55;cursor:default}';
+    document.head.appendChild(st);
+    var m = document.createElement('div'); m.id = 'senhaExclModal';
+    m.innerHTML =
+      '<div class="sxcard">' +
+        '<h3>Confirmar exclusão</h3>' +
+        '<p>Esta ação é <b>permanente</b>. Para excluir <b id="sxNome">este item</b>, digite a sua senha.</p>' +
+        '<input type="password" id="sxPwd" placeholder="Sua senha" autocomplete="current-password">' +
+        '<div class="sxerr" id="sxErr"></div>' +
+        '<div class="sxbtns">' +
+          '<button class="sxbtn" id="sxCancel" type="button">Cancelar</button>' +
+          '<button class="sxbtn danger" id="sxConfirm" type="button">Excluir definitivamente</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(m);
+    function close(){ m.classList.remove('open'); CB = null; }
+    function confirmar(){
+      var pwd = document.getElementById('sxPwd').value;
+      var errEl = document.getElementById('sxErr');
+      var btn = document.getElementById('sxConfirm');
+      if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
+      var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
+      if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
+      btn.disabled = true; errEl.textContent = 'Verificando senha…';
+      c.auth.getUser().then(function(ures){
+        var email = ures && ures.data && ures.data.user && ures.data.user.email;
+        if(!email){ errEl.textContent = 'Sessão inválida. Faça login de novo.'; btn.disabled=false; return; }
+        c.auth.signInWithPassword({ email: email, password: pwd }).then(function(res){
+          if(res.error){ errEl.textContent = 'Senha incorreta. Tente novamente.'; btn.disabled=false; return; }
+          errEl.textContent = 'Excluindo…';
+          var cb = CB; close();
+          try{ if(typeof cb === 'function') cb(); }catch(e){}
+        }, function(){ errEl.textContent = 'Não foi possível verificar a senha.'; btn.disabled=false; });
+      }, function(){ errEl.textContent = 'Sessão inválida.'; btn.disabled=false; });
+    }
+    document.getElementById('sxCancel').addEventListener('click', close);
+    document.getElementById('sxConfirm').addEventListener('click', confirmar);
+    m.addEventListener('click', function(e){ if(e.target===m) close(); });
+    document.getElementById('sxPwd').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); confirmar(); } });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && m.classList.contains('open')) close(); });
+  }
+  window.pedirSenhaExcluir = function(nome, onOk){
+    build();
+    CB = onOk;
+    document.getElementById('sxNome').textContent = nome || 'este item';
+    document.getElementById('sxPwd').value = '';
+    document.getElementById('sxErr').textContent = '';
+    document.getElementById('sxConfirm').disabled = false;
+    document.getElementById('senhaExclModal').classList.add('open');
+    setTimeout(function(){ try{ document.getElementById('sxPwd').focus(); }catch(e){} }, 60);
+  };
+})();

@@ -106,6 +106,10 @@
       if (c) { Object.assign(c, patch); this.saveClientes(arr); }
       return c;
     },
+    deleteCliente: function(id){
+      var arr = this.loadClientes().filter(function(x){ return String(x.id)!==String(id); });
+      this.saveClientes(arr);
+    },
     loadFornecedores: function(){ return read('mabe-fornecedores-v1', []); },
     saveFornecedores: function(arr){ write('mabe-fornecedores-v1', arr); },
     // Configuração: lê uma lista de cadastro salva (responsaveis, servicos, etapas, motivos, pagamentos)

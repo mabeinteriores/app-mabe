@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202607092000"></script>
+<script src="cloud.js?v=202609122046"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de cliente · Gestão Camber</title>
@@ -19,6 +19,7 @@
       <div class="page-h">
         <div><div class="crumb"><a href="clientes.html" style="color:var(--ink-3)">Clientes</a> › Novo cliente</div><h1>Cadastro de cliente</h1></div>
         <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn" id="btnExcluirCli" style="display:none;color:var(--lost);border-color:var(--lost)" onclick="excluirCliente()">🗑&nbsp; Excluir</button>
           <a class="btn ghost" href="clientes.html">Cancelar</a>
           <button class="btn primary" onclick="salvar()">Salvar cliente</button>
         </div>
@@ -100,8 +101,8 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202607051623"></script>
-<script src="shell.js?v=202607051623"></script>
+<script src="projects-data.js?v=202609122046"></script>
+<script src="shell.js?v=202609122046"></script>
 <script>
   // PF/PJ alterna rótulos
   document.querySelectorAll('#tipoPessoa .opt').forEach(function(o){
@@ -267,6 +268,7 @@
     if(!c){ editId=null; return; }
     document.querySelector('.page-h .crumb').innerHTML = '<a href="clientes.html" style="color:var(--ink-3)">Clientes</a> › Editar cliente';
     document.querySelector('.page-h h1').textContent = 'Editar cliente';
+    var _bx = document.getElementById('btnExcluirCli'); if(_bx) _bx.style.display = '';
     // PF/PJ
     var tp = c.tipoPessoa==='pj' ? 'pj' : 'pf';
     var opt = document.querySelector('#tipoPessoa .opt[data-t="'+tp+'"]'); if(opt) opt.click();
@@ -327,6 +329,19 @@
     if(editId && MabeDB.updateCliente){ MabeDB.updateCliente(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); MabeDB.addCliente(dados); }
     irPara('clientes.html');
+  }
+
+  // excluir cliente (exige senha do usuário logado)
+  function excluirCliente(){
+    if(!editId) return;
+    var c = MabeDB.getCliente ? MabeDB.getCliente(editId) : null;
+    var nome = (c && c.nome) || 'este cliente';
+    function fazer(){ if(MabeDB.deleteCliente) MabeDB.deleteCliente(editId); irPara('clientes.html'); }
+    if(typeof window.pedirSenhaExcluir === 'function'){
+      window.pedirSenhaExcluir('o cliente "'+nome+'"', fazer);
+    } else {
+      if(confirm('Excluir o cliente "'+nome+'"? Esta ação é permanente.')) fazer();
+    }
   }
 </script>
 </body>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202607092000"></script>
+<script src="cloud.js?v=202609122046"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fornecedores &amp; RT · Gestão Camber</title>
@@ -100,8 +100,8 @@
   </aside>
 </div>
 
-<script src="projects-data.js?v=202607051623"></script>
-<script src="shell.js?v=202607051623"></script>
+<script src="projects-data.js?v=202609122046"></script>
+<script src="shell.js?v=202609122046"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
   function inicial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
@@ -226,13 +226,20 @@
   // remove o fornecedor: as oportunidades ficam com "a definir"
   function excluirForn(){
     if (!curForn) return;
-    if (!confirm('Excluir o fornecedor "' + curForn + '"?\nAs negociações ficarão com fornecedor "a definir" (não são apagadas).')) return;
-    MabeDB.loadProjects().forEach(function(p){
-      var arr = MabeDB.loadOpps(p.id), ch=false;
-      arr.forEach(function(o){ if ((o.forn||'').trim()===curForn){ o.forn='a definir'; ch=true; } });
-      if (ch) MabeDB.saveOpps(p.id, arr);
-    });
-    fecharForn(); render();
+    var nome = curForn;
+    function fazer(){
+      MabeDB.loadProjects().forEach(function(p){
+        var arr = MabeDB.loadOpps(p.id), ch=false;
+        arr.forEach(function(o){ if ((o.forn||'').trim()===nome){ o.forn='a definir'; ch=true; } });
+        if (ch) MabeDB.saveOpps(p.id, arr);
+      });
+      fecharForn(); render();
+    }
+    if(typeof window.pedirSenhaExcluir === 'function'){
+      window.pedirSenhaExcluir('o fornecedor "'+nome+'" (as negociações ficam com "a definir")', fazer);
+    } else {
+      if(confirm('Excluir o fornecedor "'+nome+'"?')) fazer();
+    }
   }
   document.addEventListener('keydown', function(e){ if (e.key==='Escape') fecharForn(); });
 
