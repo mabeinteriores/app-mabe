@@ -230,6 +230,17 @@
     }).join('');
 
     // ranking de fornecedores (do período) — clicável
+    // mapa razão social -> nome fantasia (o ranking exibe a FANTASIA)
+    var FORN_FANT = {};
+    try {
+      (MabeDB.loadFornecedores ? MabeDB.loadFornecedores() : []).forEach(function(fo){
+        var razao = String(fo.nome || '').trim();
+        var fant  = String(fo.fantasia || '').trim();
+        if (razao) FORN_FANT[razao.toLowerCase()] = fant || razao;   // sem fantasia -> mantém razão
+        if (fant)  FORN_FANT[fant.toLowerCase()]  = fant;            // caso a oportunidade já guarde a fantasia
+      });
+    } catch(e){}
+    function fornExib(n){ return FORN_FANT[String(n || '').trim().toLowerCase()] || n; }
     var forn = {};
     ALLO.forEach(function(o){
       var f = forn[o.forn] || (forn[o.forn] = { nome:o.forn, serv:o.serv, fech:0, rt:0, n:0 });
@@ -239,8 +250,9 @@
     var rank = Object.keys(forn).map(function(k){ return forn[k]; })
       .sort(function(a,b){ return b.fech - a.fech || b.n - a.n; }).slice(0, 6);
     document.getElementById('rankBody').innerHTML = rank.length ? rank.map(function(f){
+      var nm = fornExib(f.nome);
       return '<tr class="click" onclick="filtrarFornecedor(\'' + encodeURIComponent(f.nome) + '\')">' +
-        '<td><div class="who"><span class="sw">' + (f.nome[0]||'?') + '</span>' + f.nome + '</div></td>' +
+        '<td><div class="who"><span class="sw">' + (nm[0]||'?') + '</span>' + nm + '</div></td>' +
         '<td style="color:var(--ink-2)">' + f.serv + '</td>' +
         '<td class="r num">' + (f.fech?fmtMil(f.fech):'—') + '</td>' +
         '<td class="r num rtpill">' + (f.rt?fmtMil(f.rt):'—') + '</td></tr>';
