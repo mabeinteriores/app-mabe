@@ -18,7 +18,10 @@
 
       <div class="page-h">
         <div><div class="crumb">Comissões &amp; parceiros</div><h1>Fornecedores &amp; RT</h1></div>
-        <a class="btn primary" href="fornecedor.html">+&nbsp; Novo fornecedor</a>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost" onclick="abrirGerarLink()">🔗&nbsp; Gerar link</button>
+          <a class="btn primary" href="fornecedor.html">+&nbsp; Novo fornecedor</a>
+        </div>
       </div>
 
       <div class="kpis">
@@ -39,6 +42,33 @@
         </table>
       </div>
 
+      <div class="panel" id="convPanel" style="display:none">
+        <div class="panel-h"><h3>Convites de fornecedor</h3><span class="meta" id="convMeta"></span></div>
+        <table class="tbl">
+          <thead><tr><th>Referência</th><th>Criado</th><th>Status</th></tr></thead>
+          <tbody id="convBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: gerar link para o fornecedor preencher -->
+  <div class="scrim" id="linkScrim" onclick="fecharGerarLink()" style="display:none"></div>
+  <div id="linkModal" style="display:none;position:fixed;z-index:60;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--surface,#fff);border:1px solid var(--line,#e5ddd0);border-radius:16px;padding:22px 22px 20px;width:min(480px,92vw);box-shadow:0 24px 60px rgba(0,0,0,.28)">
+    <h3 style="margin:0 0 4px">Gerar link para o fornecedor</h3>
+    <p style="color:var(--ink-3);font-size:13px;margin:0 0 14px">Crie um link único e envie ao fornecedor (WhatsApp/e-mail). Ele preenche e o cadastro entra sozinho aqui.</p>
+    <label style="font-size:12.5px;font-weight:600;color:var(--ink-2)">Nome do fornecedor (referência, opcional)</label>
+    <input id="lkNome" placeholder="Ex.: Marcenaria do Zé" style="width:100%;box-sizing:border-box;margin-top:5px;padding:10px 12px;border:1px solid var(--line,#e5ddd0);border-radius:9px;font-family:inherit;font-size:14px">
+    <div id="lkStatus" style="font-size:12.5px;color:var(--ink-3);margin-top:8px;min-height:16px"></div>
+    <div id="lkResult" style="display:none;margin-top:6px">
+      <label style="font-size:12.5px;font-weight:600;color:var(--ink-2)">Link (copie e envie ao fornecedor)</label>
+      <input id="lkUrl" readonly onclick="this.select()" style="width:100%;box-sizing:border-box;margin-top:5px;padding:10px 12px;border:1px solid var(--accent,#c0653a);border-radius:9px;font-family:inherit;font-size:12.5px;background:#faf6f2;color:var(--ink)">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn ghost sm" onclick="fecharGerarLink()">Fechar</button>
+      <button class="btn primary sm" id="lkGenBtn" onclick="gerarLink()">Gerar link</button>
+      <button class="btn primary sm" id="lkCopyBtn" onclick="copiarLink()" style="display:none">Copiar link</button>
     </div>
   </div>
 
@@ -207,6 +237,63 @@
   document.addEventListener('keydown', function(e){ if (e.key==='Escape') fecharForn(); });
 
   render();
+
+  // ---------- convites de fornecedor (link de auto-cadastro) ----------
+  function _sbc(){ try{ return (window.MabeCloud && MabeCloud.client && MabeCloud.client()) || null; }catch(e){ return null; } }
+  function abrirGerarLink(){
+    document.getElementById('linkScrim').style.display='block';
+    document.getElementById('linkModal').style.display='block';
+    document.getElementById('lkResult').style.display='none';
+    document.getElementById('lkCopyBtn').style.display='none';
+    document.getElementById('lkGenBtn').style.display='';
+    document.getElementById('lkNome').value='';
+    document.getElementById('lkStatus').textContent='';
+    setTimeout(function(){ try{ document.getElementById('lkNome').focus(); }catch(e){} }, 40);
+  }
+  function fecharGerarLink(){ document.getElementById('linkScrim').style.display='none'; document.getElementById('linkModal').style.display='none'; }
+  async function gerarLink(){
+    var sb=_sbc(); var st=document.getElementById('lkStatus');
+    if(!sb){ st.textContent='⚠️ Disponível só no app publicado (não no preview local).'; return; }
+    st.textContent='Gerando…';
+    try{
+      var prof = window.__mabeProfile || {};
+      var r = await sb.from('fornecedor_convites').insert({ nome_hint:(document.getElementById('lkNome').value||'').trim()||null, created_by:(prof.email||'') }).select('token').single();
+      if(r.error){ st.textContent='Erro: '+r.error.message; return; }
+      document.getElementById('lkUrl').value = location.origin + '/cadastro-fornecedor.html?c=' + r.data.token;
+      document.getElementById('lkResult').style.display='block';
+      document.getElementById('lkGenBtn').style.display='none';
+      document.getElementById('lkCopyBtn').style.display='';
+      st.textContent='✅ Link criado — copie e envie ao fornecedor.';
+      carregarConvites();
+    }catch(e){ st.textContent='Erro ao gerar o link.'; }
+  }
+  function copiarLink(){
+    var i=document.getElementById('lkUrl'); i.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    try{ navigator.clipboard && navigator.clipboard.writeText(i.value); }catch(e){}
+    var b=document.getElementById('lkCopyBtn'); var t=b.textContent; b.textContent='Copiado!'; setTimeout(function(){ b.textContent=t; },1400);
+  }
+  async function carregarConvites(){
+    var sb=_sbc(); if(!sb) return;
+    try{
+      var r = await sb.from('fornecedor_convites').select('nome_hint,status,created_at').order('created_at',{ascending:false}).limit(40);
+      if(r.error || !r.data) return;
+      var rows=r.data, panel=document.getElementById('convPanel');
+      if(!rows.length){ panel.style.display='none'; return; }
+      panel.style.display='';
+      var pend = rows.filter(function(c){ return c.status!=='respondido'; }).length;
+      document.getElementById('convMeta').textContent = pend + ' pendente' + (pend===1?'':'s') + ' · ' + rows.length + ' no total';
+      document.getElementById('convBody').innerHTML = rows.map(function(c){
+        var dt = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') : '—';
+        var badge = c.status==='respondido'
+          ? '<span class="chip win"><span class="d"></span>Respondido</span>'
+          : '<span class="chip negoc"><span class="d"></span>Pendente</span>';
+        return '<tr><td>'+(c.nome_hint||'—')+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td></tr>';
+      }).join('');
+    }catch(e){}
+  }
+  (function(){ var t=0, iv=setInterval(function(){ t++; if(_sbc()){ clearInterval(iv); carregarConvites(); } else if(t>25){ clearInterval(iv); } }, 400); })();
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 </script>
 </body>
 </html>

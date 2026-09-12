@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camber · Cadastro de Fornecedor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --brown:#6A4D2E; --accent:#C0653A; --cream:#F5F0EA; --card:#FFFFFF; --ink:#2A2620; --mut:#8C8475; --line:#E5DDD0; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--cream); color:var(--ink); font-family:Archivo,system-ui,sans-serif; font-size:15px; line-height:1.5; }
+  .wrap{ max-width:560px; margin:0 auto; padding:0 16px 48px; }
+  .top{ background:var(--brown); color:var(--cream); padding:22px 16px 20px; text-align:center; }
+  .logo{ font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:600; letter-spacing:.5px; }
+  .logo-sub{ font-size:10px; letter-spacing:3px; color:#d8c7ac; margin-top:-4px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 20px; margin-top:-14px; box-shadow:0 12px 34px rgba(60,40,20,.08); }
+  h1{ font-size:21px; margin:2px 0 4px; }
+  .lead{ color:var(--mut); font-size:13.5px; margin:0 0 18px; }
+  label{ display:block; font-size:12.5px; font-weight:600; color:var(--brown); margin:14px 0 5px; }
+  .req{ color:var(--accent); }
+  input,select{ width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:15px; color:var(--ink); background:#fff; outline:none; }
+  input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(192,101,58,.12); }
+  .hint{ font-size:11.5px; color:var(--mut); margin-top:4px; }
+  .btn{ width:100%; margin-top:22px; padding:14px; border:none; border-radius:11px; background:var(--accent); color:#fff; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; }
+  .btn:disabled{ opacity:.6; cursor:default; }
+  .sec{ font-size:11px; letter-spacing:1px; color:var(--mut); text-transform:uppercase; margin:22px 0 2px; border-top:1px solid var(--line); padding-top:16px; }
+  .msg{ text-align:center; padding:40px 10px; }
+  .msg .ic{ font-size:46px; }
+  .msg h2{ font-size:22px; margin:12px 0 6px; }
+  .msg p{ color:var(--mut); margin:0; }
+  .foot{ text-align:center; color:var(--mut); font-size:11.5px; margin-top:18px; }
+  [hidden]{ display:none !important; }
+  .err{ background:#fbeae5; color:#a3422f; border:1px solid #f0c9bd; border-radius:10px; padding:10px 12px; font-size:13px; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo">Camber</div>
+  <div class="logo-sub">DESIGN DE INTERIORES</div>
+</div>
+<div class="wrap">
+
+  <!-- carregando -->
+  <div class="card" id="vLoad"><div class="msg"><div class="ic">⏳</div><h2>Carregando…</h2></div></div>
+
+  <!-- link invalido / ja respondido -->
+  <div class="card" id="vInvalid" hidden><div class="msg">
+    <div class="ic">🔗</div><h2 id="invTit">Link inválido</h2><p id="invTxt">Este link não é válido ou já foi utilizado.</p>
+  </div></div>
+
+  <!-- formulario -->
+  <div class="card" id="vForm" hidden>
+    <h1>Cadastro de fornecedor</h1>
+    <p class="lead">Preencha seus dados para fazer parte da nossa rede de parceiros. Leva menos de 2 minutos.</p>
+
+    <div class="sec">Empresa</div>
+    <label>Razão social <span class="req">*</span></label>
+    <input id="fNome" autocomplete="organization" placeholder="Nome da empresa (ex.: Marcenaria do Zé LTDA)">
+    <label>Nome fantasia</label>
+    <input id="fFant" placeholder="Como a empresa é conhecida">
+    <label>CNPJ</label>
+    <input id="fDoc" inputmode="numeric" placeholder="00.000.000/0000-00">
+    <label>Categoria / tipo de serviço <span class="req">*</span></label>
+    <select id="fCat"><option value="">Selecione…</option></select>
+    <input id="fCatOutro" hidden placeholder="Descreva o serviço" style="margin-top:8px">
+
+    <div class="sec">Contato</div>
+    <label>Nome do responsável <span class="req">*</span></label>
+    <input id="fContato" autocomplete="name" placeholder="Com quem falamos">
+    <label>Telefone / WhatsApp <span class="req">*</span></label>
+    <input id="fTel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+    <label>E-mail</label>
+    <input id="fEmail" type="email" autocomplete="email" placeholder="email@empresa.com.br">
+
+    <div class="err" id="formErr" hidden></div>
+    <button class="btn" id="btnEnviar" onclick="enviar()">Enviar cadastro</button>
+    <div class="foot">Seus dados vão direto e com segurança para a equipe Camber.</div>
+  </div>
+
+  <!-- sucesso -->
+  <div class="card" id="vOk" hidden><div class="msg">
+    <div class="ic">✅</div><h2>Cadastro enviado!</h2>
+    <p>Obrigado. Recebemos seus dados e nossa equipe já foi avisada.<br>Em breve entramos em contato.</p>
+  </div></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  var SB_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
+  var SB_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
+  var sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+  var TOKEN = new URLSearchParams(location.search).get('c') || '';
+  function show(id){ ['vLoad','vInvalid','vForm','vOk'].forEach(function(v){ document.getElementById(v).hidden = (v!==id); }); }
+  function invalid(tit, txt){ document.getElementById('invTit').textContent = tit; document.getElementById('invTxt').textContent = txt; show('vInvalid'); }
+
+  async function init(){
+    if(!TOKEN){ invalid('Link inválido','Falta o código do convite no endereço.'); return; }
+    try{
+      var r = await sb.rpc('get_convite_fornecedor', { p_token: TOKEN });
+      var d = r.data || {};
+      if(r.error || d.status==='inexistente'){ invalid('Link inválido','Este link não existe. Confira se copiou o endereço completo.'); return; }
+      if(d.status==='respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
+      // carrega categorias
+      try{
+        var s = await sb.rpc('get_servicos_publico');
+        var cats = Array.isArray(s.data) ? s.data : [];
+        var sel = document.getElementById('fCat');
+        cats.forEach(function(c){ var o=document.createElement('option'); o.textContent=c; o.value=c; sel.appendChild(o); });
+        var out=document.createElement('option'); out.textContent='Outro (descrever)'; out.value='__outro'; sel.appendChild(out);
+      }catch(e){}
+      show('vForm');
+    }catch(e){ invalid('Erro','Não foi possível abrir o cadastro agora. Tente novamente em instantes.'); }
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var sel = document.getElementById('fCat');
+    sel.addEventListener('change', function(){ document.getElementById('fCatOutro').hidden = (sel.value !== '__outro'); });
+    init();
+  });
+
+  window.enviar = async function(){
+    var err = document.getElementById('formErr');
+    function fail(m){ err.textContent = m; err.hidden = false; }
+    err.hidden = true;
+    var nome = document.getElementById('fNome').value.trim();
+    var catSel = document.getElementById('fCat').value;
+    var cat = catSel === '__outro' ? document.getElementById('fCatOutro').value.trim() : catSel;
+    var contato = document.getElementById('fContato').value.trim();
+    var tel = document.getElementById('fTel').value.trim();
+    if(!nome){ return fail('Informe a razão social.'); }
+    if(!cat){ return fail('Selecione a categoria / tipo de serviço.'); }
+    if(!contato){ return fail('Informe o nome do responsável.'); }
+    if(!tel){ return fail('Informe o telefone / WhatsApp.'); }
+
+    var dados = {
+      nome: nome,
+      fantasia: document.getElementById('fFant').value.trim(),
+      doc: document.getElementById('fDoc').value.trim(),
+      categoria: cat,
+      contato: contato,
+      tel: tel,
+      email: document.getElementById('fEmail').value.trim()
+    };
+    var btn = document.getElementById('btnEnviar');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try{
+      var r = await sb.rpc('responder_convite_fornecedor', { p_token: TOKEN, p_dados: dados });
+      var d = r.data || {};
+      if(r.error || !d.ok){
+        if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; }
+        btn.disabled=false; btn.textContent='Enviar cadastro';
+        return fail('Não foi possível enviar. Tente novamente.');
+      }
+      show('vOk');
+    }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
+  };
+})();
+</script>
+</body>
+</html>
