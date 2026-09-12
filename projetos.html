@@ -266,11 +266,76 @@
   });
   window.addEventListener('keydown', function(e){ if (e.key==='Escape') document.getElementById('statusPop').style.display='none'; });
 
+  // ---------- exclusão de projeto com confirmação de SENHA ----------
+  var DEL_PROJ = null;
+  (function initDelModal(){
+    if (document.getElementById('delModal')) return;
+    var st = document.createElement('style');
+    st.textContent =
+      '#delModal{display:none;position:fixed;inset:0;z-index:2147483000;background:rgba(20,16,12,.5);align-items:center;justify-content:center}' +
+      '#delModal.open{display:flex}' +
+      '#delModal .delcard{background:#fff;border-radius:16px;padding:22px;width:min(420px,92vw);box-shadow:0 22px 60px rgba(0,0,0,.32)}' +
+      '#delModal h3{margin:0 0 6px;font-size:18px;font-weight:700;color:#b3402a}' +
+      '#delModal p{margin:0 0 14px;font-size:13.5px;color:#555;line-height:1.45}' +
+      '#delModal p b{color:#2a2620}' +
+      '#delModal input{width:100%;padding:11px 13px;border:1px solid #e0d8cb;border-radius:10px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none}' +
+      '#delModal input:focus{border-color:#b3402a}' +
+      '#delModal .delerr{color:#b3402a;font-size:12.5px;min-height:16px;margin:8px 2px 0}' +
+      '#delModal .delbtns{display:flex;justify-content:flex-end;gap:9px;margin-top:8px}' +
+      '#delModal .dbtn{padding:9px 15px;border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid #e0d8cb;background:#fff;color:#555}' +
+      '#delModal .dbtn.danger{background:#b3402a;border-color:#b3402a;color:#fff}' +
+      '#delModal .dbtn.danger:hover{background:#9a3320}' +
+      '#delModal .dbtn.danger:disabled{opacity:.55;cursor:default}';
+    document.head.appendChild(st);
+    var m = document.createElement('div'); m.id = 'delModal';
+    m.innerHTML =
+      '<div class="delcard">' +
+        '<h3>Excluir projeto</h3>' +
+        '<p>Esta ação é <b>permanente</b>. Para confirmar a exclusão de <b id="delNome">este projeto</b> (e suas oportunidades), digite a sua senha.</p>' +
+        '<input type="password" id="delPwd" placeholder="Sua senha" autocomplete="current-password">' +
+        '<div class="delerr" id="delErr"></div>' +
+        '<div class="delbtns">' +
+          '<button class="dbtn" id="delCancel" type="button">Cancelar</button>' +
+          '<button class="dbtn danger" id="delConfirm" type="button">Excluir definitivamente</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(m);
+    document.getElementById('delCancel').addEventListener('click', closeDelModal);
+    document.getElementById('delConfirm').addEventListener('click', doDeleteProj);
+    m.addEventListener('click', function(e){ if(e.target===m) closeDelModal(); });
+    document.getElementById('delPwd').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); doDeleteProj(); } });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && m.classList.contains('open')) closeDelModal(); });
+  })();
   function excluir(id, nome){
-    if (confirm('Excluir o projeto "' + nome + '"?\nAs oportunidades dessa obra também serão removidas.')){
-      MabeDB.deleteProject(id);
-      render();
-    }
+    DEL_PROJ = { id:id, nome:nome };
+    document.getElementById('delNome').textContent = 'o projeto "' + nome + '"';
+    document.getElementById('delPwd').value = '';
+    document.getElementById('delErr').textContent = '';
+    document.getElementById('delConfirm').disabled = false;
+    document.getElementById('delModal').classList.add('open');
+    setTimeout(function(){ try{ document.getElementById('delPwd').focus(); }catch(_){} }, 60);
+  }
+  function closeDelModal(){ var m=document.getElementById('delModal'); if(m) m.classList.remove('open'); DEL_PROJ = null; }
+  function doDeleteProj(){
+    if(!DEL_PROJ) return;
+    var pwd = document.getElementById('delPwd').value;
+    var errEl = document.getElementById('delErr');
+    var btn = document.getElementById('delConfirm');
+    if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
+    var c = window.MabeCloud && window.MabeCloud.client();
+    if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
+    btn.disabled = true; errEl.textContent = 'Verificando senha…';
+    c.auth.getUser().then(function(ures){
+      var email = ures && ures.data && ures.data.user && ures.data.user.email;
+      if(!email){ errEl.textContent = 'Sessão inválida. Faça login de novo.'; btn.disabled=false; return; }
+      c.auth.signInWithPassword({ email: email, password: pwd }).then(function(res){
+        if(res.error){ errEl.textContent = 'Senha incorreta. Tente novamente.'; btn.disabled=false; return; }
+        errEl.textContent = 'Excluindo…';
+        try { MabeDB.deleteProject(DEL_PROJ.id); } catch(e){}
+        closeDelModal();
+        render();
+      }, function(){ errEl.textContent = 'Não foi possível verificar a senha.'; btn.disabled=false; });
+    }, function(){ errEl.textContent = 'Sessão inválida.'; btn.disabled=false; });
   }
 
   function vp(v){
