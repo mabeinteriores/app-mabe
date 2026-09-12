@@ -8,24 +8,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root{ --brown:#6A4D2E; --accent:#C0653A; --cream:#F5F0EA; --card:#FFFFFF; --ink:#2A2620; --mut:#8C8475; --line:#E5DDD0; }
+  :root{ --brown:#6A4D2E; --accent:#C0653A; --cream:#F5F0EA; --card:#FFFFFF; --ink:#2A2620; --mut:#8C8475; --line:#E5DDD0; --win:#4f6f3b; }
   *{ box-sizing:border-box; }
   body{ margin:0; background:var(--cream); color:var(--ink); font-family:Archivo,system-ui,sans-serif; font-size:15px; line-height:1.5; }
-  .wrap{ max-width:560px; margin:0 auto; padding:0 16px 48px; }
+  .wrap{ max-width:600px; margin:0 auto; padding:0 16px 48px; }
   .top{ background:var(--brown); color:var(--cream); padding:22px 16px 20px; text-align:center; }
   .logo{ font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:600; letter-spacing:.5px; }
   .logo-sub{ font-size:10px; letter-spacing:3px; color:#d8c7ac; margin-top:-4px; }
   .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 20px; margin-top:-14px; box-shadow:0 12px 34px rgba(60,40,20,.08); }
   h1{ font-size:21px; margin:2px 0 4px; }
-  .lead{ color:var(--mut); font-size:13.5px; margin:0 0 18px; }
+  .lead{ color:var(--mut); font-size:13.5px; margin:0 0 16px; }
   label{ display:block; font-size:12.5px; font-weight:600; color:var(--brown); margin:14px 0 5px; }
   .req{ color:var(--accent); }
   input,select{ width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:15px; color:var(--ink); background:#fff; outline:none; }
   input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(192,101,58,.12); }
-  .hint{ font-size:11.5px; color:var(--mut); margin-top:4px; }
-  .btn{ width:100%; margin-top:22px; padding:14px; border:none; border-radius:11px; background:var(--accent); color:#fff; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; }
+  input:disabled{ background:#f4efe8; color:var(--mut); }
+  .hint{ font-size:11.5px; color:var(--mut); margin-top:4px; min-height:14px; }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .row > div{ flex:1; min-width:120px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:6px; }
+  .chip{ padding:7px 12px; border:1px solid var(--line); border-radius:999px; font-size:13px; cursor:pointer; user-select:none; background:#fff; transition:.12s; }
+  .chip.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .sec{ font-size:11px; letter-spacing:1px; color:var(--mut); text-transform:uppercase; margin:24px 0 2px; border-top:1px solid var(--line); padding-top:16px; }
+  .chk{ display:flex; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--ink); cursor:pointer; }
+  .chk input{ width:auto; }
+  .btn{ width:100%; margin-top:24px; padding:14px; border:none; border-radius:11px; background:var(--accent); color:#fff; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; }
   .btn:disabled{ opacity:.6; cursor:default; }
-  .sec{ font-size:11px; letter-spacing:1px; color:var(--mut); text-transform:uppercase; margin:22px 0 2px; border-top:1px solid var(--line); padding-top:16px; }
   .msg{ text-align:center; padding:40px 10px; }
   .msg .ic{ font-size:46px; }
   .msg h2{ font-size:22px; margin:12px 0 6px; }
@@ -42,44 +50,70 @@
 </div>
 <div class="wrap">
 
-  <!-- carregando -->
   <div class="card" id="vLoad"><div class="msg"><div class="ic">⏳</div><h2>Carregando…</h2></div></div>
 
-  <!-- link invalido / ja respondido -->
   <div class="card" id="vInvalid" hidden><div class="msg">
     <div class="ic">🔗</div><h2 id="invTit">Link inválido</h2><p id="invTxt">Este link não é válido ou já foi utilizado.</p>
   </div></div>
 
-  <!-- formulario -->
   <div class="card" id="vForm" hidden>
     <h1>Cadastro de fornecedor</h1>
-    <p class="lead">Preencha seus dados para fazer parte da nossa rede de parceiros. Leva menos de 2 minutos.</p>
+    <p class="lead">Preencha seus dados para fazer parte da nossa rede de parceiros. Digite o CNPJ e o CEP que preenchemos o resto pra você.</p>
 
     <div class="sec">Empresa</div>
+    <label>CNPJ</label>
+    <input id="fDoc" inputmode="numeric" placeholder="00.000.000/0000-00" autocomplete="off">
+    <div class="hint" id="docHint">digite o CNPJ e saia do campo — buscamos os dados automaticamente</div>
     <label>Razão social <span class="req">*</span></label>
-    <input id="fNome" autocomplete="organization" placeholder="Nome da empresa (ex.: Marcenaria do Zé LTDA)">
+    <input id="fNome" autocomplete="organization" placeholder="Nome da empresa">
     <label>Nome fantasia</label>
     <input id="fFant" placeholder="Como a empresa é conhecida">
-    <label>CNPJ</label>
-    <input id="fDoc" inputmode="numeric" placeholder="00.000.000/0000-00">
-    <label>Categoria / tipo de serviço <span class="req">*</span></label>
-    <select id="fCat"><option value="">Selecione…</option></select>
-    <input id="fCatOutro" hidden placeholder="Descreva o serviço" style="margin-top:8px">
+
+    <label>Categoria / tipos de serviço <span class="req">*</span> <span style="color:var(--mut);font-weight:400">(clique em quantos quiser)</span></label>
+    <div class="chips" id="cats"></div>
 
     <div class="sec">Contato</div>
     <label>Nome do responsável <span class="req">*</span></label>
     <input id="fContato" autocomplete="name" placeholder="Com quem falamos">
-    <label>Telefone / WhatsApp <span class="req">*</span></label>
-    <input id="fTel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+    <div class="row">
+      <div><label>Telefone / WhatsApp <span class="req">*</span></label><input id="fTel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+      <div><label>Data de aniversário</label><input id="fAniv" type="date"></div>
+    </div>
     <label>E-mail</label>
     <input id="fEmail" type="email" autocomplete="email" placeholder="email@empresa.com.br">
+
+    <div class="sec">Endereço</div>
+    <div class="row">
+      <div style="flex:2"><label>CEP</label><input id="fCep" inputmode="numeric" placeholder="00000-000"><div class="hint" id="cepHint">digite o CEP para buscar o endereço</div></div>
+      <div><label>Número</label><input id="fNum" placeholder="Nº"></div>
+    </div>
+    <label>Logradouro</label>
+    <input id="fLograd" placeholder="Rua / Avenida">
+    <div class="row">
+      <div><label>Bairro</label><input id="fBairro" placeholder="Bairro"></div>
+      <div><label>Cidade</label><input id="fCidade" placeholder="Cidade"></div>
+      <div style="max-width:80px"><label>UF</label><input id="fUF" maxlength="2" placeholder="UF"></div>
+    </div>
+
+    <div class="sec">Dados bancários</div>
+    <label>Banco</label>
+    <input id="fBanco" list="bancos" placeholder="Digite o nome ou código do banco" autocomplete="off">
+    <datalist id="bancos"></datalist>
+    <div class="row">
+      <div><label>Agência</label><input id="fAg" inputmode="numeric" placeholder="0000"></div>
+      <div><label>Conta (c/c)</label><input id="fCc" placeholder="00000-0"></div>
+    </div>
+    <label>Nome do titular da conta</label>
+    <input id="fNomeConta" placeholder="Nome de quem recebe">
+    <label class="chk"><input type="checkbox" id="fMesmoNome"> É o mesmo nome do cadastro (razão social)</label>
+    <label>Chave PIX</label>
+    <input id="fPix" placeholder="CNPJ, e-mail, telefone ou chave aleatória">
 
     <div class="err" id="formErr" hidden></div>
     <button class="btn" id="btnEnviar" onclick="enviar()">Enviar cadastro</button>
     <div class="foot">Seus dados vão direto e com segurança para a equipe Camber.</div>
   </div>
 
-  <!-- sucesso -->
   <div class="card" id="vOk" hidden><div class="msg">
     <div class="ic">✅</div><h2>Cadastro enviado!</h2>
     <p>Obrigado. Recebemos seus dados e nossa equipe já foi avisada.<br>Em breve entramos em contato.</p>
@@ -90,72 +124,110 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 (function(){
-  var SB_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
-  var SB_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
-  var sb = window.supabase.createClient(SB_URL, SB_KEY);
+  var SB_URL='https://vlvadvlfsbgwcldaxhah.supabase.co';
+  var SB_KEY='sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
+  var sb=window.supabase.createClient(SB_URL,SB_KEY);
+  var TOKEN=new URLSearchParams(location.search).get('c')||'';
+  var CATS=[]; // categorias selecionadas
 
-  var TOKEN = new URLSearchParams(location.search).get('c') || '';
-  function show(id){ ['vLoad','vInvalid','vForm','vOk'].forEach(function(v){ document.getElementById(v).hidden = (v!==id); }); }
-  function invalid(tit, txt){ document.getElementById('invTit').textContent = tit; document.getElementById('invTxt').textContent = txt; show('vInvalid'); }
+  var BANCOS=['001 — Banco do Brasil','104 — Caixa Econômica Federal','237 — Bradesco','341 — Itaú','033 — Santander',
+    '260 — Nubank (Nu Pagamentos)','077 — Banco Inter','336 — C6 Bank','212 — Banco Original','623 — Banco Pan',
+    '655 — Neon / Votorantim','748 — Sicredi','756 — Sicoob','085 — Ailos','136 — Unicred','041 — Banrisul',
+    '070 — BRB','004 — Banco do Nordeste','021 — Banestes','422 — Banco Safra','208 — BTG Pactual','246 — ABC Brasil',
+    '290 — PagBank (PagSeguro)','323 — Mercado Pago','380 — PicPay','197 — Stone','121 — Agibank','133 — Cresol',
+    '102 — XP Investimentos','348 — Banco XP','399 — HSBC','745 — Citibank','025 — Banco Alfa','318 — Banco BMG',
+    '093 — PicPay Bank','403 — Cora','364 — Efí (Gerencianet)','280 — Will Bank','Outro (digitar)'];
+
+  function show(id){ ['vLoad','vInvalid','vForm','vOk'].forEach(function(v){ document.getElementById(v).hidden=(v!==id); }); }
+  function invalid(t,x){ document.getElementById('invTit').textContent=t; document.getElementById('invTxt').textContent=x; show('vInvalid'); }
+  function set(id,v){ var e=document.getElementById(id); if(e && v!=null && v!=='') e.value=v; }
+  function val(id){ var e=document.getElementById(id); return e?String(e.value||'').trim():''; }
 
   async function init(){
     if(!TOKEN){ invalid('Link inválido','Falta o código do convite no endereço.'); return; }
     try{
-      var r = await sb.rpc('get_convite_fornecedor', { p_token: TOKEN });
-      var d = r.data || {};
-      if(r.error || d.status==='inexistente'){ invalid('Link inválido','Este link não existe. Confira se copiou o endereço completo.'); return; }
-      if(d.status==='respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
-      // carrega categorias
+      var r=await sb.rpc('get_convite_fornecedor',{p_token:TOKEN}); var d=r.data||{};
+      if(r.error||d.status==='inexistente'){ invalid('Link inválido','Este link não existe. Confira se copiou o endereço completo.'); return; }
+      if(d.status==='respondido'||d.status==='cadastrado'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
+      // categorias (chips)
       try{
-        var s = await sb.rpc('get_servicos_publico');
-        var cats = Array.isArray(s.data) ? s.data : [];
-        var sel = document.getElementById('fCat');
-        cats.forEach(function(c){ var o=document.createElement('option'); o.textContent=c; o.value=c; sel.appendChild(o); });
-        var out=document.createElement('option'); out.textContent='Outro (descrever)'; out.value='__outro'; sel.appendChild(out);
+        var s=await sb.rpc('get_servicos_publico'); var arr=Array.isArray(s.data)?s.data:[];
+        var box=document.getElementById('cats');
+        arr.forEach(function(c){ var el=document.createElement('span'); el.className='chip'; el.textContent=c; el.setAttribute('data-cat',c);
+          el.onclick=function(){ el.classList.toggle('on'); var i=CATS.indexOf(c); if(el.classList.contains('on')){ if(i<0)CATS.push(c); } else if(i>=0){ CATS.splice(i,1);} }; box.appendChild(el); });
       }catch(e){}
+      // bancos (datalist)
+      var dl=document.getElementById('bancos'); BANCOS.forEach(function(b){ var o=document.createElement('option'); o.value=b; dl.appendChild(o); });
       show('vForm');
     }catch(e){ invalid('Erro','Não foi possível abrir o cadastro agora. Tente novamente em instantes.'); }
   }
 
+  // CNPJ -> BrasilAPI
+  function buscaCnpj(){
+    var el=document.getElementById('fDoc'); var hint=document.getElementById('docHint');
+    var d=(el.value||'').replace(/\D/g,''); if(d.length!==14) return;
+    el.value=d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5');
+    hint.textContent='buscando dados do CNPJ…'; hint.style.color='#8C8475';
+    fetch('https://brasilapi.com.br/api/cnpj/v1/'+d).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      set('fNome', j.razao_social||''); set('fFant', j.nome_fantasia||'');
+      if(!val('fContato')){ var soc=(j.qsa&&j.qsa[0]&&j.qsa[0].nome_socio)||''; set('fContato', soc); }
+      var tel=j.ddd_telefone_1||''; if(tel && !val('fTel')) set('fTel', String(tel).replace(/^(\d{2})(\d{4,5})(\d{4})$/,'($1) $2-$3'));
+      if(j.email && !val('fEmail')) set('fEmail', j.email);
+      set('fLograd',[j.descricao_tipo_de_logradouro,j.logradouro].filter(Boolean).join(' ').trim());
+      set('fNum', j.numero||''); set('fBairro', j.bairro||''); set('fCidade', j.municipio||''); set('fUF', j.uf||'');
+      if(j.cep){ var c=String(j.cep).replace(/\D/g,''); set('fCep', c.replace(/^(\d{5})(\d{3})$/,'$1-$2')); }
+      syncNomeConta();
+      hint.textContent='✓ dados preenchidos pelo CNPJ — confira e ajuste'; hint.style.color='#4f6f3b';
+    }).catch(function(){ hint.textContent='CNPJ não encontrado — preencha manualmente'; hint.style.color='#a3422f'; });
+  }
+  // CEP -> ViaCEP
+  function buscaCep(){
+    var el=document.getElementById('fCep'); var hint=document.getElementById('cepHint');
+    var c=(el.value||'').replace(/\D/g,''); if(c.length!==8) return;
+    el.value=c.slice(0,5)+'-'+c.slice(5); hint.textContent='buscando endereço…'; hint.style.color='#8C8475';
+    fetch('https://viacep.com.br/ws/'+c+'/json/').then(function(r){return r.json();}).then(function(d){
+      if(d.erro){ hint.textContent='CEP não encontrado'; hint.style.color='#a3422f'; return; }
+      set('fLograd', d.logradouro||''); set('fBairro', d.bairro||''); set('fCidade', d.localidade||''); set('fUF', d.uf||'');
+      hint.textContent='✓ endereço preenchido'; hint.style.color='#4f6f3b';
+      var n=document.getElementById('fNum'); if(n) n.focus();
+    }).catch(function(){ hint.textContent='não foi possível buscar o CEP'; hint.style.color='#a3422f'; });
+  }
+  function syncNomeConta(){
+    var chk=document.getElementById('fMesmoNome'); var nc=document.getElementById('fNomeConta');
+    if(chk.checked){ nc.value=val('fNome'); nc.disabled=true; } else { nc.disabled=false; }
+  }
+
   document.addEventListener('DOMContentLoaded', function(){
-    var sel = document.getElementById('fCat');
-    sel.addEventListener('change', function(){ document.getElementById('fCatOutro').hidden = (sel.value !== '__outro'); });
+    document.getElementById('fDoc').addEventListener('blur', buscaCnpj);
+    document.getElementById('fDoc').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); buscaCnpj(); } });
+    document.getElementById('fCep').addEventListener('blur', buscaCep);
+    document.getElementById('fCep').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); buscaCep(); } });
+    document.getElementById('fMesmoNome').addEventListener('change', syncNomeConta);
+    document.getElementById('fNome').addEventListener('input', syncNomeConta);
     init();
   });
 
-  window.enviar = async function(){
-    var err = document.getElementById('formErr');
-    function fail(m){ err.textContent = m; err.hidden = false; }
-    err.hidden = true;
-    var nome = document.getElementById('fNome').value.trim();
-    var catSel = document.getElementById('fCat').value;
-    var cat = catSel === '__outro' ? document.getElementById('fCatOutro').value.trim() : catSel;
-    var contato = document.getElementById('fContato').value.trim();
-    var tel = document.getElementById('fTel').value.trim();
+  window.enviar=async function(){
+    var err=document.getElementById('formErr'); function fail(m){ err.textContent=m; err.hidden=false; }
+    err.hidden=true;
+    var nome=val('fNome');
     if(!nome){ return fail('Informe a razão social.'); }
-    if(!cat){ return fail('Selecione a categoria / tipo de serviço.'); }
-    if(!contato){ return fail('Informe o nome do responsável.'); }
-    if(!tel){ return fail('Informe o telefone / WhatsApp.'); }
+    if(!CATS.length){ return fail('Selecione ao menos uma categoria / serviço.'); }
+    if(!val('fContato')){ return fail('Informe o nome do responsável.'); }
+    if(!val('fTel')){ return fail('Informe o telefone / WhatsApp.'); }
 
-    var dados = {
-      nome: nome,
-      fantasia: document.getElementById('fFant').value.trim(),
-      doc: document.getElementById('fDoc').value.trim(),
-      categoria: cat,
-      contato: contato,
-      tel: tel,
-      email: document.getElementById('fEmail').value.trim()
+    var dados={
+      nome:nome, fantasia:val('fFant'), doc:val('fDoc'),
+      categorias:CATS.slice(), categoria:CATS[0],
+      contato:val('fContato'), tel:val('fTel'), email:val('fEmail'), aniversario:val('fAniv'),
+      cep:val('fCep'), logradouro:val('fLograd'), numero:val('fNum'), bairro:val('fBairro'), cidade:val('fCidade'), uf:val('fUF'),
+      banco:val('fBanco'), agencia:val('fAg'), conta:val('fCc'),
+      nomeConta:(document.getElementById('fMesmoNome').checked? nome : val('fNomeConta')), pix:val('fPix')
     };
-    var btn = document.getElementById('btnEnviar');
-    btn.disabled = true; btn.textContent = 'Enviando…';
+    var btn=document.getElementById('btnEnviar'); btn.disabled=true; btn.textContent='Enviando…';
     try{
-      var r = await sb.rpc('responder_convite_fornecedor', { p_token: TOKEN, p_dados: dados });
-      var d = r.data || {};
-      if(r.error || !d.ok){
-        if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; }
-        btn.disabled=false; btn.textContent='Enviar cadastro';
-        return fail('Não foi possível enviar. Tente novamente.');
-      }
+      var r=await sb.rpc('responder_convite_fornecedor',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
+      if(r.error||!d.ok){ if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
       show('vOk');
     }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
   };

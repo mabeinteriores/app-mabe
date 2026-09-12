@@ -95,12 +95,13 @@
       <section class="panel">
         <div class="panel-h"><h3>Dados bancários</h3><span class="meta">para repasses / RT</span></div>
         <div class="form-grid">
-          <div class="field"><label>Banco</label><input class="inp" placeholder="ex.: 341 — Itaú"></div>
+          <div class="field"><label>Banco</label><input class="inp" id="fBanco" placeholder="ex.: 341 — Itaú"></div>
           <div class="field"><label>Tipo de conta</label>
-            <select class="sel"><option>Corrente</option><option>Poupança</option><option>Pagamento</option></select></div>
-          <div class="field"><label>Agência</label><input class="inp" placeholder="0000"></div>
-          <div class="field"><label>Conta</label><input class="inp" placeholder="00000-0"></div>
-          <div class="field full"><label>Chave PIX</label><input class="inp" placeholder="CNPJ, e-mail, telefone ou chave aleatória"></div>
+            <select class="sel" id="fTipoConta"><option>Corrente</option><option>Poupança</option><option>Pagamento</option></select></div>
+          <div class="field"><label>Agência</label><input class="inp" id="fAg" placeholder="0000"></div>
+          <div class="field"><label>Conta</label><input class="inp" id="fCc" placeholder="00000-0"></div>
+          <div class="field full"><label>Nome do titular da conta</label><input class="inp" id="fNomeConta" placeholder="Nome de quem recebe"></div>
+          <div class="field full"><label>Chave PIX</label><input class="inp" id="fPix" placeholder="CNPJ, e-mail, telefone ou chave aleatória"></div>
         </div>
       </section>
 
@@ -313,6 +314,8 @@
     fsetV('fCep', f.cep); fsetV('fLograd', f.logradouro); fsetV('fNum', f.numero); fsetV('fCompl', f.complemento);
     fsetV('fBairro', f.bairro); fsetV('fCidade', f.cidade); fsetV('fUF', f.uf);
     fsetV('rtdef', f.rt);
+    fsetV('fBanco', f.banco); fsetV('fAg', f.agencia); fsetV('fCc', f.conta); fsetV('fNomeConta', f.nomeConta); fsetV('fPix', f.pix);
+    if(f.tipoConta){ var _tc=document.getElementById('fTipoConta'); if(_tc) _tc.value=f.tipoConta; }
     var son = f.status!=='Inativo';
     var sopt = document.querySelector('.choice .opt[data-s="'+(son?'on':'off')+'"]');
     if(sopt){ var grp=sopt.parentNode; grp.querySelectorAll('.opt').forEach(function(x){x.classList.remove('on');}); sopt.classList.add('on'); }
@@ -353,18 +356,29 @@
       }catch(e){}
       var opt = document.querySelector('#tipoPessoa .opt[data-t="pj"]'); if(opt) opt.click();
       fsetV('fRazao', d.nome||''); fsetV('fFant', d.fantasia||''); fsetV('doc', d.doc||'');
-      if(d.categoria){
-        try{ setCats([d.categoria]); }catch(e){}
-        if(!document.querySelector('#catServ .opt.on')){
-          var grp=document.getElementById('catServ');
-          if(grp){ var chip=document.createElement('span'); chip.className='opt on'; chip.setAttribute('data-cat', d.categoria); chip.textContent=d.categoria; grp.appendChild(chip); }
-        }
+      // categorias (varias) — marca as existentes e cria chip p/ as que nao estao na config
+      var listaCat = (d.categorias && d.categorias.length) ? d.categorias : (d.categoria ? [d.categoria] : []);
+      if(listaCat.length){
+        var grp=document.getElementById('catServ');
+        try{ setCats(listaCat); }catch(e){}
+        listaCat.forEach(function(cat){
+          if(grp && !grp.querySelector('.opt[data-cat="'+String(cat).replace(/"/g,'&quot;')+'"]')){
+            var chip=document.createElement('span'); chip.className='opt on'; chip.setAttribute('data-cat', cat); chip.textContent=cat; grp.appendChild(chip);
+          }
+        });
       }
+      // endereco
+      fsetV('fCep', d.cep||''); fsetV('fLograd', d.logradouro||''); fsetV('fNum', d.numero||'');
+      fsetV('fBairro', d.bairro||''); fsetV('fCidade', d.cidade||''); if(d.uf){ var _uf=document.getElementById('fUF'); if(_uf) _uf.value=d.uf; }
+      // dados bancarios
+      fsetV('fBanco', d.banco||''); fsetV('fAg', d.agencia||''); fsetV('fCc', d.conta||''); fsetV('fNomeConta', d.nomeConta||''); fsetV('fPix', d.pix||'');
+      // contato (1o bloco)
       var c0=document.querySelector('#ctWrap .ct-bloco');
       if(c0){
         var n=c0.querySelector('.ct-nome');  if(n)  n.value  = d.contato||'';
         var tl=c0.querySelector('.ct-tel');  if(tl) tl.value = d.tel||'';
         var em=c0.querySelector('.ct-email');if(em) em.value = d.email||'';
+        var av=c0.querySelector('.ct-aniv'); if(av && d.aniversario) av.value = d.aniversario;
       }
     }catch(e){}
   }
@@ -397,7 +411,9 @@
       email: c0.email||'', site: c0.site||'', aniversario: c0.aniversario||'',
       cep: fval('fCep'), logradouro: fval('fLograd'), numero: fval('fNum'), complemento: fval('fCompl'),
       bairro: fval('fBairro'), cidade: fval('fCidade'), uf: fval('fUF'),
-      rt: parseFloat((fval('rtdef')||'').replace(',','.'))||0
+      rt: parseFloat((fval('rtdef')||'').replace(',','.'))||0,
+      banco: fval('fBanco'), tipoConta: (document.getElementById('fTipoConta')||{}).value||'',
+      agencia: fval('fAg'), conta: fval('fCc'), nomeConta: fval('fNomeConta'), pix: fval('fPix')
     };
     if(editId && MabeDB.updateFornecedor){ MabeDB.updateFornecedor(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); MabeDB.addFornecedor(dados); }
