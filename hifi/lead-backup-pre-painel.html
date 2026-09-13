@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609130108"></script>
+<script src="cloud.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lead · Gestão Camber</title>
+<title>Lead · Mabe Comercial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=20260912215700">
-<link rel="stylesheet" href="app.css?v=20260912215700">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="app.css">
 <style>
-  /* aba Lead do app: largura ampla; o shell (cloud.js?v=202609130108/shell.js?v=202609130108) cuida do resto do layout */
-  #app.camber .wrap{ max-width:min(1760px, 95vw); margin:0 auto; }
-
   #app[data-page="lead"] .lhead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   #app[data-page="lead"] .lhead .crumb{ font-size:12px; color:var(--ink-3); margin-bottom:2px; }
   #app[data-page="lead"] .lhead h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:-.01em; }
-  #app[data-page="lead"] .lstats{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:16px 0 6px; }
-  @media(max-width:1100px){ #app[data-page="lead"] .lstats{ grid-template-columns:repeat(3,1fr); } }
-  @media(max-width:620px){ #app[data-page="lead"] .lstats{ grid-template-columns:repeat(2,1fr); } }
-  #app[data-page="lead"] .lstat .v.morno{ color:#8a6606; }
-  #app[data-page="lead"] .lstat .v.frio{ color:#5b6b7a; }
+  #app[data-page="lead"] .lstats{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0 6px; }
   #app[data-page="lead"] .lstat{ background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:14px 16px; }
   #app[data-page="lead"] .lstat .k{ font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3); }
   #app[data-page="lead"] .lstat .v{ font-size:26px; font-weight:700; margin-top:4px; }
@@ -197,18 +190,6 @@
   #app[data-page="lead"] .kcol[data-stage="Proposta enviada"] .dot{ background:#c08a2e; }
   #app[data-page="lead"] .kcol[data-stage="Fechado"] .dot{ background:#5d7e49; }
   #app[data-page="lead"] .kcol[data-stage="Perdido"] .dot{ background:#b1503f; }
-  #app[data-page="lead"] .kcol[data-stage="Fugas"] .dot{ background:#8c8475; }
-  #app[data-page="lead"] .kcol.fugacol{ background:#f7eee9; border-color:#e6cabf; }
-  #app[data-page="lead"] .kcard.fuga{ cursor:grab; border-style:dashed; border-color:#e0c9bf; background:#fffdf9; }
-  #app[data-page="lead"] .kcard.fuga:active{ cursor:grabbing; }
-  #app[data-page="lead"] .kcard.fuga.recuperado{ border-style:solid; border-color:#cdb98f; background:#fbf6ec; }
-  #app[data-page="lead"] .kcard.fuga .kfstop{ font-size:10.5px; color:#b3402a; line-height:1.3; }
-  #app[data-page="lead"] .kcard .kfrec{ font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; background:#e7d7a8; color:#5c4708; border-radius:20px; padding:1px 7px; vertical-align:middle; }
-  #app[data-page="lead"] .kcard .kfstrat{ font-size:11px; color:#5c4708; background:#f3eacb; border-radius:7px; padding:3px 8px; margin-top:8px; display:inline-block; cursor:help; }
-  #app[data-page="lead"] .kcard .kfacts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
-  #app[data-page="lead"] .kcard .fgbtn{ font-family:inherit; font-size:11.5px; font-weight:600; padding:5px 9px; border-radius:8px; border:1px solid var(--hair); background:var(--surface); color:var(--ink-2); cursor:pointer; text-decoration:none; }
-  #app[data-page="lead"] .kcard .fgbtn.wa{ color:#0a7d3b; border-color:#bfe3cd; }
-  #app[data-page="lead"] .kcard .fgbtn.del{ color:#b3402a; border-color:#e7c6bc; }
   /* cor de fundo do card conforme o Lead Score (temperatura) */
   #app[data-page="lead"] .kcard.q{ background:#fce0d6; border-color:#efb9a6; }
   #app[data-page="lead"] .kcard.m{ background:#fdf3bf; border-color:#ecdb8f; }
@@ -235,21 +216,6 @@
   #app[data-page="lead"] .funstep .fp.drop{ color:#b3402a; }
   #app[data-page="lead"] .funarrow{ color:var(--ink-3); font-size:15px; flex:0 0 auto; }
   #app[data-page="lead"] .funhint{ font-size:11.5px; color:var(--ink-3); margin-top:14px; opacity:.85; }
-  /* lista de fugas (abandonos reais) */
-  #app[data-page="lead"] .fglist{ display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:11px; }
-  #app[data-page="lead"] .fgcard{ background:#fffdf9; border:1px dashed #e0c9bf; border-radius:13px; padding:13px 14px; }
-  #app[data-page="lead"] .fgcard .fgnm{ font-size:14px; font-weight:700; line-height:1.2; }
-  #app[data-page="lead"] .fgcard .fgmeta{ font-size:11.5px; color:var(--ink-3); margin-top:3px; }
-  #app[data-page="lead"] .fgcard .fgstop{ font-size:12.5px; margin-top:9px; color:var(--ink-2); }
-  #app[data-page="lead"] .fgcard .fgstop b{ color:#b3402a; }
-  #app[data-page="lead"] .fgcard .fgacts{ display:flex; flex-wrap:wrap; gap:7px; margin-top:11px; }
-  #app[data-page="lead"] .fgcard .fgbtn{ font-family:inherit; font-size:12px; font-weight:600; padding:6px 11px; border-radius:9px; border:1px solid var(--hair); background:var(--surface); color:var(--ink-2); cursor:pointer; text-decoration:none; }
-  #app[data-page="lead"] .fgcard .fgbtn.wa{ color:#0a7d3b; border-color:#bfe3cd; }
-  #app[data-page="lead"] .fgcard .fgbtn.del{ color:#b3402a; border-color:#e7c6bc; }
-  #app[data-page="lead"] .fgcard .fgqa{ margin-top:10px; border-top:1px solid var(--hair); padding-top:8px; display:none; }
-  #app[data-page="lead"] .fgcard .fgqa.open{ display:block; }
-  #app[data-page="lead"] .fgcard .fgqa .q{ font-size:11px; color:var(--ink-3); margin-top:6px; }
-  #app[data-page="lead"] .fgcard .fgqa .a{ font-size:12.5px; color:var(--ink); font-weight:500; }
 
   /* override manual do Lead Score (drawer) */
   #app[data-page="lead"] .ovrow{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
@@ -262,8 +228,7 @@
 </style>
 </head>
 <body>
-
-<div class="camber skin-studio" id="app" data-page="lead">
+<div class="mabe skin-studio" id="app" data-page="lead">
   <div class="body scroll">
     <div class="wrap" style="padding:18px 0 28px;">
 
@@ -281,8 +246,6 @@
       <div class="lstats" id="lStats">
         <div class="lstat clk" data-filter="all"><div class="k">Total de leads</div><div class="v" id="stTotal">—</div></div>
         <div class="lstat clk" data-filter="hot"><div class="k">🔥 Quentes</div><div class="v hot" id="stHot">—</div></div>
-        <div class="lstat clk" data-filter="m"><div class="k">🟡 Mornos</div><div class="v morno" id="stMorno">—</div></div>
-        <div class="lstat clk" data-filter="f"><div class="k">🔵 Frios</div><div class="v frio" id="stFrio">—</div></div>
         <div class="lstat clk" data-filter="opp"><div class="k">Oportunidades (&gt; R$ 300 mil)</div><div class="v opp" id="stOpp">—</div></div>
         <div class="lstat clk" data-filter="week"><div class="k">Esta semana</div><div class="v" id="stWeek">—</div></div>
       </div>
@@ -321,19 +284,21 @@
 
       <div class="lpanel collap closed" id="lFunil" style="display:none">
         <div class="lcollap" id="lFunilToggle">
-          <span class="lcollap-t">🛟 Fugas <span class="pvbadge" id="lFunilBadge">0</span></span>
+          <span class="lcollap-t">🛟 Funil &amp; Fugas <span class="pvbadge">preview</span></span>
           <span class="lcollap-c" id="lFunilChev">▸</span>
         </div>
         <div class="lcollap-body" id="lFunilBody">
           <div class="funsteps" id="lFunilSteps"></div>
           <div class="lchead" style="margin-top:20px"><h3>Onde mais desistem</h3></div>
           <div id="lFunilDrop"></div>
+          <div class="lchead" style="margin-top:20px"><h3>Visitas por origem (UTM)</h3></div>
+          <div id="lFunilOrigem"></div>
           <div class="funhint" id="lFunilHint"></div>
         </div>
       </div>
 
       <div class="lfilters" id="lFilters">
-        <input type="search" id="fBusca" placeholder="Buscar nome ou telefone…" autocomplete="off" name="lead-busca-filtro" readonly onfocus="this.removeAttribute('readonly')">
+        <input type="search" id="fBusca" placeholder="Buscar nome ou telefone…" autocomplete="off">
         <select id="fTipo"><option value="">Tipo: todos</option></select>
         <select id="fInvest"><option value="">Investimento: todos</option></select>
         <select id="fOrigem"><option value="">Origem: todas</option></select>
@@ -342,6 +307,22 @@
           <option value="q">🔥 Quente</option>
           <option value="m">🟡 Morno</option>
           <option value="f">🔵 Frio</option>
+        </select>
+        <select id="fEtapa">
+          <option value="">Etapa: todas</option>
+          <option value="Novo">Novo</option>
+          <option value="Respondido">Respondido</option>
+          <option value="Proposta enviada">Proposta enviada</option>
+          <option value="Fechado">Fechado</option>
+          <option value="Perdido">Perdido</option>
+        </select>
+        <select id="fPeriodo">
+          <option value="">Período: todos</option>
+          <option value="hoje">Hoje</option>
+          <option value="7">Últimos 7 dias</option>
+          <option value="30">Últimos 30 dias</option>
+          <option value="90">Últimos 90 dias</option>
+          <option value="ano">Este ano</option>
         </select>
         <button type="button" class="lfclear" id="fLimpar">Limpar</button>
         <span class="lfcount" id="fCount"></span>
@@ -394,115 +375,23 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=202609130108"></script>
-<script src="shell.js?v=202609130108"></script>
-<script>
-// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202609130108/shell.js?v=202609130108) já fornece CamberCloud, nav, perms e auth.
-(function(){ return;
-  var SUPABASE_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
-  var APP = location.origin + '/hifi/';
-  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
-  // shim do CamberCloud usado pela aba Lead
-  window.CamberCloud = { client: function(){ return sb; } };
-  window.__camberPerms = { admin:true };  // usuários aprovados do painel são admin (excluir lead exige re-senha)
-
-  var $ = function(id){ return document.getElementById(id); };
-  var app = $('app');
-
-  // tema (igual ao app)
-  var theme = 'light';
-  try{ theme = localStorage.getItem('mabe-theme') || 'light'; }catch(e){}
-  app.setAttribute('data-theme', theme);
-  var SUN = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
-  var MOON = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
-
-  // barra de topo idêntica à da aba Lead do app (menu completo)
-  function buildTopbar(nome){
-    var pages = [
-      { t:'Painel', href:APP+'painel.html' },
-      { t:'Precificação', href:APP+'precificacao.html' },
-      { t:'Projetos', href:APP+'projetos.html' },
-      { t:'Clientes', href:APP+'clientes.html' },
-      { t:'Fornecedores', href:APP+'fornecedores.html' },
-      { t:'Indicações', href:APP+'indicacoes.html' },
-      { t:'Lead', href:'#', on:true },
-      { t:'Usuários', href:APP+'usuarios.html' },
-      { t:'Configuração', href:APP+'configuracao.html' }
-    ];
-    var nav = pages.map(function(p){ return '<a class="'+(p.on?'on':'')+'" href="'+p.href+'"'+(p.on?'':' target="_top"')+'>'+p.t+'</a>'; }).join('');
-    var ini = (String(nome||'M').trim()[0]||'M').toUpperCase();
-    $('appTop').innerHTML =
-      '<div class="brandwrap" style="position:relative">' +
-        '<a class="brand" href="'+APP+'painel.html" style="text-decoration:none;color:inherit">' +
-          '<div class="mark">C</div>' +
-          '<div><div class="bn">Gestão Camber</div><div class="bs">'+(nome||'Comercial')+'</div></div>' +
-        '</a>' +
-      '</div>' +
-      '<nav class="nav">' + nav + '</nav>' +
-      '<div class="sp"></div>' +
-      '<button class="iconbtn" id="themeBtn" title="Alternar tema">' + (theme==='dark'?SUN:MOON) + '</button>' +
-      '<a class="btn primary" href="'+APP+'precificacao.html?novo=1">+&nbsp; Nova Precificação</a>' +
-      '<button class="btn" id="btnLogout" type="button">Sair</button>' +
-      '<div class="av">'+ini+'</div>';
-    $('themeBtn').addEventListener('click', function(){
-      var now = app.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
-      app.setAttribute('data-theme', now);
-      try{ localStorage.setItem('mabe-theme', now); }catch(e){}
-      this.innerHTML = now==='dark'?SUN:MOON;
-    });
-    $('btnLogout').addEventListener('click', function(){ sb.auth.signOut().then(showLogin, showLogin); });
-  }
-
-  function showApp(){
-    $('login').style.display = 'none';
-    $('app').style.display = '';
-    try{ sb.realtime.setAuth(); }catch(_){}
-    sb.auth.getUser().then(function(u){
-      var nome = '';
-      try{ var em = u && u.data && u.data.user && u.data.user.email; if(em){ nome = em.split('@')[0]; nome = nome.charAt(0).toUpperCase()+nome.slice(1); } }catch(e){}
-      buildTopbar(nome);
-    }, function(){ buildTopbar(''); });
-    if (window.CamberLeadLoad) window.CamberLeadLoad();
-  }
-  function showLogin(){ $('app').style.display='none'; $('login').style.display='flex'; }
-
-  function doLogin(){
-    var err = $('loginErr'); err.textContent='';
-    var email = $('email').value.trim(), password = $('senha').value;
-    if(!email || !password){ err.textContent='Informe e-mail e senha.'; return; }
-    var b = $('btnLogin'); b.disabled=true; b.textContent='Entrando…';
-    sb.auth.signInWithPassword({ email:email, password:password }).then(function(res){
-      b.disabled=false; b.textContent='Entrar';
-      if(res.error){ err.textContent='E-mail ou senha inválidos.'; return; }
-      showApp();
-    }, function(){ b.disabled=false; b.textContent='Entrar'; err.textContent='Falha ao conectar.'; });
-  }
-  $('btnLogin').addEventListener('click', doLogin);
-  $('senha').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
-
-  // sessão existente -> entra direto
-  sb.auth.getSession().then(function(r){
-    if(r && r.data && r.data.session) showApp(); else showLogin();
-  }, showLogin);
-})();
-</script>
+<script src="projects-data.js"></script>
+<script src="shell.js"></script>
 <script>
 (function(){
   var LEADS = [];
   var CUR = null;
   var DEL_LEAD = null;
-  var DEL_FUGA = null;
   var VIEW = localStorage.getItem('mabe_lead_view') || 'kanban';
-  var DB_WRITE = true; // grava as etapas do Kanban no Supabase (respostas.status) — migração aplicada 2026-06
+  var DB_WRITE = false; // false = mudanças de etapa só visuais (localStorage); true = grava no Supabase
   var STAGEMAP = JSON.parse(localStorage.getItem('mabe_lead_stage') || '{}');   // {id: 'Etapa'}
   var OVERRIDE = JSON.parse(localStorage.getItem('mabe_lead_temp') || '{}');     // {id: 'q'|'m'|'f'}
   var PERIOD = localStorage.getItem('mabe_lead_period') || 'dia';
   var DIM = '';
   var FILTER = 'all'; // all | hot | opp | week — clique nos cards de estatística
-  var FILTERS = { busca:'', tipo:'', invest:'', origem:'', temp:'' }; // barra de filtros
+  var FILTERS = { busca:'', tipo:'', invest:'', origem:'', temp:'', etapa:'', periodo:'' }; // barra de filtros
   var CHARTS_OPEN = localStorage.getItem('mabe_lead_charts') === '1'; // recolhido por padrão
-  var FUNIL_OPEN = localStorage.getItem('mabe_lead_funil') !== '0';   // Fugas aberto por padrão
+  var FUNIL_OPEN = localStorage.getItem('mabe_lead_funil') === '1';   // recolhido por padrão
 
   // ---------- helpers de leitura ----------
   function norm(s){ s=String(s==null?'':s).toLowerCase();
@@ -554,7 +443,7 @@
     return {label:v, tier:1, opp:false};
   }
 
-  // ═══════════ LEAD SCORE CAMBER (0–100) ═══════════
+  // ═══════════ LEAD SCORE MABĒ (0–100) ═══════════
   // Soma os melhores níveis de cada categoria (teto bruto = SCORE_MAX) e normaliza p/ 100.
   var SCORE_MAX = 155;
 
@@ -703,8 +592,6 @@
     var r = L._r || withOverride(L, read(L.summary));
     // filtro dos cards de estatística
     if(FILTER==='hot' && r.temp!=='q') return false;
-    if(FILTER==='m' && r.temp!=='m') return false;
-    if(FILTER==='f' && r.temp!=='f') return false;
     if(FILTER==='opp' && !r.inv.opp) return false;
     if(FILTER==='week' && !(new Date(L.created_at) >= new Date(Date.now()-7*864e5))) return false;
     // barra de filtros
@@ -713,6 +600,13 @@
     if(F.invest && r.inv.label !== F.invest) return false;
     if(F.origem && (ans(L.summary,'como conheceu')||'') !== F.origem) return false;
     if(F.temp   && r.temp !== F.temp) return false;
+    if(F.etapa  && stageOf(L) !== F.etapa) return false;
+    if(F.periodo){
+      var t = new Date(L.created_at), now = new Date();
+      if(F.periodo==='hoje'){ var s0=new Date(); s0.setHours(0,0,0,0); if(t < s0) return false; }
+      else if(F.periodo==='ano'){ if(t < new Date(now.getFullYear(),0,1)) return false; }
+      else { var dias=parseInt(F.periodo,10); if(dias && t < new Date(Date.now()-dias*864e5)) return false; }
+    }
     if(F.busca){
       var hay = ((L.nome||'')+' '+(L.telefone||'')).toLowerCase();
       if(hay.indexOf(F.busca.toLowerCase()) < 0) return false;
@@ -745,20 +639,16 @@
     if(!LEADS.length){ em.style.display='block'; em.textContent='Nenhum lead recebido ainda. Quando alguém responder o formulário, aparece aqui.'; renderKanban(); renderCharts(); renderFunil(); applyView(); return; }
 
     // estatísticas sempre sobre o total
-    var total=LEADS.length, hot=0, morno=0, frio=0, opp=0, week=0;
+    var total=LEADS.length, hot=0, opp=0, week=0;
     var weekAgo = new Date(Date.now()-7*864e5);
     LEADS.forEach(function(L){
       var r = withOverride(L, read(L.summary)); L._r = r;
       if(r.temp==='q') hot++;
-      else if(r.temp==='m') morno++;
-      else frio++;
       if(r.inv.opp) opp++;
       if(new Date(L.created_at) >= weekAgo) week++;
     });
     document.getElementById('stTotal').textContent = total;
     document.getElementById('stHot').textContent = hot;
-    document.getElementById('stMorno').textContent = morno;
-    document.getElementById('stFrio').textContent = frio;
     document.getElementById('stOpp').textContent = opp;
     document.getElementById('stWeek').textContent = week;
     highlightFilter();
@@ -800,8 +690,7 @@
   // ---------- KANBAN (etapas do funil) ----------
   var STAGES = ['Novo','Respondido','Proposta enviada','Fechado','Perdido'];
   function stageOf(L){
-    // com gravação ligada, a etapa vem do banco (respostas.status); STAGEMAP só no modo visual
-    if(!DB_WRITE && L && STAGEMAP[L.id] && STAGES.indexOf(STAGEMAP[L.id])>=0) return STAGEMAP[L.id];
+    if(L && STAGEMAP[L.id] && STAGES.indexOf(STAGEMAP[L.id])>=0) return STAGEMAP[L.id];
     var s = norm(L && L.status);
     if(!s) return 'Novo';
     if(s.indexOf('proposta')>=0) return 'Proposta enviada';
@@ -812,19 +701,16 @@
   }
   function persistStatus(id, s){
     try{
-      var c = window.CamberCloud && window.CamberCloud.client();
+      var c = window.MabeCloud && window.MabeCloud.client();
       if(c) c.from('respostas').update({ status:s, status_em:new Date().toISOString() }).eq('id', id).then(function(){},function(){});
     }catch(_){}
   }
-  function fugaEtapa(f){ return (f && f.etapa && STAGES.indexOf(f.etapa)>=0) ? f.etapa : null; }
   function renderKanban(){
     var wrap = document.getElementById('lKanban'); if(!wrap) return;
-    var byStage = {}, fugaByStage = {}; STAGES.forEach(function(s){ byStage[s] = []; fugaByStage[s] = []; });
+    var byStage = {}; STAGES.forEach(function(s){ byStage[s] = []; });
     LEADS.filter(passFilter).forEach(function(L){ L._r = withOverride(L, read(L.summary)); byStage[stageOf(L)].push(L); });
-    var fugasAband = [];
-    FUGAS.forEach(function(f){ var e = fugaEtapa(f); if(e) fugaByStage[e].push(f); else fugasAband.push(f); });
     wrap.innerHTML = STAGES.map(function(stage){
-      var items = byStage[stage], fitems = fugaByStage[stage];
+      var items = byStage[stage];
       var cards = items.map(function(L){
         var r = L._r;
         return '<div class="kcard '+r.temp+'" draggable="true" data-id="'+L.id+'">'+
@@ -835,71 +721,12 @@
             (r.manual?'<span class="kmanual">manual</span>':'')+
             '<span class="kago">'+ago(L.created_at)+'</span>'+
           '</div></div>';
-      }).join('') + fitems.map(fugaKCard).join('');
-      cards = cards || '<div class="kempty">—</div>';
-      var total = items.length + fitems.length;
+      }).join('') || '<div class="kempty">—</div>';
       return '<div class="kcol" data-stage="'+esc(stage)+'">'+
-        '<div class="kcol-h"><span><span class="dot"></span>'+esc(stage)+'</span><span class="cnt">'+total+'</span></div>'+
+        '<div class="kcol-h"><span><span class="dot"></span>'+esc(stage)+'</span><span class="cnt">'+items.length+'</span></div>'+
         '<div class="kcards">'+cards+'</div></div>';
-    }).join('') + fugasColHtml(fugasAband);   // coluna Fugas à direita de Perdido
+    }).join('');
   }
-  // cards de Fugas (formulários abandonados) — agora ARRASTÁVEIS para o funil
-  function fugaKCard(f){
-    var qtd = Array.isArray(f.respostas) ? f.respostas.length : 0;
-    var tel = (f.telefone||'').replace(/\D/g,'');
-    var estr = Array.isArray(f.estrategias) ? f.estrategias : [];
-    var estrTip = estr.map(function(e){ return (e.estrategia||'') + (e.para?(' → '+e.para):''); }).join(' · ');
-    var recuperado = !!fugaEtapa(f);
-    return '<div class="kcard fuga'+(recuperado?' recuperado':'')+'" draggable="true" data-fid="'+f.id+'">'+
-      '<div class="knm">'+esc(f.nome||'Sem nome ainda')+(recuperado?' <span class="kfrec">recuperando</span>':'')+'</div>'+
-      '<div class="ksub">'+esc(f.telefone||'sem telefone')+(f.categoria?' · '+esc(f.categoria):'')+'</div>'+
-      '<div class="kbadges">'+
-        '<span class="kfstop">parou em: '+esc(f.ultima_pergunta||'—')+(f.pagina?' (p.'+f.pagina+')':'')+'</span>'+
-        '<span class="kago">'+qtd+' resp.</span>'+
-      '</div>'+
-      (estr.length ? '<div class="kfstrat" title="'+esc(estrTip)+'">🎯 '+estr.length+' estratégia(s)</div>' : '')+
-      '<div class="kfacts">'+
-        (tel.length>=10 ? '<a class="fgbtn wa" href="'+waLink(f.telefone)+'" target="_blank" rel="noopener">WhatsApp</a>' : '')+
-        '<button type="button" class="fgbtn" onclick="window.__addEstrategia('+f.id+')">+ Estratégia</button>'+
-        '<button type="button" class="fgbtn del" onclick="window.__delFuga('+f.id+')">Excluir</button>'+
-      '</div></div>';
-  }
-  function fugasColHtml(list){
-    var cards = list.length ? list.map(fugaKCard).join('') : '<div class="kempty">—</div>';
-    return '<div class="kcol fugacol" data-stage="Fugas">'+
-      '<div class="kcol-h"><span><span class="dot"></span>Fugas</span><span class="cnt">'+list.length+'</span></div>'+
-      '<div class="kcards">'+cards+'</div></div>';
-  }
-  // mover fuga entre colunas + registrar estratégia (para relatório futuro)
-  function persistFuga(f, patch){
-    var c = window.CamberCloud && window.CamberCloud.client(); if(!c) return;
-    c.from('fugas').update(patch).eq('id', f.id).then(function(){}, function(){});
-  }
-  window.__moveFuga = function(fid, stage){
-    var f = FUGAS.filter(function(x){ return String(x.id)===String(fid); })[0]; if(!f) return;
-    var de = fugaEtapa(f) || 'Fugas';
-    var para = (STAGES.indexOf(stage)>=0) ? stage : null;   // null = volta p/ coluna Fugas
-    if(de === (para||'Fugas')) return;
-    var estr = Array.isArray(f.estrategias) ? f.estrategias.slice() : [];
-    if(para){  // recuperando: pede a estratégia
-      var s = window.prompt('Movendo "'+(f.nome||'lead')+'" para "'+para+'".\nQual estratégia você usou? (ex.: WhatsApp, Ligação, E-mail, Desconto/condição, Reagendamento)', '');
-      if(s===null) { renderKanban(); return; }  // cancelou
-      if(s.trim()) estr.push({ em:new Date().toISOString(), de:de, para:para, estrategia:s.trim() });
-    }
-    f.etapa = para; f.estrategias = estr;
-    persistFuga(f, { etapa: para, estrategias: estr });
-    renderKanban();
-  };
-  window.__addEstrategia = function(fid){
-    var f = FUGAS.filter(function(x){ return String(x.id)===String(fid); })[0]; if(!f) return;
-    var s = window.prompt('Registrar estratégia/ação para "'+(f.nome||'lead')+'" (ex.: WhatsApp enviado, Ligação, Proposta, Desconto):', '');
-    if(s===null || !s.trim()) return;
-    var estr = Array.isArray(f.estrategias) ? f.estrategias.slice() : [];
-    estr.push({ em:new Date().toISOString(), de:(fugaEtapa(f)||'Fugas'), para:(fugaEtapa(f)||'Fugas'), estrategia:s.trim() });
-    f.estrategias = estr;
-    persistFuga(f, { estrategias: estr });
-    renderKanban();
-  };
   function setStage(id, stage){
     var L = LEADS.filter(function(x){ return String(x.id)===String(id); })[0];
     if(!L || STAGES.indexOf(stage)<0) return;
@@ -914,7 +741,7 @@
     var seg = document.getElementById('lViewSeg');
     if(seg) seg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.view===VIEW); });
     var k = document.getElementById('lKanban'), g = document.getElementById('lGrid');
-    if(k) k.style.display = (VIEW==='kanban' && (LEADS.length || FUGAS.length)) ? 'flex' : 'none';
+    if(k) k.style.display = (VIEW==='kanban' && LEADS.length) ? 'flex' : 'none';
     if(g) g.style.display = (VIEW==='lista'  && LEADS.length) ? '' : 'none';
   }
 
@@ -996,9 +823,54 @@
     renderDim();
   }
 
-  // ---------- FUGAS (formulários abandonados — tabela real `fugas`) ----------
-  var FUGAS = [];
-  function waLink(tel){ var d=String(tel||'').replace(/\D/g,''); var full=d.length>=12?d:(d.length>=10?'55'+d:d); return 'https://wa.me/'+full; }
+  // ---------- FUNIL & FUGAS (preview, sem banco) ----------
+  // Em produção isso virá da tabela lead_eventos. No preview lemos do localStorage
+  // (alimentado pelo formulário em modo teste) e, se vazio, usamos dados de exemplo.
+  var ETAPAS_FORM = ['Dados iniciais','Sobre o imóvel','Escopo do projeto','Momento do projeto','Estilo de vida','O que é essencial','Experiências anteriores','Investimento','Enviado'];
+  var SAMPLE_EVENTOS = (function(){
+    // 34 sessões fictícias: origem + até onde foram
+    var defs = [
+      ['instagram',9,12],['instagram',2,5],['instagram',4,3],['whatsapp',9,6],
+      ['whatsapp',7,2],['google',9,4],['google',3,2],['indicacao',9,3],
+      ['instagram',6,1],['direto',1,1],['google',5,1],['instagram',9,2]
+    ];
+    var evs=[], sid=0;
+    defs.forEach(function(d){
+      var origem=d[0], maxEtapa=d[1], qtd=d[2];
+      for(var n=0;n<qtd;n++){
+        sid++; var s='s'+sid; var atr={utm_source:origem};
+        evs.push({sessao:s,tipo:'abriu',etapa:1,etapa_nome:ETAPAS_FORM[0],atribuicao:atr});
+        if(maxEtapa>1) evs.push({sessao:s,tipo:'progresso',etapa:maxEtapa,etapa_nome:ETAPAS_FORM[Math.min(maxEtapa-1,8)],atribuicao:atr});
+        if(maxEtapa>=9) evs.push({sessao:s,tipo:'enviou',etapa:9,etapa_nome:'Enviado',atribuicao:atr});
+      }
+    });
+    return evs;
+  })();
+  function getEventos(){
+    // Funil & Fugas RESETADO: sem amostra fictícia e limpando dados de teste antigos.
+    // Volta a ter dados quando o rastreio real (tabela lead_eventos) for ativado.
+    try{ localStorage.removeItem('mabe_lead_eventos'); }catch(_){}
+    return {evs:[], sample:false};
+  }
+  function computeFunil(evs){
+    var sess={};
+    evs.forEach(function(e){
+      var s=sess[e.sessao]||(sess[e.sessao]={maxEtapa:0,maxNome:'',enviou:false,origem:'direto'});
+      if(e.atribuicao&&e.atribuicao.utm_source) s.origem=e.atribuicao.utm_source;
+      if(e.tipo==='enviou') s.enviou=true;
+      if((e.etapa||0)>s.maxEtapa){ s.maxEtapa=e.etapa||0; s.maxNome=e.etapa_nome||''; }
+    });
+    var list=Object.keys(sess).map(function(k){return sess[k];});
+    var abriu=list.length;
+    var comecou=list.filter(function(s){return s.maxEtapa>1;}).length;
+    var enviou=list.filter(function(s){return s.enviou;}).length;
+    var dropoff={}, origem={};
+    list.forEach(function(s){
+      if(!s.enviou){ var nome=s.maxNome||'Início'; dropoff[nome]=(dropoff[nome]||0)+1; }
+      origem[s.origem]=(origem[s.origem]||0)+1;
+    });
+    return {abriu:abriu, comecou:comecou, enviou:enviou, dropoff:dropoff, origem:origem};
+  }
   function applyFunilCollapse(){
     var p=document.getElementById('lFunil'); if(!p) return;
     p.classList.toggle('closed', !FUNIL_OPEN);
@@ -1013,61 +885,23 @@
         '<div class="val">'+e[1]+'</div></div>';
     }).join('') : '<div style="font-size:12.5px;color:var(--ink-3)">Sem dados.</div>';
   }
-  function fugaCard(f){
-    var tel=(f.telefone||'').replace(/\D/g,''), temTel=tel.length>=10;
-    var qtd=Array.isArray(f.respostas)?f.respostas.length:0;
-    var quando=f.atualizado_em ? new Date(f.atualizado_em).toLocaleString('pt-BR') : '';
-    var qa=(Array.isArray(f.respostas)?f.respostas:[]).map(function(x){ return '<div class="q">'+esc(x.label)+'</div><div class="a">'+esc(x.value||'—')+'</div>'; }).join('');
-    return '<div class="fgcard">'+
-      '<div class="fgnm">'+esc(f.nome||'Sem nome ainda')+'</div>'+
-      '<div class="fgmeta">'+[esc(f.categoria||''),esc(f.telefone||''),esc(quando)].filter(Boolean).join(' · ')+'</div>'+
-      '<div class="fgstop">Parou em: <b>'+esc(f.ultima_pergunta||'—')+'</b>'+(f.pagina?' (pergunta '+f.pagina+')':'')+' · '+qtd+' resposta(s)</div>'+
-      '<div class="fgacts">'+
-        (temTel?'<a class="fgbtn wa" href="'+waLink(f.telefone)+'" target="_blank" rel="noopener">WhatsApp</a>':'')+
-        '<button type="button" class="fgbtn" onclick="window.__verFuga('+f.id+')">Ver respostas</button>'+
-        '<button type="button" class="fgbtn del" onclick="window.__delFuga('+f.id+')">Excluir</button>'+
-      '</div>'+
-      '<div class="fgqa" id="fgqa'+f.id+'">'+qa+'</div>'+
-    '</div>';
-  }
-  window.__verFuga=function(id){ var el=document.getElementById('fgqa'+id); if(el) el.classList.toggle('open'); };
-  window.__delFuga=function(id){
-    var f = FUGAS.filter(function(x){ return String(x.id)===String(id); })[0] || { id:id, nome:'' };
-    openDelFugaModal(f);
-  };
-  function fetchFugas(){
-    var c=window.CamberCloud && window.CamberCloud.client(); if(!c) return;
-    c.from('fugas').select('*').eq('concluido',false).order('atualizado_em',{ascending:false}).then(function(out){
-      FUGAS=(out && out.data) || []; renderFunil(); renderKanban(); applyView();
-    }, function(){});
-  }
-  var __fgRt=null, __fgTimer=null;
-  function subscribeFugasRealtime(){
-    if(__fgRt) return;
-    var c=window.CamberCloud && window.CamberCloud.client(); if(!c) return;
-    c.auth.getSession().then(function(r){
-      try{ if(r&&r.data&&r.data.session) c.realtime.setAuth(r.data.session.access_token); }catch(_){}
-      __fgRt=c.channel('fugas-rt').on('postgres_changes',{event:'*',schema:'public',table:'fugas'},function(){
-        clearTimeout(__fgTimer); __fgTimer=setTimeout(fetchFugas,1500);
-      }).subscribe();
-    }, function(){});
-  }
   function renderFunil(){
     var panel=document.getElementById('lFunil'); if(!panel) return;
     panel.style.display='block';
     applyFunilCollapse();
-    var enviou=LEADS.length, fugas=FUGAS.length, iniciou=enviou+fugas;
-    var pc=function(n,d){ return d? Math.round(n/d*100):0; };
-    var badge=document.getElementById('lFunilBadge'); if(badge) badge.textContent=fugas;
+    var src=getEventos(); var f=computeFunil(src.evs);
+    var pc=function(n,d){ return d? Math.round(n/d*100) : 0; };
     document.getElementById('lFunilSteps').innerHTML =
-      '<div class="funstep"><div class="fk">Iniciaram</div><div class="fv">'+iniciou+'</div><div class="fp">100%</div></div>'+
+      '<div class="funstep"><div class="fk">Abriu</div><div class="fv">'+f.abriu+'</div><div class="fp">100%</div></div>'+
       '<span class="funarrow">→</span>'+
-      '<div class="funstep"><div class="fk">Abandonaram</div><div class="fv">'+fugas+'</div><div class="fp'+(fugas?' drop':'')+'">'+pc(fugas,iniciou)+'% de fuga</div></div>'+
+      '<div class="funstep"><div class="fk">Começou</div><div class="fv">'+f.comecou+'</div><div class="fp'+(f.comecou<f.abriu?' drop':'')+'">'+pc(f.comecou,f.abriu)+'% de quem abriu</div></div>'+
       '<span class="funarrow">→</span>'+
-      '<div class="funstep"><div class="fk">Enviaram</div><div class="fv">'+enviou+'</div><div class="fp">'+pc(enviou,iniciou)+'% de conversão</div></div>';
-    var drop={}; FUGAS.forEach(function(f){ var k=f.ultima_pergunta||'Início'; drop[k]=(drop[k]||0)+1; });
-    document.getElementById('lFunilDrop').innerHTML = mapHbars(drop);
-    document.getElementById('lFunilHint').textContent = 'Atualiza em tempo real. Os formulários abandonados aparecem na coluna "Fugas" do Kanban.';
+      '<div class="funstep"><div class="fk">Enviou</div><div class="fv">'+f.enviou+'</div><div class="fp'+(f.enviou<f.comecou?' drop':'')+'">'+pc(f.enviou,f.abriu)+'% de conversão</div></div>';
+    document.getElementById('lFunilDrop').innerHTML = mapHbars(f.dropoff);
+    document.getElementById('lFunilOrigem').innerHTML = mapHbars(f.origem);
+    document.getElementById('lFunilHint').textContent = (src.evs && src.evs.length)
+      ? 'Dados de teste (localStorage) — não gravados no banco.'
+      : 'Funil zerado — será preenchido quando o rastreio no banco (lead_eventos) for ativado.';
   }
 
   // ---------- drawer ----------
@@ -1100,7 +934,7 @@
       '<div style="font-size:12px;color:var(--ink-3);margin:-4px 0 2px">Sobrepõe a temperatura do Lead Score (salvo localmente, não grava no banco).</div>'+
       '<div class="ovrow" id="dOverride">'+ovBtns+'</div></div>';
 
-    var isAdmin = !!(window.__camberPerms && window.__camberPerms.admin);
+    var isAdmin = !!(window.__mabePerms && window.__mabePerms.admin);
     document.getElementById('dBody').innerHTML =
       '<div class="dsec"><h3>Status</h3><div class="statusrow" id="dStatus">'+stbtns+'</div></div>'+
       '<div class="dsec" id="dScoreSec">'+scoreHtml+'</div>'+
@@ -1109,14 +943,11 @@
       (isAdmin ? '<div class="dsec"><button type="button" class="dellead" id="dDelete">🗑&nbsp; Excluir este lead</button></div>' : '');
 
     var wpp = document.getElementById('dWpp');
-    if(fone){ wpp.style.display=''; wpp.href = 'https://wa.me/'+(fone.length<=11?('55'+fone):fone)+'?text='+encodeURIComponent('Olá '+(L.nome||'')+'! Aqui é da Camber Interiores 🌿'); }
+    if(fone){ wpp.style.display=''; wpp.href = 'https://wa.me/'+(fone.length<=11?('55'+fone):fone)+'?text='+encodeURIComponent('Olá '+(L.nome||'')+'! Aqui é da Mabē Interiores 🌿'); }
     else wpp.style.display='none';
     var mail = document.getElementById('dMail');
     if(email && email.indexOf('@')>0){ mail.style.display=''; mail.href='mailto:'+email; }
     else mail.style.display='none';
-    // garante que controles de impressão (escondidos no drawer de fuga) voltem para leads
-    var _pv=document.getElementById('dPrintView'); if(_pv) _pv.style.display='';
-    var _pb=document.getElementById('dPrint'); if(_pb) _pb.style.display='';
 
     // status update (etapa do funil) — visual via setStage (localStorage); grava no banco só se DB_WRITE
     document.getElementById('dStatus').addEventListener('click', function(e){
@@ -1151,37 +982,6 @@
     document.getElementById('lScrim').classList.remove('open');
     document.getElementById('lDrawer').classList.remove('open');
   }
-  // drawer da fuga: TODAS as respostas preenchidas até a pessoa sair do site
-  function openFuga(fid){
-    var f = FUGAS.filter(function(x){ return String(x.id)===String(fid); })[0]; if(!f) return;
-    var quando = f.atualizado_em ? new Date(f.atualizado_em).toLocaleString('pt-BR') : '';
-    document.getElementById('dNome').textContent = (f.nome || 'Sem nome ainda') + ' · fuga';
-    document.getElementById('dSub').textContent = [f.telefone, f.categoria, quando].filter(Boolean).join(' · ');
-    var resp = Array.isArray(f.respostas) ? f.respostas : [];
-    var qas = resp.length ? resp.map(function(it){
-      return '<div class="qa"><div class="q">'+esc(it.label)+'</div><div class="a">'+esc(it.value||'—')+'</div></div>';
-    }).join('') : '<div style="font-size:13px;color:var(--ink-3)">Nenhuma resposta preenchida.</div>';
-    var estr = Array.isArray(f.estrategias) ? f.estrategias : [];
-    var estrHtml = estr.length ? '<div class="dsec"><h3>Estratégias / ações</h3><div class="hlist">'+estr.map(function(e){
-      var dt = e.em ? new Date(e.em).toLocaleString('pt-BR') : '';
-      var mov = (e.para && e.para!==e.de) ? ' <b>('+esc(e.de)+' → '+esc(e.para)+')</b>' : '';
-      return '<div class="hl"><span class="ic">🎯</span><div>'+esc(e.estrategia||'')+mov+'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+esc(dt)+'</div></div></div>';
-    }).join('')+'</div></div>' : '';
-    document.getElementById('dBody').innerHTML =
-      '<div class="dsec"><h3>Onde parou</h3><div class="hlist"><div class="hl strong"><span class="ic">🚪</span><div>Saiu em: <b>'+esc(f.ultima_pergunta||'—')+'</b>'+(f.pagina?' (pergunta '+f.pagina+')':'')+'</div></div></div></div>'+
-      '<div class="dsec"><h3>Respostas preenchidas até sair ('+resp.length+')</h3>'+qas+'</div>'+
-      estrHtml;
-    var wpp = document.getElementById('dWpp');
-    var tel = (f.telefone||'').replace(/\D/g,'');
-    if(tel.length>=10){ wpp.style.display=''; wpp.href = waLink(f.telefone)+'?text='+encodeURIComponent('Olá '+(f.nome||'')+'! Aqui é da Camber Interiores 🌿'); }
-    else wpp.style.display='none';
-    document.getElementById('dMail').style.display='none';
-    var pv=document.getElementById('dPrintView'); if(pv) pv.style.display='none';
-    var pb=document.getElementById('dPrint'); if(pb) pb.style.display='none';
-    document.getElementById('lScrim').classList.add('open');
-    document.getElementById('lDrawer').classList.add('open');
-  }
-  window.__openFuga = openFuga;
 
   // ---------- impressão do lead individual ----------
   function printLead(L){
@@ -1203,13 +1003,13 @@
 
     document.getElementById('leadPrint').innerHTML =
       '<div class="pdoc">'+
-        '<div class="phead"><div class="pbrand">camber</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
+        '<div class="phead"><div class="pbrand">mabē</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
         '<h1>'+esc(L.nome||'Sem nome')+'</h1>'+
         '<div class="pcontact">'+esc(L.telefone||'')+(email?' &nbsp;·&nbsp; '+esc(email):'')+(origem?' &nbsp;·&nbsp; '+esc(origem):'')+'</div>'+
         '<div class="pchips"><span>'+r.tempLabel+'</span><span>'+esc(r.inv.label)+'</span>'+(r.inv.opp?'<span class="opp">Oportunidade &gt; R$ 300 mil</span>':'')+'</div>'+
         '<h2>Lead Score — '+r.score+'/100 · '+r.tempLabel+'</h2><ul class="phl">'+hl+'</ul>'+
         '<h2>Respostas do formulário</h2><div class="pgrid '+view+'">'+boxes+'</div>'+
-        '<div class="pfoot">Camber Interiores · documento gerado pelo Gestão Camber</div>'+
+        '<div class="pfoot">Mabē Interiores · documento gerado pelo Mabe Comercial</div>'+
       '</div>';
     window.print();
   }
@@ -1227,15 +1027,11 @@
     var wrap = document.getElementById('lKanban'); if(!wrap) return;
     wrap.addEventListener('click', function(e){
       if(e.target.closest('.kcard.dragging')) return;
-      if(e.target.closest('.fgbtn')) return;            // botões do card de fuga
-      var c = e.target.closest('.kcard'); if(!c) return;
-      if(c.getAttribute('data-id')) openLead(c.getAttribute('data-id'));
-      else if(c.getAttribute('data-fid')) openFuga(c.getAttribute('data-fid'));
+      var c = e.target.closest('.kcard'); if(c) openLead(c.getAttribute('data-id'));
     });
     wrap.addEventListener('dragstart', function(e){
       var c = e.target.closest('.kcard'); if(!c) return;
-      var tok = c.getAttribute('data-fid') ? ('fuga:'+c.getAttribute('data-fid')) : ('lead:'+c.getAttribute('data-id'));
-      e.dataTransfer.setData('text/plain', tok);
+      e.dataTransfer.setData('text/plain', c.getAttribute('data-id'));
       e.dataTransfer.effectAllowed = 'move';
       c.classList.add('dragging');
     });
@@ -1249,11 +1045,8 @@
     wrap.addEventListener('drop', function(e){
       var col = e.target.closest('.kcol'); if(!col) return;
       e.preventDefault(); col.classList.remove('drag-over');
-      var tok = e.dataTransfer.getData('text/plain'); if(!tok) return;
-      var stage = col.getAttribute('data-stage');
-      if(tok.indexOf('fuga:')===0) window.__moveFuga(tok.slice(5), stage);
-      else if(tok.indexOf('lead:')===0) setStage(tok.slice(5), stage);
-      else setStage(tok, stage);
+      var id = e.dataTransfer.getData('text/plain');
+      if(id) setStage(id, col.getAttribute('data-stage'));
     });
   })();
 
@@ -1292,10 +1085,12 @@
   document.getElementById('fInvest').addEventListener('change', function(){ FILTERS.invest = this.value; render(); });
   document.getElementById('fOrigem').addEventListener('change', function(){ FILTERS.origem = this.value; render(); });
   document.getElementById('fTemp').addEventListener('change', function(){ FILTERS.temp = this.value; render(); });
+  document.getElementById('fEtapa').addEventListener('change', function(){ FILTERS.etapa = this.value; render(); });
+  document.getElementById('fPeriodo').addEventListener('change', function(){ FILTERS.periodo = this.value; render(); });
   document.getElementById('fLimpar').addEventListener('click', function(){
-    FILTERS = { busca:'', tipo:'', invest:'', origem:'', temp:'' }; FILTER = 'all';
+    FILTERS = { busca:'', tipo:'', invest:'', origem:'', temp:'', etapa:'', periodo:'' }; FILTER = 'all';
     document.getElementById('fBusca').value='';
-    ['fTipo','fInvest','fOrigem','fTemp'].forEach(function(id){ document.getElementById(id).value=''; });
+    ['fTipo','fInvest','fOrigem','fTemp','fEtapa','fPeriodo'].forEach(function(id){ document.getElementById(id).value=''; });
     render();
   });
 
@@ -1303,9 +1098,9 @@
   document.getElementById('lScrim').addEventListener('click', closeLead);
   document.getElementById('dPrint').addEventListener('click', function(){ printLead(CUR); });
 
-  // ---------- excluir lead / fuga (admin + reconfirmar senha) ----------
+  // ---------- excluir lead (admin + reconfirmar senha) ----------
   function openDelModal(L){
-    DEL_LEAD = L; DEL_FUGA = null;
+    DEL_LEAD = L;
     document.getElementById('delNome').textContent = L.nome || 'este lead';
     document.getElementById('delPwd').value = '';
     document.getElementById('delErr').textContent = '';
@@ -1313,24 +1108,15 @@
     document.getElementById('delModal').classList.add('open');
     setTimeout(function(){ try{ document.getElementById('delPwd').focus(); }catch(_){} }, 60);
   }
-  function openDelFugaModal(f){
-    DEL_FUGA = f; DEL_LEAD = null;
-    document.getElementById('delNome').textContent = (f.nome ? (f.nome + ' (fuga)') : 'esta fuga');
-    document.getElementById('delPwd').value = '';
-    document.getElementById('delErr').textContent = '';
-    document.getElementById('delConfirm').disabled = false;
-    document.getElementById('delModal').classList.add('open');
-    setTimeout(function(){ try{ document.getElementById('delPwd').focus(); }catch(_){} }, 60);
-  }
-  function closeDelModal(){ document.getElementById('delModal').classList.remove('open'); DEL_LEAD = null; DEL_FUGA = null; }
+  function closeDelModal(){ document.getElementById('delModal').classList.remove('open'); DEL_LEAD = null; }
 
   function doDelete(){
-    var L = DEL_LEAD, F = DEL_FUGA; if(!L && !F) return;
+    var L = DEL_LEAD; if(!L) return;
     var pwd = document.getElementById('delPwd').value;
     var errEl = document.getElementById('delErr');
     var btn = document.getElementById('delConfirm');
     if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
-    var c = window.CamberCloud && window.CamberCloud.client();
+    var c = window.MabeCloud && window.MabeCloud.client();
     if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
     btn.disabled = true; errEl.style.color=''; errEl.textContent = 'Verificando senha…';
     c.auth.getUser().then(function(ures){
@@ -1339,22 +1125,13 @@
       c.auth.signInWithPassword({ email: email, password: pwd }).then(function(res){
         if(res.error){ errEl.textContent = 'Senha incorreta. Tente novamente.'; btn.disabled=false; return; }
         errEl.textContent = 'Excluindo…';
-        if(F){
-          c.from('fugas').delete().eq('id', F.id).then(function(out){
-            if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
-            FUGAS = FUGAS.filter(function(x){ return String(x.id) !== String(F.id); });
-            renderFunil(); renderKanban();
-            closeDelModal();
-          }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
-        } else {
-          c.from('respostas').delete().eq('id', L.id).then(function(out){
-            if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
-            LEADS = LEADS.filter(function(x){ return String(x.id) !== String(L.id); });
-            render();
-            closeDelModal();
-            closeLead();
-          }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
-        }
+        c.from('respostas').delete().eq('id', L.id).then(function(out){
+          if(out.error){ errEl.textContent = 'Erro ao excluir: ' + out.error.message; btn.disabled=false; return; }
+          LEADS = LEADS.filter(function(x){ return String(x.id) !== String(L.id); });
+          render();
+          closeDelModal();
+          closeLead();
+        }, function(e){ errEl.textContent = 'Erro ao excluir.'; btn.disabled=false; });
       }, function(){ errEl.textContent = 'Não foi possível verificar a senha.'; btn.disabled=false; });
     }, function(){ errEl.textContent = 'Sessão inválida.'; btn.disabled=false; });
   }
@@ -1367,7 +1144,7 @@
   // ---------- carga ----------
   function load(tries){
     tries = tries||0;
-    var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
+    var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
     if(!c){ if(tries<60){ setTimeout(function(){load(tries+1);},150); } else { document.getElementById('lLoad').textContent='Sem conexão com o servidor.'; } return; }
     c.auth.getUser().then(function(res){
       if(!res || !res.data || !res.data.user){ if(tries<200){ setTimeout(function(){load(tries+1);},500); } return; }
@@ -1379,24 +1156,8 @@
     }, function(){ if(tries<200) setTimeout(function(){load(tries+1);},500); });
   }
 
-  // exposto para o shell disparar (load() trata auth/retry internamente)
-  window.CamberLeadLoad = function(){ load(0); fetchFugas(); subscribeFugasRealtime(); };
-})();
-</script>
-<script>
-// dispara a carga da aba Lead assim que o shell (CamberCloud) estiver pronto
-(function(){
-  function go(t){ t=t||0;
-    var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
-    if(!c || !window.CamberLeadLoad){ if(t<150) setTimeout(function(){ go(t+1); }, 150); return; }
-    // só dispara depois que a sessão do Supabase estiver restaurada (evita corrida no auth)
-    c.auth.getSession().then(function(r){
-      if(r && r.data && r.data.session){ window.CamberLeadLoad(); }
-      else if(t<150){ setTimeout(function(){ go(t+1); }, 200); }
-    }, function(){ if(t<150) setTimeout(function(){ go(t+1); }, 200); });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ go(0); });
-  else go(0);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ load(0); });
+  else load(0);
 })();
 </script>
 </body>

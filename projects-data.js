@@ -188,6 +188,46 @@
       try { this.seedOppsPadrao(p); } catch(e) {}
       return p;
     },
+    // AUTO-CURA: garante que toda proposta da Precificação tenha o seu Projeto.
+    // Projetos podem sumir por sincronização (last-write-wins entre navegadores);
+    // as propostas persistem melhor, então recriamos o projeto que faltar — com o
+    // MESMO projId da proposta, para o vínculo continuar certo. Retorna quantos recriou.
+    reconciliarProjetos: function(){
+      var props;
+      try { props = JSON.parse(localStorage.getItem('mabe_prc_propostas_v1') || '[]'); } catch(e){ props = []; }
+      if (!Array.isArray(props) || !props.length) return 0;
+      var arr = read(PKEY, []);
+      var byId = {}; arr.forEach(function(p){ byId[String(p.id)] = true; });
+      var maxId = arr.reduce(function(m,x){ return Math.max(m, Number(x.id)||0); }, 0);
+      var tipoMap = { 'Residencial':'Residencial','Corporativos':'Comercial','Corporativo':'Comercial','Airbnb':'Airbnb','Reforma':'Reforma' };
+      var criados = 0, propsMudou = false;
+      props.forEach(function(pr){
+        if (!pr) return;
+        if (pr.projId != null && byId[String(pr.projId)]) return;   // projeto já existe
+        var L = pr.localizacao || {};
+        var seg = pr.segmento || pr.tipo || 'Projeto';
+        var novoId = (pr.projId != null && !byId[String(pr.projId)]) ? pr.projId : (++maxId);
+        var proj = {
+          id: novoId,
+          nome: (pr.cliente || 'Cliente') + ' — ' + seg,
+          cliente: pr.cliente || '—',
+          tipo: tipoMap[seg] || seg || 'Residencial',
+          cidade: L.cidade || '—', uf: L.uf || '', cep: L.cep || '', logradouro: L.rua || '', numero: L.numero || '', bairro: L.bairro || '',
+          valor: Math.round(pr.totalGeral || 0),
+          resp: pr.comercial || 'Comercial',
+          obs: 'Gerado a partir de proposta de precificação.',
+          op: 0, pct: 0, rt: 0, statusLabel: 'Prospecção', statusCls: 'prospec'
+        };
+        arr.unshift(proj); byId[String(novoId)] = true;
+        if (pr.projId !== novoId) { pr.projId = novoId; propsMudou = true; }
+        criados++;
+      });
+      if (criados) {
+        this.saveProjects(arr);
+        if (propsMudou) { try { localStorage.setItem('mabe_prc_propostas_v1', JSON.stringify(props)); } catch(e){} }
+      }
+      return criados;
+    },
     // cria oportunidades-base (em Prospecção) para projetos Residencial/Comercial
     seedOppsPadrao: function(p){
       if (!p || (p.tipo !== 'Residencial' && p.tipo !== 'Comercial')) return;

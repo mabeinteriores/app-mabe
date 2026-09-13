@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260912221608"></script>
+<script src="cloud.js?v=202609130108"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projetos · Gestão Camber</title>
@@ -112,8 +112,8 @@
   <input type="file" id="fotoInput" accept="image/*" style="display:none">
 </div>
 
-<script src="projects-data.js?v=20260912221608"></script>
-<script src="shell.js?v=20260912215700"></script>
+<script src="projects-data.js?v=202609130108"></script>
+<script src="shell.js?v=202609130108"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : '—'; }
   // tipo de projeto vem da Configuração (Tipos de Projeto)
@@ -559,6 +559,8 @@
     var sel=document.getElementById('pjResp'); if(!sel) return;
     sel.innerHTML = CamberDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
   })();
+  // auto-cura: recria na lista qualquer projeto de Precificação que tenha sumido
+  try { if (CamberDB.reconciliarProjetos) CamberDB.reconciliarProjetos(); } catch(e){}
   render();
 </script>
 <script src="cliente-anexos.js?v=4"></script>

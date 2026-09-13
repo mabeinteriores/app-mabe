@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260912221608"></script>
+<script src="cloud.js?v=202609130108"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Residência Alphaville · Gestão Camber</title>
@@ -254,9 +254,9 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=20260912221608"></script>
-<script src="ct.js?v=20260912215700"></script>
-<script src="shell.js?v=20260912215700"></script>
+<script src="projects-data.js?v=202609130108"></script>
+<script src="ct.js?v=202609130108"></script>
+<script src="shell.js?v=202609130108"></script>
 <script>
   var STAGES = [
     { k:'prospec', l:'Prospecção' },
@@ -269,13 +269,26 @@
 
   var opps = [];
   var PROJ = null, projId = null, seq = 1, editing = null;
+  var PROJ_NAO_ENCONTRADO = false;
 
   // carrega o projeto pelo id da URL
   (function loadProject(){
     var qs = new URLSearchParams(location.search);
     projId = qs.get('id');
     PROJ = CamberDB.getProject(projId);
-    if (!PROJ){ var all = CamberDB.loadProjects(); PROJ = all[0]; }
+    // Projeto pode ter sumido por sincronização, mas a proposta da Precificação
+    // costuma sobreviver — tentamos recriá-lo antes de desistir. NUNCA abrir outro
+    // projeto no lugar (isso confundia o usuário: "puxa outro projeto e some").
+    if (!PROJ){
+      try { if (CamberDB.reconciliarProjetos) CamberDB.reconciliarProjetos(); } catch(e){}
+      PROJ = CamberDB.getProject(projId);
+    }
+    if (!PROJ){
+      PROJ_NAO_ENCONTRADO = true;
+      alert('Este projeto não foi encontrado. Ele pode ter sido excluído. Voltando para a lista de projetos.');
+      location.href = 'projetos.html';
+      return;
+    }
     projId = PROJ ? PROJ.id : null;
     opps = projId != null ? CamberDB.loadOpps(projId) : [];
     seq = opps.reduce(function(m,o){ return Math.max(m, o.id); }, 0) + 1;
@@ -376,6 +389,7 @@
   }
 
   function render(){
+    if (PROJ_NAO_ENCONTRADO || !PROJ) return;
     // kanban
     var html = STAGES.map(function(s){
       var list = opps.filter(function(o){ return o.et === s.k; });
