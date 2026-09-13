@@ -89,13 +89,8 @@
           <h1 id="projName">—</h1>
         </div>
         <div class="btnbar" style="display:flex;gap:10px;align-items:center">
-          <div class="mais-wrap">
-            <button class="btn" id="btnMais" type="button" onclick="toggleMais(event)">☰&nbsp; Mais<span class="mais-badge" id="maisBadge" style="display:none" title="Visita em andamento"></span></button>
-            <div class="mais-menu" id="maisMenu">
-              <button class="mais-item" id="miLucro" onclick="fecharMais();imprimirLucro()">🧮&nbsp; Imprimir Lucro</button>
-              <button class="mais-item" onclick="fecharMais();imprimir()">⎣&nbsp; Imprimir</button>
-            </div>
-          </div>
+          <button class="btn" type="button" onclick="imprimir()">Imprimir</button>
+          <button class="btn" id="miLucro" type="button" onclick="imprimirLucro()">Imprimir lucro</button>
         </div>
       </div>
 
@@ -931,6 +926,7 @@
   })();
 
   render();
+  aplicarPermLucro();
 </script>
 
 <script src="visitas.js?v=20260913-autores"></script>
