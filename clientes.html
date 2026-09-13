@@ -138,13 +138,17 @@
     return Object.keys(map).map(function(k){ return map[k]; });
   }
 
-  // Carteira somente de clientes com projetos em andamento.
+  // Inclui os cadastros sem projetos para permitir consultar e editar todos os clientes.
   function carteiraCompleta(){
     var lista = carteira();
     var regs = (CamberDB.loadClientes ? CamberDB.loadClientes() : []);
     var byName = {}; regs.forEach(function(c){ if(c.nome) byName[c.nome.toLowerCase()] = c; });
     // anexa o id do cliente cadastrado às linhas vindas de projetos (mesmo nome)
     lista.forEach(function(c){ var r=byName[(c.nome||'').toLowerCase()]; if(r){ c.id=r.id; if(!c.cidade){c.cidade=r.cidade||'';c.uf=r.uf||'';} } });
+    regs.forEach(function(r){
+      if(lista.some(function(c){return String(c.id)===String(r.id);}))return;
+      lista.push({id:r.id,nome:r.nome||'',cidade:r.cidade||'',uf:r.uf||'',projetos:0,contratado:0,negoc:0,concluido:false,ativo:false});
+    });
     return lista;
   }
 
@@ -157,7 +161,7 @@
 
     var body = document.getElementById('cliBody');
     if (!lista.length){
-      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente com projeto em andamento encontrado.</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente encontrado.</td></tr>';
     } else { var ovr = loadCliStatus(); body.innerHTML = lista.map(function(c){
       var nameKey = (c.nome||'').toLowerCase();
       var defSt = c.concluido ? 'win' : (c.negoc>0 ? 'negoc' : 'prospec');

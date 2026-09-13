@@ -96,7 +96,7 @@
         String(item.doc || '').replace(/\D/g, '') === numeros;
     });
     if (duplicado){
-      var erro = new Error('Este CPF/CNPJ já está cadastrado para outro ' + tipo + '. Abra o cadastro existente para editar.');
+      var erro = new Error('Este CPF/CNPJ já está cadastrado para ' + tipo + ' "' + (duplicado.nome || 'Sem nome') + '" (ID ' + duplicado.id + '). Abra esse cadastro para editar.');
       erro.code = 'DOCUMENTO_DUPLICADO';
       throw erro;
     }
