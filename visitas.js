@@ -31,12 +31,13 @@
   function fDataFull(ts) { var d = new Date(ts); return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear(); }
   function fHora(ts) { var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
-  function eu() { return (typeof meuNome === 'function' ? meuNome() : '') || '—'; }
+  function eu() { return ((window.__camberProfile||{}).nome || (window.__camberUser||{}).email || 'Usuário não identificado').trim(); }
 
   // ---------- ações ----------
   function checkin(motivo) {
     var v = load();
-    var nova = { id: (v.reduce(function (a, x) { return Math.max(a, x.id); }, 0) + 1), user: eu(), in: Date.now(), out: null, obs: motivo || '', loc: null };
+    if(v.some(function(x){return !x.out && (x.userId ? x.userId === (window.__camberUser||{}).id : x.user===eu());}))return;
+    var nova = { id: (v.reduce(function (a, x) { return Math.max(a, x.id); }, 0) + 1), user: eu(), userId: (window.__camberUser||{}).id || null, in: Date.now(), out: null, obs: motivo || '', loc: null };
     v.push(nova); save(v); render();
     capturarGPS(nova.id, 'loc');
   }
@@ -65,7 +66,7 @@
   }
   function checkout(id) {
     var v = load(), it = v.find(function (x) { return x.id === id; });
-    if (it && !it.out) { it.out = Date.now(); save(v); capturarGPS(id, 'locOut'); }
+    if (it && !it.out) { it.out = Date.now(); it.checkoutUser=eu(); it.checkoutUserId=(window.__camberUser||{}).id || null; save(v); capturarGPS(id, 'locOut'); }
     render();
   }
 
@@ -185,7 +186,8 @@
     // 3) relatório
     var repHtml = '<button class="vis-report" onclick="Visitas.openReport()">📄&nbsp; Gerar relatório de visitas</button>';
 
-    mount.innerHTML = prevHtml + stHtml + repHtml;
+    var history = '<h3 style="margin-top:24px">Histórico de visitas</h3>' + v.slice().reverse().map(function(x){return '<div style="padding:14px 0;border-top:1px solid var(--hair)"><b>'+esc(x.obs||'Visita')+'</b><div>Entrada: '+fmtDataHora(x.in)+' · '+esc(x.user)+'</div>'+gpsLinha(x,'loc')+'<div>Saída: '+(x.out ? fmtDataHora(x.out)+' · '+esc(x.checkoutUser||'Não registrado') : 'Em andamento')+'</div>'+(x.out?gpsLinha(x,'locOut')+'<div>Duração: '+fmtClock(x.out-x.in)+'</div>':'')+'</div>';}).join('');
+    mount.innerHTML = prevHtml + stHtml + repHtml + history;
 
     if (tick) { clearInterval(tick); tick = null; }
     if (ativa) { var upd = function () { var el = document.getElementById('visTimer'); if (el) el.textContent = fmtClock(Date.now() - ativa.in); }; upd(); tick = setInterval(upd, 1000); }
@@ -207,7 +209,7 @@
     var sep = '━━━━━━━━━━━━━';
     var blocos = c.map(function (x, i) {
       return '*Visita ' + (i + 1) + '*\n' +
-        '👤 Colaborador: ' + x.user + '\n' +
+        '👤 Check-in: ' + x.user + '\n👤 Check-out: ' + (x.checkoutUser || 'Não registrado') + '\n' +
         (x.obs ? ('📝 Motivo: ' + x.obs + '\n') : '') +
         '🟢 Entrada: ' + fmtDataHora(x.in) + (x.loc ? ('\n📍 Local: ' + mapUrl(x.loc)) : '') + '\n' +
         '🔴 Saída: ' + fmtDataHora(x.out) + (x.locOut ? ('\n📍 Local: ' + mapUrl(x.locOut)) : '') + '\n' +
@@ -228,7 +230,7 @@
       var locOut = x.locOut ? (' · <a href="' + mapUrl(x.locOut) + '">ver local</a>') : '';
       return '<div class="rv">' +
         '<div class="rv-h"><span class="rv-n">Visita ' + (i + 1) + '</span><span class="rv-d">⏱️ ' + fmtDurLongo(x.out - x.in) + '</span></div>' +
-        '<div class="rv-l"><b>Colaborador:</b> ' + esc(x.user) + (x.obs ? ('&nbsp;&nbsp;·&nbsp;&nbsp;<b>Motivo:</b> ' + esc(x.obs)) : '') + '</div>' +
+        '<div class="rv-l"><b>Check-in:</b> ' + esc(x.user) + ' · <b>Check-out:</b> ' + esc(x.checkoutUser || 'Não registrado') + (x.obs ? ('&nbsp;&nbsp;·&nbsp;&nbsp;<b>Motivo:</b> ' + esc(x.obs)) : '') + '</div>' +
         '<div class="rv-l"><span class="rvd g"></span><b>Entrada:</b> ' + fmtDataHora(x.in) + locIn + '</div>' +
         '<div class="rv-l"><span class="rvd r"></span><b>Saída:</b> ' + fmtDataHora(x.out) + locOut + '</div>' +
         '</div>';

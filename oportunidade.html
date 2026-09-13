@@ -267,8 +267,8 @@
       if (!p) return;
       document.title = 'Nova oportunidade · ' + p.nome;
       var crumb = document.getElementById('crumbProj');
-      crumb.textContent = p.nome; crumb.href = 'projeto.html?id=' + p.id;
-      document.getElementById('cancelLink').href = 'projeto.html?id=' + p.id;
+      crumb.textContent = p.nome; crumb.href = 'projeto.html?area=oportunidades&id=' + p.id;
+      document.getElementById('cancelLink').href = 'projeto.html?area=oportunidades&id=' + p.id;
       var cli = document.getElementById('wCliente');
       cli.innerHTML = '<option>' + (p.cliente||'—') + '</option>';
     }
@@ -325,7 +325,7 @@
     list.push(opp);
     CamberDB.saveOpps(projId, list);
     CamberDB.recalc(projId);
-    irPara('projeto.html?id=' + projId);
+    irPara('projeto.html?area=oportunidades&id=' + projId);
   }
 
   render();
