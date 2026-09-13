@@ -297,12 +297,14 @@
   document.getElementById('convBody').addEventListener('click',function(e){
     var btn=e.target.closest('button[data-convite]'); if(btn) excluirConvite(btn.getAttribute('data-convite'));
   });
+  var convLeitura=0;
   async function carregarConvites(){
     var sb=_sbc(); if(!sb) return;
+    var leitura=++convLeitura;
     try{
       var limite=new Date(Date.now()-20*24*60*60*1000).toISOString();
       var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').in('status',['pendente','respondido']).or('status.eq.respondido,created_at.gt.'+limite).order('created_at',{ascending:false});
-      if(r.error || !r.data) return;
+      if(leitura!==convLeitura || r.error || !r.data) return;
       var rows=r.data, panel=document.getElementById('convPanel');
       if(!rows.length){ panel.style.display='none'; return; }
       panel.style.display='';
@@ -326,9 +328,36 @@
       }).join('');
     }catch(e){}
   }
-  (function(){ var t=0, iv=setInterval(function(){ t++; if(_sbc()){ clearInterval(iv); carregarConvites(); } else if(t>25){ clearInterval(iv); } }, 400); })();
-  window.addEventListener('pageshow',carregarConvites);
-  setInterval(function(){ if(!document.hidden) carregarConvites(); },60000);
+  // Atualiza apenas a lista, sem recarregar a página ou interromper formulários.
+  var convCanal=null, convCliente=null, convConectado=false, convUltimaLeitura=0;
+  function atualizarConvitesLive(){ convUltimaLeitura=Date.now(); carregarConvites(); }
+  function iniciarConvitesLive(){
+    var sb=_sbc(); if(!sb || convCanal) return;
+    convCliente=sb;
+    convCanal=sb.channel('camber-fornecedor-convites')
+      .on('postgres_changes',{event:'*',schema:'public',table:'fornecedor_convites'},atualizarConvitesLive);
+    convCanal.subscribe(function(status){
+      convConectado=status==='SUBSCRIBED';
+      if(convConectado) atualizarConvitesLive();
+    });
+    atualizarConvitesLive();
+  }
+  function retomarConvitesLive(){ iniciarConvitesLive(); atualizarConvitesLive(); }
+  window.addEventListener('pageshow',retomarConvitesLive);
+  window.addEventListener('online',retomarConvitesLive);
+  window.addEventListener('focus',retomarConvitesLive);
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) retomarConvitesLive(); });
+  window.addEventListener('pagehide',function(){
+    if(convCanal && convCliente) convCliente.removeChannel(convCanal);
+    convCanal=null; convCliente=null; convConectado=false;
+  });
+  setInterval(function(){
+    if(document.hidden) return;
+    iniciarConvitesLive();
+    // Recupera eventos perdidos durante uma queda de conexão e atualiza vencimentos.
+    if(Date.now()-convUltimaLeitura >= (convConectado ? 60000 : 10000)) atualizarConvitesLive();
+  },1000);
+  iniciarConvitesLive();
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 </script>
 </body>
