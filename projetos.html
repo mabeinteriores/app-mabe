@@ -50,7 +50,7 @@
       <!-- TABELA -->
       <div id="vTab">
         <table class="tbl lined">
-          <thead><tr><th>Projeto</th><th>Cliente</th><th>Localização</th><th style="text-align:center">Anexos</th><th class="r">Valor projeto</th><th class="r">Op.</th><th style="width:140px">% fechado</th><th class="r">RT prev.</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Projeto</th><th>Cliente</th><th>Localização</th><th class="r">Valor projeto</th><th class="r">Op.</th><th style="width:140px">% fechado</th><th style="text-align:center">Anexos</th><th class="r">RT prev.</th><th>Status</th><th></th></tr></thead>
           <tbody id="projBody"></tbody>
         </table>
       </div>
@@ -188,10 +188,10 @@
         '<td class="tcell-strong">' + p.nome + '</td>' +
         '<td>' + p.cliente + '</td>' +
         '<td><button type="button" class="btn ghost" style="padding:0;color:var(--accent);text-align:left" onclick="event.stopPropagation();abrirMapaProjeto(' + p.id + ')">' + p.cidade + ' · ' + p.uf + ' ›</button></td>' +
-        '<td style="text-align:center"><button class="btn sm" onclick="event.stopPropagation();abrirAnexosProjeto(' + p.id + ')">Anexos</button></td>' +
         '<td class="r num">' + brl(p.valor) + '</td>' +
         '<td class="r num">' + p.op + '</td>' +
         '<td><div class="prog"><i style="width:' + p.pct + '%"></i></div><span style="font-size:11px;color:var(--ink-3)">' + p.pct + '%</span></td>' +
+        '<td style="text-align:center"><button class="btn sm" onclick="event.stopPropagation();abrirAnexosProjeto(' + p.id + ')">Anexos</button></td>' +
         '<td class="r num rtpill">' + (p.rt ? brl(p.rt) : 'R$ 0') + '</td>' +
         '<td><span class="chip statusedit ' + p.statusCls + '" title="Clique para mudar o status" onclick="event.stopPropagation();statusMenu(event,' + p.id + ')"><span class="d"></span>' + p.statusLabel + ' <span style="opacity:.6;font-size:10px">▾</span></span></td>' +
         '<td class="r" style="white-space:nowrap"><button class="cbtn" title="Editar projeto" onclick="event.stopPropagation();editar(' + p.id + ')">✎</button> ' +
