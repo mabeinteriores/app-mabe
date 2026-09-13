@@ -34,12 +34,25 @@
   function eu() { return (typeof meuNome === 'function' ? meuNome() : '') || '—'; }
 
   // ---------- ações ----------
-  function checkin(motivo) {
+  async function checkin(motivo) {
+    if (visitStarting) return;
+    visitStarting = true;
+    var reference = crypto.randomUUID();
+    try {
     var v = load();
     var nova = { id: (v.reduce(function (a, x) { return Math.max(a, x.id); }, 0) + 1), user: eu(), in: Date.now(), out: null, obs: motivo || '', loc: null };
+    if (v.some(function(x){return x.user===eu()&&!x.out;})) return;
+    if (!window.VisitAudio) throw new Error('Atualize a página para carregar o serviço de gravação.');
+    var started = await VisitAudio.start(projId, reference, function(){ checkout(nova.id); });
+    if (!started) return;
+    v=load(); nova.id=v.reduce(function(a,x){return Math.max(a,x.id);},0)+1;
+    nova.in=Date.now(); nova.audioRef=reference;
     v.push(nova); save(v); render();
     capturarGPS(nova.id, 'loc');
+    } catch(e) { alert(e.message || 'Não foi possível iniciar a gravação.'); }
+    finally { visitStarting=false; }
   }
+  var visitStarting=false, visitFinishing=false;
   // captura a localização (não bloqueia) e guarda o status para dar retorno ao usuário
   function capturarGPS(id, campo) {
     if (!navigator.geolocation) { setGps(id, campo, 'no'); return; }
@@ -63,10 +76,15 @@
     if (st === 'fail' || st === 'no') return '<div class="vis-gps err">📍 Sem localização · <a onclick="Visitas.gps(' + v.id + ',\'' + campo + '\')">tentar de novo</a></div>';
     return '<div class="vis-gps"><a onclick="Visitas.gps(' + v.id + ',\'' + campo + '\')">📍 Registrar localização</a></div>';
   }
-  function checkout(id) {
+  async function checkout(id) {
+    if(visitFinishing) return;
+    visitFinishing=true;
     var v = load(), it = v.find(function (x) { return x.id === id; });
     if (it && !it.out) { it.out = Date.now(); save(v); capturarGPS(id, 'locOut'); }
     render();
+    try { if(window.VisitAudio) await VisitAudio.finish(); }
+    catch(e) { alert('A visita foi encerrada, mas o áudio ainda não foi confirmado. Mantenha a página aberta e use Tentar enviar novamente.'); }
+    finally {visitFinishing=false;}
   }
 
   // ---------- check-in: escolha do motivo ----------
@@ -184,6 +202,7 @@
 
     // 3) relatório
     var repHtml = '<button class="vis-report" onclick="Visitas.openReport()">📄&nbsp; Gerar relatório de visitas</button>';
+    if(window.VisitAudio && VisitAudio.isAdmin()) repHtml += '<button class="vis-report" onclick="VisitAudio.openAdmin(projId)">🔒 Áudios e análises (administrador)</button>';
 
     mount.innerHTML = prevHtml + stHtml + repHtml;
 
