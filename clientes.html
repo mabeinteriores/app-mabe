@@ -19,7 +19,6 @@
       <div class="page-h">
         <div><div class="crumb">Carteira de clientes</div><h1>Clientes</h1></div>
         <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
-          <button class="btn" onclick="abrirAnexosClientes()">ANEXOS</button>
           <button class="btn" onclick="abrirGerarLink()">🔗&nbsp; Gerar link</button>
           <a class="btn" href="cliente.html">+&nbsp; Novo cliente</a>
         </div>
@@ -45,7 +44,7 @@
             <label class="ipt" style="gap:8px;min-width:200px"><span>⌕</span><input id="cliSearch" oninput="render()" placeholder="Buscar cliente ou cidade…" style="border:none;background:transparent;outline:none;font-family:inherit;font-size:13px;color:var(--ink);width:100%"></label>
           </div>
           <table class="tbl">
-            <thead><tr><th>Cliente</th><th>Localização</th><th class="r">Projetos</th><th class="r">Contratado</th><th class="r">Em negoc.</th><th>Status</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Localização</th><th style="text-align:center">Projetos</th><th style="text-align:center">Anexos</th><th class="r">Contratado</th><th class="r">Em negoc.</th><th>Status</th></tr></thead>
             <tbody id="cliBody"></tbody>
             <tfoot><tr class="tfoot" id="cliFoot"></tr></tfoot>
           </table>
@@ -158,7 +157,7 @@
 
     var body = document.getElementById('cliBody');
     if (!lista.length){
-      body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente com projeto em andamento encontrado.</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente com projeto em andamento encontrado.</td></tr>';
     } else { var ovr = loadCliStatus(); body.innerHTML = lista.map(function(c){
       var nameKey = (c.nome||'').toLowerCase();
       var defSt = c.concluido ? 'win' : (c.negoc>0 ? 'negoc' : 'prospec');
@@ -166,7 +165,8 @@
       return '<tr class="click" onclick="location.href=\'cliente.html' + (c.id?('?id='+c.id):'') + '\'">' +
         '<td><div class="who"><span class="sw">' + inicial(c.nome) + '</span>' + c.nome + '</div></td>' +
         '<td style="color:var(--ink-2)">' + (c.cidade||'—') + (c.uf?(' · '+c.uf):'') + '</td>' +
-        '<td class="r num">' + c.projetos + '</td>' +
+        '<td class="num" style="text-align:center">' + c.projetos + '</td>' +
+        '<td style="text-align:center"><button class="btn sm" data-cliente="' + escAttr(c.id) + '" onclick="event.stopPropagation();abrirAnexosClientes(this.dataset.cliente)"' + (c.id ? '' : ' disabled title="Conclua o cadastro deste cliente para acessar os anexos"') + '>Anexos</button></td>' +
         '<td class="r num">' + brl(c.contratado) + '</td>' +
         '<td class="r num rtpill">' + brl(c.negoc) + '</td>' +
         '<td>' + statusSelect(nameKey, st) + '</td>' +
@@ -177,7 +177,7 @@
     var tProj=0, tCon=0, tNeg=0, ativos=0;
     lista.forEach(function(c){ tProj+=c.projetos; tCon+=c.contratado; tNeg+=c.negoc; if(c.ativo||c.concluido) ativos++; });
     document.getElementById('cliFoot').innerHTML =
-      '<td>Total</td><td></td><td class="r num">' + tProj + '</td>' +
+      '<td>Total</td><td></td><td class="num" style="text-align:center">' + tProj + '</td><td></td>' +
       '<td class="r num">' + brl(tCon) + '</td><td class="r num rtpill">' + brl(tNeg) + '</td><td></td>';
 
     // KPIs
@@ -320,6 +320,6 @@
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 
 </script>
-<script src="cliente-anexos.js?v=1"></script>
+<script src="cliente-anexos.js?v=2"></script>
 </body>
 </html>

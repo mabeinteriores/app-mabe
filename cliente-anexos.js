@@ -69,9 +69,11 @@
     catch(e){await render();status.textContent='Falha no envio. '+sent+' arquivo(s) concluído(s). Confira a lista antes de tentar novamente.';}
     finally{working=false;button.disabled=false;select.disabled=false;input.disabled=false;}
   }
-  window.abrirAnexosClientes=async function(){
+  window.abrirAnexosClientes=async function(clienteId){
     if(!dialog)setup();dialog.showModal();select.replaceChildren(new Option('Selecione…',''));list.replaceChildren();input.disabled=button.disabled=true;
-    (window.CamberDB?CamberDB.loadClientes():[]).forEach(function(c){select.add(new Option(c.nome,'c:'+c.id));});
+    (window.CamberDB?CamberDB.loadClientes():[]).filter(function(c){return !clienteId||String(c.id)===String(clienteId);}).forEach(function(c){select.add(new Option(c.nome,'c:'+c.id));});
+    if(clienteId){select.value='c:'+clienteId;select.disabled=true;await render();return;}
+    select.disabled=false;
     try{var rows=check(await client().from('cliente_convites').select('token,nome_hint,dados').eq('status','respondido'));rows.forEach(function(c){select.add(new Option((c.dados&&c.dados.nome||c.nome_hint||'Cliente')+' (convite recebido)','i:'+c.token));});}
     catch(e){status.textContent='Não foi possível consultar os convites.';}
   };
