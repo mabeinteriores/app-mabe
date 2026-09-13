@@ -7,6 +7,9 @@
 // Deve ser o PRIMEIRO <script> do <head>, antes de projects-data.js/prc.js.
 // =====================================================================
 (function () {
+  if(new URLSearchParams(location.hash.slice(1)).get('type')==='recovery' || new URLSearchParams(location.hash.slice(1)).has('error_code')){
+    location.replace('recuperar-senha.html'+location.search+location.hash);return;
+  }
   var SUPABASE_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
   var SB_LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
@@ -125,6 +128,7 @@
       '<input id="mcPass" type="password" placeholder="Senha" autocomplete="current-password">' +
       '<button id="mcLogin">Entrar</button>' +
       '<button id="mcToggle" class="alt">Criar conta</button>' +
+      '<a href="recuperar-senha.html" style="display:block;margin-top:16px;color:#a75c35;font-size:13px">Esqueci minha senha</a>' +
       '<div class="msg" id="mcMsg" style="color:#b3402a">' + (msg || '') + '</div>';
     var mode = 'login';
     var nomeEl = o.querySelector('#mcNome');
