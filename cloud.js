@@ -48,24 +48,28 @@
     clearTimeout(pushTimer);
     pushTimer = setTimeout(flush, 300);
   }
+  var inFlight=null, activeBatch={};
   function flush() {
-    if (!sb || !ready) return Promise.resolve();
-    var keys = Object.keys(pending);
-    if (!keys.length) return Promise.resolve();
-    var batch = pending; pending = {};
-    var ts = new Date().toISOString();
-    lastStamp = ts;   // marca como escrita própria p/ o polling não recarregar a si mesmo
-    var ops = keys.map(function (k) {
-      var raw = batch[k];
-      if (raw === null) {
-        return sb.from('kv_store').delete().eq('workspace', WORKSPACE).eq('key', k).then(function () {});
-      } else {
-        var val; try { val = JSON.parse(raw); } catch (e) { val = raw; }
-        return sb.from('kv_store').upsert({ workspace: WORKSPACE, key: k, value: val, updated_at: ts },
-          { onConflict: 'workspace,key' }).then(function () {});
-      }
+    if(inFlight) return inFlight.then(function(ok){ return ok ? flush() : false; });
+    if(!Object.keys(pending).length) return Promise.resolve(true);
+    if(!sb || !ready) return Promise.resolve(false);
+    var batch=pending; pending={}; activeBatch=batch;
+    var ts=new Date().toISOString(); lastStamp=ts;
+    inFlight=Promise.all(Object.keys(batch).map(function(k){
+      return Promise.resolve().then(function(){
+        var raw=batch[k];
+        if(raw===null) return sb.from('kv_store').delete().eq('workspace',WORKSPACE).eq('key',k);
+        var val; try{val=JSON.parse(raw);}catch(e){val=raw;}
+        return sb.from('kv_store').upsert({workspace:WORKSPACE,key:k,value:val,updated_at:ts},{onConflict:'workspace,key'});
+      }).then(function(res){ if(res && res.error) throw res.error; return true; }).catch(function(){
+        if(!Object.prototype.hasOwnProperty.call(pending,k)) pending[k]=batch[k];
+        return false;
+      });
+    })).then(function(results){
+      inFlight=null; activeBatch={};
+      return results.every(Boolean);
     });
-    return Promise.all(ops);
+    return inFlight.then(function(ok){return ok && Object.keys(pending).length ? flush() : ok;});
   }
 
   // ---------- 2) overlay (esconde a UI até estar pronto) ----------
@@ -176,7 +180,7 @@
       var changed = 0;
       (res.data || []).forEach(function (row) {
         if (!shouldSync(row.key)) return;            // ignora chaves de auth porventura gravadas antes
-        if (pending[row.key] !== undefined) return;  // edição local ainda não enviada: não sobrescreve
+        if (pending[row.key] !== undefined || activeBatch[row.key] !== undefined) return;  // edição local ainda não enviada: não sobrescreve
         var incoming = typeof row.value === 'string' ? row.value : JSON.stringify(row.value);
         try { if (localStorage.getItem(row.key) !== incoming) { _set(row.key, incoming); changed++; } } catch (e) {}
       });
@@ -341,6 +345,7 @@
   var liveOn = false, liveTimer = null, livePending = false, liveBanner = null;
 
   function isBusyEditing() {
+    if(inFlight || Object.keys(pending).length) return true;
     try {
       var a = document.activeElement;
       if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return true;
@@ -369,6 +374,7 @@
     doLiveRefresh();
   }
   function doLiveRefresh() {
+    if(inFlight || Object.keys(pending).length){ showLiveBanner(); return; }
     livePending = false;
     if (!sb) { location.reload(); return; }
     // re-hidrata o kv_store (pega o estado novo) e recarrega UMA vez para renderizar
@@ -518,8 +524,8 @@
     client: function () { return sb; },
     responsaveis: function () { return respList; },
     // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
-    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush(); },
-    pendente: function () { return Object.keys(pending).length > 0; }
+    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw new Error('Não foi possível sincronizar os dados.');}); },
+    pendente: function () { return !!inFlight || Object.keys(pending).length > 0; }
   };
 
   // rede de segurança: tenta enviar pendências antes da página sair

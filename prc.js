@@ -10,25 +10,10 @@
   /* ---- stores locais ---- */
   var CKEY='mabe_prc_clientes_v1', PKEY='mabe_prc_propostas_v1';
   function rd(k){ try{var s=localStorage.getItem(k);return s?JSON.parse(s):null;}catch(e){return null;} }
-  function wr(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+  function wr(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
-  // clientes: começa com os clientes dos projetos (CamberDB), se existir
-  window.clientes = rd(CKEY);
-  if(!Array.isArray(window.clientes)){
-    window.clientes = [];
-    try{
-      if(window.CamberDB){
-        var seen={};
-        CamberDB.loadProjects().forEach(function(p){
-          if(p.cliente && !seen[p.cliente]){ seen[p.cliente]=1;
-            window.clientes.push({id:Date.now()+Math.floor(Math.random()*1e6),nome:p.cliente,tel:'',email:'',end:(p.cidade?(p.cidade+(p.uf?'/'+p.uf:'')):''),data:''});
-          }
-        });
-      }
-    }catch(e){}
-    wr(CKEY, window.clientes);
-  }
-  window.salvarClientes = function(){ wr(CKEY, window.clientes); };
+  window.clientes = [];
+  window.salvarClientes = function(){};
 
   window.propostas = rd(PKEY);
   if(!Array.isArray(window.propostas)) window.propostas = [];
@@ -53,34 +38,7 @@
   // (a) os criados aqui pelo botão "Novo cliente" (marcados _manual) e
   // (b) os clientes da carteira de Projetos (CamberDB). Resíduos de demo são descartados.
   window.refreshClientes = function(){
-    try{
-      var manuais=(window.clientes||[]).filter(function(c){return c && c._manual;});
-      var lista=manuais.slice();
-      var seen={};
-      lista.forEach(function(c){ if(c.nome) seen[c.nome.toLowerCase()]=true; });
-      if(window.CamberDB){
-        // (b) clientes cadastrados na aba Clientes
-        if(CamberDB.loadClientes){
-          CamberDB.loadClientes().forEach(function(cl){
-            var nm=(cl.nome||'').trim();
-            if(nm && !seen[nm.toLowerCase()]){
-              seen[nm.toLowerCase()]=true;
-              lista.push({id:cl.id||(Date.now()+Math.floor(Math.random()*1e6)),nome:nm,tel:cl.tel||cl.cel||'',email:cl.email||'',end:(cl.endereco||cl.localizacao||(cl.cidade?(cl.cidade+(cl.uf?'/'+cl.uf:'')):''))||''});
-            }
-          });
-        }
-        // (c) clientes da carteira de Projetos
-        CamberDB.loadProjects().forEach(function(p){
-          var nm=(p.cliente||'').trim();
-          if(nm && !seen[nm.toLowerCase()]){
-            seen[nm.toLowerCase()]=true;
-            lista.push({id:Date.now()+Math.floor(Math.random()*1e6),nome:nm,tel:'',email:'',end:(p.cidade?(p.cidade+(p.uf?'/'+p.uf:'')):''),data:''});
-          }
-        });
-      }
-      window.clientes=lista;
-      wr(CKEY, window.clientes);
-    }catch(e){}
+    window.clientes = window.CamberDB ? CamberDB.loadClientes().filter(function(c){ return c && c.id != null; }) : [];
   };
   window.popularSelectClientes = function(){
     var sel=document.getElementById('sel-cliente'); if(!sel)return;
@@ -91,12 +49,11 @@
       lista.map(function(c){return '<option value="'+c.id+'">'+(c.nome||'')+'</option>';}).join('');
     if(keep)sel.value=keep;
   };
-  window.getNome = window.getNome || function(){
+  window.getClienteSelecionado = function(){
     var sel=document.getElementById('sel-cliente');
-    if(sel && sel.value){ var c=window.clientes.find(function(x){return String(x.id)===String(sel.value);}); if(c)return c.nome; }
-    var man=document.getElementById('inp-cliente-manual');
-    return man ? man.value.trim() : '';
+    return sel && sel.value && window.CamberDB ? CamberDB.getCliente(sel.value) : null;
   };
+  window.getNome = function(){ var c=getClienteSelecionado(); return c ? c.nome : ''; };
 
   /* ---- alertas inline ---- */
   window.showAlert = window.showAlert || function(id,msg,type){
@@ -248,6 +205,7 @@ window.PRC = (function(){
     });
   }
   function selectSeg(id){
+    if(!getClienteSelecionado()){ showAlert('calc-alert','Selecione um cliente cadastrado antes de precificar.','error'); return; }
     var s=findSeg(id); if(!s)return;
     editId=null; var _eb=el('prc-edit-banner'); if(_eb)_eb.style.display='none';
     if(cur && String(cur.id)!==String(s.id) && proj.length){ if(!confirm('Trocar de tipo de projeto? Os cômodos já adicionados serão limpos.'))return; proj=[]; }
@@ -497,20 +455,8 @@ window.PRC = (function(){
     var ok=!!(nome && proj.length>0 && cur);
     ['prc-btn-salvar','prc-btn-pdf','prc-btn-wpp'].forEach(function(id){var b=el(id);if(b)b.disabled=!ok;});
   }
-  function novoCliente(){
-    ['prc-nc-nome','prc-nc-esposa','prc-nc-tel','prc-nc-email','prc-nc-end'].forEach(function(id){var e=el(id);if(e)e.value='';});
-    el('prc-nc-tipo').value='comum';el('prc-nc-origem').value='direto';el('prc-newcli-alert').textContent='';
-    abrirModal('prc-newcli-ov');
-  }
-  function salvarNovoCliente(){
-    var nome=el('prc-nc-nome').value.trim();
-    if(!nome){showAlert('prc-newcli-alert','⚠️ Informe o nome.','error');return;}
-    var c={id:Date.now(),_manual:true,nome:nome,esposa:el('prc-nc-esposa').value.trim(),tel:el('prc-nc-tel').value.trim(),email:el('prc-nc-email').value.trim(),end:el('prc-nc-end').value.trim(),tipo:el('prc-nc-tipo').value,origem:el('prc-nc-origem').value,indicadoPor:'',obs:'',cpf:'',rg:'',anivCli:'',anivCasa:'',data:fmtDate()};
-    clientes.unshift(c); salvarClientes(); popularSelectClientes();
-    var sel=el('sel-cliente'); if(sel){sel.value=String(c.id);} 
-    var man=el('inp-cliente-manual'); if(man){man.value='';man.disabled=true;}
-    fecharModal('prc-newcli-ov'); clientInfo(); refresh();
-  }
+  function novoCliente(){ window.open('cliente.html', '_blank', 'noopener'); }
+  function salvarNovoCliente(){ novoCliente(); }
 
   /* ---- AÇÕES ---- */
   function buildProp(){
@@ -519,7 +465,7 @@ window.PRC = (function(){
     var d=desc>0?Math.min(desc,bruto):0;
     var liq=Math.max(0,bruto-d);
     return {
-      id:Date.now(), cliente:nome, tipo:(cur?cur.name:'—'), segmento:(cur?cur.name:''), m2:projSize(),
+      id:Date.now(), clienteId:getClienteSelecionado().id, cliente:nome, tipo:(cur?cur.name:'—'), segmento:(cur?cur.name:''), m2:projSize(),
       exig:1, perfil:1, valorProjetoBruto:bruto, valorProjeto:liq, valorAcomp:0,
       totalGeral:liq, totalSemDesconto:bruto,
       desconto:{tipo:(d>0?'valor':null),valor:d,pct:null,auth:''},
@@ -534,47 +480,32 @@ window.PRC = (function(){
   }
   function salvar(){
     var nome=getNome();
-    if(!nome){showAlert('calc-alert','⚠️ Selecione ou informe o cliente.','error');return;}
+    if(!nome){showAlert('calc-alert','⚠️ Cadastre e selecione o cliente antes de precificar.','error');return;}
     if(!cur){showAlert('calc-alert','⚠️ Selecione o tipo de projeto.','error');return;}
     if(total()<=0){showAlert('calc-alert','⚠️ Adicione cômodos (com valor) ao projeto.','error');return;}
     if(editId){ doSalvar(); } else if(imovelData){ doSalvar(); } else { openImovelModal(true); }
   }
-  function doSalvar(){
-    var np=buildProp();
-    var savedProp;
-    if(editId){
-      var idx=propostas.findIndex(function(x){return String(x.id)===String(editId);});
-      if(idx!==-1){
-        var prev=propostas[idx];
-        propostas[idx]=Object.assign({}, prev, np, {id:prev.id, status:prev.status, comercial:prev.comercial, criado:prev.criado, historico:prev.historico, localizacao:(np.localizacao||prev.localizacao||null), projId:prev.projId});
-        if(!Array.isArray(propostas[idx].historico))propostas[idx].historico=[];
-        propostas[idx].historico.push({status:propostas[idx].status||'aguardando',data:fmtDate(),responsavel:(typeof CFG!=='undefined'&&CFG.user)?CFG.user:'Sistema',obs:'Proposta editada (precificação por cômodos)'});
-        savedProp=propostas[idx];
-        showAlert('calc-alert','✅ Proposta atualizada — abrindo Projetos…','success');
-      } else { savedProp=np; propostas.unshift(np); showAlert('calc-alert','✅ Proposta salva — abrindo Projetos…','success'); }
-      editId=null; var _eb=el('prc-edit-banner'); if(_eb)_eb.style.display='none';
-    } else {
-      savedProp=np; propostas.unshift(np);
-      showAlert('calc-alert','✅ Proposta salva — abrindo Projetos…','success');
-    }
-    syncProjetoFromProp(savedProp);   // cria/atualiza o projeto que alimenta os dashboards
-    salvarPropostas();
-    proj=[]; desc=0; imovelData=null; var _dvs=el('prc-desc-val'); if(_dvs)_dvs.value=''; renderItems(); refresh(); updateImovelBtn();
-    try{renderPropostas();}catch(e){}
-    // vai automaticamente para a aba Projetos (após garantir o envio ao banco)
-    setTimeout(function(){ irPara('projetos.html'); }, 400);
-  }
-
-  // navega só depois de confirmar o envio das pendências ao banco
-  function irPara(url){
-    var done=false, go=function(){ if(done) return; done=true; location.href=url; };
+  var saving=false;
+  async function doSalvar(){
+    if(saving) return;
+    if(!getClienteSelecionado()){ showAlert('calc-alert','Cadastre e selecione o cliente antes de salvar.','error'); return; }
+    saving=true;
+    showAlert('calc-alert','Salvando proposta e projeto…','loading');
     try {
-      if (window.CamberCloud && CamberCloud.flush){
-        var p = CamberCloud.flush();
-        if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
-      }
-    } catch(e){}
-    go();
+      var np=buildProp();
+      var idx=editId ? propostas.findIndex(function(x){return String(x.id)===String(editId);}) : -1;
+      var prev=idx>=0 ? propostas[idx] : null;
+      var saved=prev ? Object.assign({},prev,np,{id:prev.id,status:prev.status,criado:prev.criado,projId:prev.projId}) : np;
+      syncProjetoFromProp(saved);
+      if(idx>=0) propostas[idx]=saved; else propostas.unshift(saved);
+      editId=saved.id;
+      salvarPropostas();
+      if(window.CamberCloud) await CamberCloud.flush();
+      showAlert('calc-alert','Proposta e projeto salvos. Abrindo Projetos…','success');
+      location.href='projetos.html';
+    } catch(e){
+      showAlert('calc-alert','Não foi possível confirmar o salvamento. Mantenha esta página aberta e clique em Salvar novamente.','error');
+    } finally { saving=false; }
   }
 
   // mapeia o segmento da precificação para o "tipo de projeto" do app
@@ -584,11 +515,11 @@ window.PRC = (function(){
   }
   // cria (ou atualiza) um Projeto em CamberDB a partir da proposta salva
   function syncProjetoFromProp(p){
-    if(!p || !window.CamberDB) return;
+    if(!p || !window.CamberDB) throw new Error('Cadastro de projetos indisponível');
     var L=p.localizacao||{};
     var dados={
       nome: (p.cliente||'Cliente') + ' — ' + (p.segmento||p.tipo||'Projeto'),
-      cliente: p.cliente||'—',
+      cliente: p.cliente||'—', clienteId:p.clienteId, precificacaoId:p.id,
       tipo: tipoFromSeg(p.segmento||p.tipo),
       cidade: L.cidade||'—', uf: L.uf||'',
       cep: L.cep||'', logradouro: L.rua||'', numero: L.numero||'', bairro: L.bairro||'',
@@ -596,6 +527,7 @@ window.PRC = (function(){
       resp: (typeof CFG!=='undefined'&&CFG.user)?CFG.user:'Você (Arq.)',
       obs: 'Gerado a partir de proposta de precificação. ' + (p.obs||'')
     };
+    if(!p.projId){ var existente=CamberDB.loadProjects().find(function(x){return String(x.precificacaoId)===String(p.id);}); if(existente)p.projId=existente.id; }
     if(p.projId && CamberDB.getProject(p.projId)){
       CamberDB.updateProject(p.projId, dados);
     } else {
@@ -730,7 +662,7 @@ window.PRC = (function(){
     var p=propostas.find(function(x){return String(x.id)===String(id);}); if(!p)return;
     editId=id;
     var sel=el('sel-cliente'), man=el('inp-cliente-manual');
-    var cli=clientes.find(function(c){return c.nome===p.cliente;});
+    var cli=p.clienteId ? clientes.find(function(c){return String(c.id)===String(p.clienteId);}) : null;
     if(sel){ if(cli){sel.value=String(cli.id); if(man){man.disabled=true;man.value='';}} else {sel.value=''; if(man){man.disabled=false;man.value=p.cliente||'';}} }
     var seg=segs.find(function(s){return s.name===(p.segmento||p.tipo);});
     cur=seg||null;
@@ -786,3 +718,5 @@ function abrirEditarProp(id){
 
 document.addEventListener('DOMContentLoaded', function(){ if(window.PRC) PRC.init(); });
 if(document.readyState!=='loading'){ if(window.PRC) PRC.init(); }
+
+window.addEventListener('focus',function(){ if(window.popularSelectClientes) popularSelectClientes(); if(window.PRC) PRC._onClient(); });

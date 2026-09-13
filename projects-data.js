@@ -66,7 +66,7 @@
     catch (e) { return fallback; }
   }
   function write(key, val){
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    localStorage.setItem(key, JSON.stringify(val));
   }
 
   // RT de uma oportunidade, em reais. rtTipo: 'pct' (% do valor) ou 'brl' (valor fixo em R$).

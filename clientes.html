@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260912215700"></script>
+<script src="cloud.js?v=20260912221608"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clientes · Gestão Camber</title>
@@ -72,7 +72,7 @@
   .cli-st.win{color:#4f6f3b}
   .cli-st.lost{color:#a3422f}
 </style>
-<script src="projects-data.js?v=20260912215700"></script>
+<script src="projects-data.js?v=20260912221608"></script>
 <script src="shell.js?v=20260912215700"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
@@ -95,6 +95,7 @@
   function carteira(){
     var map = {};
     CamberDB.loadProjects().forEach(function(p){
+      if (['prospec','negoc','prop'].indexOf(p.statusCls) === -1) return;
       var nome = p.cliente || '—';
       if (!map[nome]) map[nome] = { nome:nome, cidade:p.cidade, uf:p.uf, projetos:0, contratado:0, negoc:0, concluido:false, ativo:false };
       var c = map[nome];
@@ -107,20 +108,13 @@
     return Object.keys(map).map(function(k){ return map[k]; });
   }
 
-  // inclui também os clientes cadastrados no formulário (sem projeto ainda)
+  // Carteira somente de clientes com projetos em andamento.
   function carteiraCompleta(){
     var lista = carteira();
     var regs = (CamberDB.loadClientes ? CamberDB.loadClientes() : []);
     var byName = {}; regs.forEach(function(c){ if(c.nome) byName[c.nome.toLowerCase()] = c; });
     // anexa o id do cliente cadastrado às linhas vindas de projetos (mesmo nome)
     lista.forEach(function(c){ var r=byName[(c.nome||'').toLowerCase()]; if(r){ c.id=r.id; if(!c.cidade){c.cidade=r.cidade||'';c.uf=r.uf||'';} } });
-    var nomes = {}; lista.forEach(function(c){ nomes[(c.nome||'').toLowerCase()] = true; });
-    regs.forEach(function(c){
-      var nm = (c.nome||'').trim(); if (!nm || nomes[nm.toLowerCase()]) return;
-      nomes[nm.toLowerCase()] = true;
-      lista.push({ id:c.id, nome:nm, cidade:c.cidade||'', uf:c.uf||'', projetos:0, contratado:0, negoc:0,
-        concluido:false, ativo:(c.status!=='Inativo') });
-    });
     return lista;
   }
 
@@ -133,7 +127,7 @@
 
     var body = document.getElementById('cliBody');
     if (!lista.length){
-      body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente encontrado.</td></tr>';
+      body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:26px">Nenhum cliente com projeto em andamento encontrado.</td></tr>';
     } else { var ovr = loadCliStatus(); body.innerHTML = lista.map(function(c){
       var nameKey = (c.nome||'').toLowerCase();
       var defSt = c.concluido ? 'win' : (c.negoc>0 ? 'negoc' : 'prospec');
