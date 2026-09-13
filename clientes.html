@@ -18,9 +18,17 @@
 
       <div class="page-h">
         <div><div class="crumb">Carteira de clientes</div><h1>Clientes</h1></div>
+        <button class="btn ghost" onclick="abrirGerarLink()">🔗 Gerar link</button>
         <a class="btn" href="cliente.html">+&nbsp; Novo cliente</a>
       </div>
 
+      <div class="panel" id="convPanel" style="display:none">
+        <div class="panel-h"><h3>Convites de cliente</h3><span class="meta" id="convMeta"></span></div>
+        <table class="tbl">
+          <thead><tr><th>Referência</th><th>Criado</th><th>Status</th><th class="r"></th></tr></thead>
+          <tbody id="convBody"></tbody>
+        </table>
+      </div>
       <div class="kpis">
         <div class="kpi hero"><div class="kl"><span class="ml">Total contratado</span></div><div class="kv num" id="kTot">—</div><div class="kd"><span id="kTotSub">—</span></div></div>
         <div class="kpi"><div class="kl"><span class="ml">Em negociação</span></div><div class="kv num" id="kNeg" style="color:var(--st-negoc)">—</div><div class="kd"><span>propostas em aberto</span></div></div>
@@ -63,6 +71,26 @@
     </div>
   </div>
 </div>
+  <!-- MODAL: gerar link para o cliente preencher -->
+  <div class="scrim" id="linkScrim" onclick="fecharGerarLink()" style="display:none"></div>
+  <div id="linkModal" style="display:none;position:fixed;z-index:60;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--surface,#fff);border:1px solid var(--line,#e5ddd0);border-radius:16px;padding:22px 22px 20px;width:min(480px,92vw);box-shadow:0 24px 60px rgba(0,0,0,.28)">
+    <h3 style="margin:0 0 4px">Gerar link para o cliente</h3>
+    <p style="color:var(--ink-3);font-size:13px;margin:0 0 14px">Crie um link único e envie ao cliente (WhatsApp/e-mail). Ele preenche e os dados aparecem aqui para você conferir e concluir o cadastro.</p>
+    <label style="font-size:12.5px;font-weight:600;color:var(--ink-2)">Nome do cliente (referência, opcional)</label>
+    <input id="lkNome" placeholder="Ex.: Ana Silva" style="width:100%;box-sizing:border-box;margin-top:5px;padding:10px 12px;border:1px solid var(--line,#e5ddd0);border-radius:9px;font-family:inherit;font-size:14px">
+    <div id="lkStatus" style="font-size:12.5px;color:var(--ink-3);margin-top:8px;min-height:16px"></div>
+    <div id="lkResult" style="display:none;margin-top:6px">
+      <label style="font-size:12.5px;font-weight:600;color:var(--ink-2)">Link (copie e envie ao cliente)</label>
+      <input id="lkUrl" readonly onclick="this.select()" style="width:100%;box-sizing:border-box;margin-top:5px;padding:10px 12px;border:1px solid var(--accent,#c0653a);border-radius:9px;font-family:inherit;font-size:12.5px;background:#faf6f2;color:var(--ink)">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn ghost sm" onclick="fecharGerarLink()">Fechar</button>
+      <button class="btn primary sm" id="lkGenBtn" onclick="gerarLink()">Gerar link</button>
+      <button class="btn primary sm" id="lkCopyBtn" onclick="copiarLink()" style="display:none">Copiar link</button>
+    </div>
+  </div>
+
+
 <style>
   .cli-st{font:inherit;font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;border:1px solid var(--line,#e7e0d3);background:var(--surface,#fff);cursor:pointer;max-width:170px}
   .cli-st:hover{border-color:var(--accent,#b8902f)}
@@ -171,6 +199,123 @@
   }
 
   render();
+</script>
+<script>
+  // ---------- convites de cliente (link de auto-cadastro) ----------
+  function _sbc(){ try{ return (window.CamberCloud && CamberCloud.client && CamberCloud.client()) || null; }catch(e){ return null; } }
+  function abrirGerarLink(){
+    document.getElementById('linkScrim').style.display='block';
+    document.getElementById('linkModal').style.display='block';
+    document.getElementById('lkResult').style.display='none';
+    document.getElementById('lkCopyBtn').style.display='none';
+    document.getElementById('lkGenBtn').style.display='';
+    document.getElementById('lkNome').value='';
+    document.getElementById('lkStatus').textContent='';
+    setTimeout(function(){ try{ document.getElementById('lkNome').focus(); }catch(e){} }, 40);
+  }
+  function fecharGerarLink(){ document.getElementById('linkScrim').style.display='none'; document.getElementById('linkModal').style.display='none'; }
+  async function gerarLink(){
+    var sb=_sbc(); var st=document.getElementById('lkStatus');
+    if(!sb){ st.textContent='⚠️ Disponível só no app publicado (não no preview local).'; return; }
+    st.textContent='Gerando…';
+    try{
+      var prof = window.__camberProfile || {};
+      var r = await sb.from('cliente_convites').insert({ nome_hint:(document.getElementById('lkNome').value||'').trim()||null, created_by:(prof.email||'') }).select('token').single();
+      if(r.error){ st.textContent='Erro: '+r.error.message; return; }
+      document.getElementById('lkUrl').value = location.origin + '/cadastro-cliente.html?c=' + r.data.token;
+      document.getElementById('lkResult').style.display='block';
+      document.getElementById('lkGenBtn').style.display='none';
+      document.getElementById('lkCopyBtn').style.display='';
+      st.textContent='✅ Link criado — copie e envie ao cliente. Sem resposta, será excluído após 20 dias.';
+      carregarConvites();
+    }catch(e){ st.textContent='Erro ao gerar o link.'; }
+  }
+  function copiarLink(){
+    var i=document.getElementById('lkUrl'); i.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    try{ navigator.clipboard && navigator.clipboard.writeText(i.value); }catch(e){}
+    var b=document.getElementById('lkCopyBtn'); var t=b.textContent; b.textContent='Copiado!'; setTimeout(function(){ b.textContent=t; },1400);
+  }
+  function textoConvite(v){ var el=document.createElement('span'); el.textContent=v||'—'; return el.innerHTML; }
+  async function excluirConvite(token){
+    var sb=_sbc(); if(!sb) return;
+    async function fazer(){
+      try{
+        var r=await sb.from('cliente_convites').delete().eq('token',token).in('status',['pendente','respondido']).select('token');
+        if(r.error) throw r.error;
+        if(!r.data || !r.data.length) { alert('O convite não foi excluído. Atualize a lista e verifique sua permissão.'); }
+        await carregarConvites();
+      }catch(e){ alert('Não foi possível excluir o convite. Tente novamente.'); }
+    }
+    if(typeof window.pedirSenhaExcluir==='function') window.pedirSenhaExcluir('o convite (o link será invalidado e será necessário gerar outro)',fazer);
+    else if(confirm('Excluir este convite? O link deixará de funcionar e será necessário começar com um novo convite.')) await fazer();
+  }
+  document.getElementById('convBody').addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-convite]'); if(btn) excluirConvite(btn.getAttribute('data-convite'));
+  });
+  var convLeitura=0;
+  async function carregarConvites(){
+    var sb=_sbc(); if(!sb) return;
+    var leitura=++convLeitura;
+    try{
+      var limite=new Date(Date.now()-20*24*60*60*1000).toISOString();
+      var r = await sb.from('cliente_convites').select('token,nome_hint,status,created_at').in('status',['pendente','respondido']).or('status.eq.respondido,created_at.gt.'+limite).order('created_at',{ascending:false});
+      if(leitura!==convLeitura || r.error || !r.data) return;
+      var rows=r.data, panel=document.getElementById('convPanel');
+      if(!rows.length){ panel.style.display='none'; return; }
+      panel.style.display='';
+      var aguard = rows.filter(function(c){ return c.status==='pendente'; }).length;
+      var criar  = rows.filter(function(c){ return c.status==='respondido'; }).length;
+      document.getElementById('convMeta').textContent =
+        (criar ? (criar + ' para criar · ') : '') + aguard + ' aguardando · ' + rows.length + ' no total';
+      document.getElementById('convBody').innerHTML = rows.map(function(c){
+        var dt = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') : '—';
+        var badge, acao='';
+        if(c.status==='respondido'){
+          badge='<span class="chip win"><span class="d"></span>Respondido</span>';
+          acao='<a class="btn primary sm" href="cliente.html?convite='+encodeURIComponent(c.token)+'">Criar cliente</a>';
+        } else if(c.status==='cadastrado'){
+          badge='<span class="chip" style="opacity:.65"><span class="d"></span>Cadastrado</span>';
+        } else {
+          badge='<span class="chip negoc"><span class="d"></span>Pendente</span>';
+        }
+        acao+=' <button class="btn sm" data-convite="'+textoConvite(c.token).replace(/"/g,'&quot;')+'">Excluir convite</button>';
+        return '<tr><td>'+textoConvite(c.nome_hint)+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
+      }).join('');
+    }catch(e){}
+  }
+  // Atualiza apenas a lista, sem recarregar a página ou interromper formulários.
+  var convCanal=null, convCliente=null, convConectado=false, convUltimaLeitura=0;
+  function atualizarConvitesLive(){ convUltimaLeitura=Date.now(); carregarConvites(); }
+  function iniciarConvitesLive(){
+    var sb=_sbc(); if(!sb || convCanal) return;
+    convCliente=sb;
+    convCanal=sb.channel('camber-cliente-convites')
+      .on('postgres_changes',{event:'*',schema:'public',table:'cliente_convites'},atualizarConvitesLive);
+    convCanal.subscribe(function(status){
+      convConectado=status==='SUBSCRIBED';
+      if(convConectado) atualizarConvitesLive();
+    });
+    atualizarConvitesLive();
+  }
+  function retomarConvitesLive(){ iniciarConvitesLive(); atualizarConvitesLive(); }
+  window.addEventListener('pageshow',retomarConvitesLive);
+  window.addEventListener('online',retomarConvitesLive);
+  window.addEventListener('focus',retomarConvitesLive);
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) retomarConvitesLive(); });
+  window.addEventListener('pagehide',function(){
+    if(convCanal && convCliente) convCliente.removeChannel(convCanal);
+    convCanal=null; convCliente=null; convConectado=false;
+  });
+  setInterval(function(){
+    if(document.hidden) return;
+    iniciarConvitesLive();
+    // Recupera eventos perdidos durante uma queda de conexão e atualiza vencimentos.
+    if(Date.now()-convUltimaLeitura >= (convConectado ? 60000 : 10000)) atualizarConvitesLive();
+  },1000);
+  iniciarConvitesLive();
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
+
 </script>
 </body>
 </html>

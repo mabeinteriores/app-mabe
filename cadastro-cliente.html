@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camber · Cadastro de Cliente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --brown:#6A4D2E; --accent:#C0653A; --cream:#F5F0EA; --card:#FFFFFF; --ink:#2A2620; --mut:#8C8475; --line:#E5DDD0; --win:#4f6f3b; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--cream); color:var(--ink); font-family:Archivo,system-ui,sans-serif; font-size:15px; line-height:1.5; }
+  .wrap{ max-width:600px; margin:0 auto; padding:0 16px 48px; }
+  .top{ background:var(--brown); color:var(--cream); padding:22px 16px 20px; text-align:center; }
+  .logo{ font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:600; letter-spacing:.5px; }
+  .logo-sub{ font-size:10px; letter-spacing:3px; color:#d8c7ac; margin-top:-4px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 20px; margin-top:-14px; box-shadow:0 12px 34px rgba(60,40,20,.08); }
+  h1{ font-size:21px; margin:2px 0 4px; }
+  .lead{ color:var(--mut); font-size:13.5px; margin:0 0 16px; }
+  label{ display:block; font-size:12.5px; font-weight:600; color:var(--brown); margin:14px 0 5px; }
+  .req{ color:var(--accent); }
+  input,select{ width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:15px; color:var(--ink); background:#fff; outline:none; }
+  input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(192,101,58,.12); }
+  input:disabled{ background:#f4efe8; color:var(--mut); }
+  .hint{ font-size:11.5px; color:var(--mut); margin-top:4px; min-height:14px; }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .row > div{ flex:1; min-width:120px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:6px; }
+  .chip{ padding:7px 12px; border:1px solid var(--line); border-radius:999px; font-size:13px; cursor:pointer; user-select:none; background:#fff; transition:.12s; }
+  .chip.on{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .sec{ font-size:11px; letter-spacing:1px; color:var(--mut); text-transform:uppercase; margin:24px 0 2px; border-top:1px solid var(--line); padding-top:16px; }
+  .chk{ display:flex; align-items:center; gap:8px; margin-top:8px; font-size:13px; color:var(--ink); cursor:pointer; }
+  .chk input{ width:auto; }
+  .btn{ width:100%; margin-top:24px; padding:14px; border:none; border-radius:11px; background:var(--accent); color:#fff; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; }
+  .btn:disabled{ opacity:.6; cursor:default; }
+  .msg{ text-align:center; padding:40px 10px; }
+  .msg .ic{ font-size:46px; }
+  .msg h2{ font-size:22px; margin:12px 0 6px; }
+  .msg p{ color:var(--mut); margin:0; }
+  .foot{ text-align:center; color:var(--mut); font-size:11.5px; margin-top:18px; }
+  [hidden]{ display:none !important; }
+  .err{ background:#fbeae5; color:#a3422f; border:1px solid #f0c9bd; border-radius:10px; padding:10px 12px; font-size:13px; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo">Camber</div>
+  <div class="logo-sub">DESIGN DE INTERIORES</div>
+</div>
+<div class="wrap">
+
+  <div class="card" id="vLoad"><div class="msg"><div class="ic">⏳</div><h2>Carregando…</h2></div></div>
+
+  <div class="card" id="vInvalid" hidden><div class="msg">
+    <div class="ic">🔗</div><h2 id="invTit">Link inválido</h2><p id="invTxt">Este link não é válido ou já foi utilizado.</p>
+  </div></div>
+
+  <div class="card" id="vForm" hidden>
+    <h1>Cadastro de cliente</h1>
+    <p class="lead">Preencha seus dados para seu cadastro na Camber. Todos os campos são obrigatórios, exceto a data de aniversário. Digite o CNPJ e o CEP para buscar os dados automaticamente.</p>
+
+    <div class="sec">Cliente</div>
+    <label>CPF ou CNPJ <span class="req">*</span></label>
+    <input id="fDoc" required inputmode="numeric" placeholder="CPF ou CNPJ" autocomplete="off">
+    <div class="hint" id="docHint">digite o CNPJ e saia do campo — buscamos os dados automaticamente</div>
+    <label>Nome completo / Razão social <span class="req">*</span></label>
+    <input id="fNome" required autocomplete="organization" placeholder="Nome da empresa">
+
+
+    <div class="sec">Contato</div>
+    <label>Nome do responsável <span class="req">*</span></label>
+    <input id="fContato" required autocomplete="name" placeholder="Com quem falamos">
+    <div class="row">
+      <div><label>Telefone / WhatsApp <span class="req">*</span></label><input id="fTel" required inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+      <div><label>Data de aniversário (opcional)</label><input id="fAniv" type="date"></div>
+    </div>
+    <label>E-mail <span class="req">*</span></label>
+    <input id="fEmail" required type="email" autocomplete="email" placeholder="email@empresa.com.br">
+
+    <div class="sec">Endereço</div>
+    <div class="row">
+      <div style="flex:2"><label>CEP <span class="req">*</span></label><input id="fCep" required inputmode="numeric" placeholder="00000-000"><div class="hint" id="cepHint">digite o CEP para buscar o endereço</div></div>
+      <div><label>Número <span class="req">*</span></label><input id="fNum" required placeholder="Nº"></div>
+    </div>
+    <label>Logradouro <span class="req">*</span></label>
+    <input id="fLograd" required placeholder="Rua / Avenida">
+    <div class="row">
+      <div><label>Bairro <span class="req">*</span></label><input id="fBairro" required placeholder="Bairro"></div>
+      <div><label>Cidade <span class="req">*</span></label><input id="fCidade" required placeholder="Cidade"></div>
+      <div style="max-width:80px"><label>UF <span class="req">*</span></label><input id="fUF" required maxlength="2" placeholder="UF"></div>
+    </div>
+
+    <div class="err" id="formErr" hidden></div>
+    <button class="btn" id="btnEnviar" onclick="enviar()">Enviar cadastro</button>
+    <div class="foot">Seus dados vão direto e com segurança para a equipe Camber.</div>
+  </div>
+
+  <div class="card" id="vOk" hidden><div class="msg">
+    <div class="ic">✅</div><h2>Cadastro enviado!</h2>
+    <p>Obrigado. Recebemos seus dados e nossa equipe já foi avisada.<br>Em breve entramos em contato.</p>
+  </div></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  var SB_URL='https://vlvadvlfsbgwcldaxhah.supabase.co';
+  var SB_KEY='sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
+  var sb=window.supabase.createClient(SB_URL,SB_KEY);
+  var TOKEN=new URLSearchParams(location.search).get('c')||'';
+
+
+  function show(id){ ['vLoad','vInvalid','vForm','vOk'].forEach(function(v){ document.getElementById(v).hidden=(v!==id); }); }
+  function invalid(t,x){ document.getElementById('invTit').textContent=t; document.getElementById('invTxt').textContent=x; show('vInvalid'); }
+  function set(id,v){ var e=document.getElementById(id); if(e && v!=null && v!=='') e.value=v; }
+  function val(id){ var e=document.getElementById(id); return e?String(e.value||'').trim():''; }
+
+  async function init(){
+    if(!TOKEN){ invalid('Link inválido','Falta o código do convite no endereço.'); return; }
+    try{
+      var r=await sb.rpc('get_convite_cliente',{p_token:TOKEN}); var d=r.data||{};
+      if(r.error||d.status==='inexistente'||d.status==='expirado'){ invalid('Link indisponível','Este convite foi excluído, expirou ou não existe. Convites sem resposta valem por 20 dias. Peça um novo link à equipe Camber para começar novamente.'); return; }
+      if(d.status==='respondido'||d.status==='cadastrado'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
+      show('vForm');
+    }catch(e){ invalid('Erro','Não foi possível abrir o cadastro agora. Tente novamente em instantes.'); }
+  }
+
+  // CNPJ -> BrasilAPI
+  function buscaCnpj(){
+    var el=document.getElementById('fDoc'); var hint=document.getElementById('docHint');
+    var d=(el.value||'').replace(/\D/g,''); if(d.length!==14) return;
+    el.value=d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5');
+    hint.textContent='buscando dados do CNPJ…'; hint.style.color='#8C8475';
+    fetch('https://brasilapi.com.br/api/cnpj/v1/'+d).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      set('fNome', j.razao_social||''); set('fFant', j.nome_fantasia||'');
+      if(!val('fContato')){ var soc=(j.qsa&&j.qsa[0]&&j.qsa[0].nome_socio)||''; set('fContato', soc); }
+      var tel=j.ddd_telefone_1||''; if(tel && !val('fTel')) set('fTel', String(tel).replace(/^(\d{2})(\d{4,5})(\d{4})$/,'($1) $2-$3'));
+      if(j.email && !val('fEmail')) set('fEmail', j.email);
+      set('fLograd',[j.descricao_tipo_de_logradouro,j.logradouro].filter(Boolean).join(' ').trim());
+      set('fNum', j.numero||''); set('fBairro', j.bairro||''); set('fCidade', j.municipio||''); set('fUF', j.uf||'');
+      if(j.cep){ var c=String(j.cep).replace(/\D/g,''); set('fCep', c.replace(/^(\d{5})(\d{3})$/,'$1-$2')); }
+      hint.textContent='✓ dados preenchidos pelo CNPJ — confira e ajuste'; hint.style.color='#4f6f3b';
+    }).catch(function(){ hint.textContent='CNPJ não encontrado — preencha manualmente'; hint.style.color='#a3422f'; });
+  }
+  // CEP -> ViaCEP
+  function buscaCep(){
+    var el=document.getElementById('fCep'); var hint=document.getElementById('cepHint');
+    var c=(el.value||'').replace(/\D/g,''); if(c.length!==8) return;
+    el.value=c.slice(0,5)+'-'+c.slice(5); hint.textContent='buscando endereço…'; hint.style.color='#8C8475';
+    fetch('https://viacep.com.br/ws/'+c+'/json/').then(function(r){return r.json();}).then(function(d){
+      if(d.erro){ hint.textContent='CEP não encontrado'; hint.style.color='#a3422f'; return; }
+      set('fLograd', d.logradouro||''); set('fBairro', d.bairro||''); set('fCidade', d.localidade||''); set('fUF', d.uf||'');
+      hint.textContent='✓ endereço preenchido'; hint.style.color='#4f6f3b';
+      var n=document.getElementById('fNum'); if(n) n.focus();
+    }).catch(function(){ hint.textContent='não foi possível buscar o CEP'; hint.style.color='#a3422f'; });
+  }
+
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('fDoc').addEventListener('blur', buscaCnpj);
+    document.getElementById('fDoc').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); buscaCnpj(); } });
+    document.getElementById('fCep').addEventListener('blur', buscaCep);
+    document.getElementById('fCep').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); buscaCep(); } });
+    init();
+  });
+
+  window.enviar=async function(){
+    var err=document.getElementById('formErr'); function fail(m){ err.textContent=m; err.hidden=false; }
+    err.hidden=true;
+    var obrigatorios={fDoc:'CPF/CNPJ',fNome:'nome completo / razão social',fContato:'nome do contato',fTel:'telefone / WhatsApp',fEmail:'e-mail',fCep:'CEP',fNum:'número',fLograd:'logradouro',fBairro:'bairro',fCidade:'cidade',fUF:'UF'};
+    for(var id in obrigatorios){
+      var campo=document.getElementById(id);
+      if(!val(id)){ campo.focus(); return fail('Preencha o campo '+obrigatorios[id]+'.'); }
+      if(!campo.disabled && !campo.checkValidity()){ campo.reportValidity(); return fail('Confira o campo '+obrigatorios[id]+'.'); }
+    }
+    var documento=val('fDoc').replace(/\D/g,'');
+    if(![11,14].includes(documento.length)){ return fail('Informe um CPF com 11 números ou CNPJ com 14 números.'); }
+    var nome=val('fNome');
+    if(!nome){ return fail('Informe a razão social.'); }
+    if(!val('fContato')){ return fail('Informe o nome do responsável.'); }
+    if(!val('fTel')){ return fail('Informe o telefone / WhatsApp.'); }
+
+    var dados={
+      nome:nome, tipoPessoa:val('fDoc').replace(/\D/g,'').length===14?'pj':'pf', doc:val('fDoc'),
+      contato:val('fContato'), tel:val('fTel'), email:val('fEmail'), aniversario:val('fAniv'),
+      cep:val('fCep'), logradouro:val('fLograd'), numero:val('fNum'), bairro:val('fBairro'), cidade:val('fCidade'), uf:val('fUF')
+    };
+    var btn=document.getElementById('btnEnviar'); btn.disabled=true; btn.textContent='Enviando…';
+    try{
+      var r=await sb.rpc('responder_convite_cliente',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
+      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios. Apenas a data de aniversário é opcional.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
+      show('vOk');
+    }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
+  };
+})();
+</script>
+</body>
+</html>

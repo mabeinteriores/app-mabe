@@ -307,7 +307,32 @@
     go();
   }
 
-  function salvar(){
+
+  var conviteToken=new URLSearchParams(location.search).get('convite');
+  var convitePronto=!conviteToken;
+  async function prefillConviteCliente(){
+    var sb=window.CamberCloud && CamberCloud.client();
+    if(!sb) return;
+    clearInterval(conviteTimer);
+    try {
+      var r=await sb.from('cliente_convites').select('dados,status').eq('token',conviteToken).single();
+      if(r.error || !r.data || r.data.status!=='respondido') throw new Error('Convite indisponível ou já cadastrado.');
+      var d=r.data.dados;
+      document.querySelector('#tipoPessoa .opt[data-t="'+(d.tipoPessoa==='pj'?'pj':'pf')+'"]').click();
+      setV('cNome',d.nome);setV('doc',d.doc);setV('cep',d.cep);setV('lograd',d.logradouro);setV('num',d.numero);
+      setV('bairro',d.bairro);setV('cidade',d.cidade);setV('uf',d.uf);
+      document.getElementById('ctWrap').innerHTML='';
+      addContato({nome:d.contato,tel:d.tel,email:d.email,aniversario:d.aniversario});
+      document.querySelector('.page-h h1').textContent='Novo cliente (preenchido pelo cliente)';
+      convitePronto=true;
+    }catch(e){ alert(e.message || 'Não foi possível carregar o convite.'); }
+  }
+  var conviteTimer=conviteToken ? setInterval(prefillConviteCliente,500) : null;
+
+  var salvandoCliente=false;
+  async function salvar(){
+    if(salvandoCliente) return;
+    if(!convitePronto){alert('Aguarde o carregamento de um convite válido.');return;}
     var nome = val('cNome');
     if(!nome){ alert('Informe o nome do cliente.'); document.getElementById('cNome').focus(); return; }
     var pf = (document.querySelector('#tipoPessoa .opt.on')||{}).dataset ? document.querySelector('#tipoPessoa .opt.on').dataset.t : 'pf';
@@ -328,7 +353,7 @@
     };
     try {
     if(editId && CamberDB.updateCliente){ CamberDB.updateCliente(editId, dados); }
-    else { dados.data = new Date().toISOString().slice(0,10); CamberDB.addCliente(dados); }
+    else { dados.data = new Date().toISOString().slice(0,10); editId=CamberDB.addCliente(dados).id; }
     } catch (erro) {
       if (erro.code !== 'DOCUMENTO_DUPLICADO') throw erro;
       alert(erro.message);
