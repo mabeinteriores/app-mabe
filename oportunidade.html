@@ -65,7 +65,7 @@
                   <button type="button" data-rt="brl" onclick="setRtTipo('brl')">Em R$</button>
                 </div>
                 <div class="inset"><input class="inp" id="rtpct" style="border-radius:10px 0 0 10px" placeholder="9" inputmode="decimal"><span class="addon" id="rtAddon">%</span></div>
-                <span class="hint">escolha % ou valor fixo · padrão do serviço pré-preenchido</span></div>
+                <span class="hint">escolha % ou valor fixo · percentual do fornecedor pré-preenchido</span></div>
               <div class="field"><label>RT calculada</label>
                 <div class="inset"><span class="addon" style="border-radius:10px 0 0 10px;border-right:none;border-left:1px solid var(--hair-2)">R$</span><input class="inp ro" id="rtval" style="border-radius:0 10px 10px 0" value="—" readonly></div>
                 <span class="hint">valor × % · automático</span></div>
@@ -174,8 +174,8 @@
     document.getElementById('margem').value = marg!==null ? marg + '%' : '—';
   }
   ['val','rtpct','custo'].forEach(function(id){ document.getElementById(id).addEventListener('input', calc); });
-  // pré-preenche RT padrão de Marcenaria (9%)
-  document.getElementById('rtpct').value = '9';
+  // A comissão é preenchida pelo fornecedor selecionado.
+  document.getElementById('rtpct').value = '';
 
   // etapa + motivo
   document.querySelectorAll('#etapas .opt').forEach(function(o){
@@ -240,6 +240,14 @@
     if(!cats.length) return true;
     return cats.some(function(c){ c=(c||'').toLowerCase(); return c && (serv.indexOf(c)>=0 || c.indexOf(serv)>=0); });
   }
+  function aplicarRtFornecedor(){
+    var selected=document.getElementById('wForn').value;
+    var fornecedor=(CamberDB.loadFornecedores?CamberDB.loadFornecedores():[]).find(function(f){return String(f.nome||'').trim().toLowerCase()===String(selected||'').trim().toLowerCase();});
+    var value=fornecedor && fornecedor.rt;
+    document.getElementById('rtpct').value=value===null||value===undefined||value===''?'':String(n(value));
+    setRtTipo('pct');
+  }
+  document.getElementById('wForn').addEventListener('change',aplicarRtFornecedor);
   function refreshWForn(){
     var sel = document.getElementById('wForn'); if(!sel) return;
     var serv = (document.getElementById('wServ')||{}).value || '';
@@ -253,6 +261,7 @@
     if(cur && cur!=='a definir' && !seen[cur.toLowerCase()]){ html = '<option>'+escHtml(cur)+'</option>' + html; }
     sel.innerHTML = html;
     if(cur && Array.prototype.some.call(sel.options, function(o){ return o.textContent===cur; })) sel.value = cur;
+    aplicarRtFornecedor();
   }
   refreshWForn();
   (function(){ var s=document.getElementById('wServ'); if(s) s.addEventListener('change', refreshWForn); })();
