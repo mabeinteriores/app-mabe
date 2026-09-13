@@ -120,7 +120,7 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=20260912215700"></script>
+<script src="projects-data.js?v=20260912220644"></script>
 <script src="shell.js?v=20260912215700"></script>
 <script>
   // Tipos de serviço vêm da Configuração (refletem o que você cadastra lá)
@@ -415,8 +415,15 @@
       banco: fval('fBanco'), tipoConta: (document.getElementById('fTipoConta')||{}).value||'',
       agencia: fval('fAg'), conta: fval('fCc'), nomeConta: fval('fNomeConta'), pix: fval('fPix')
     };
+    try {
     if(editId && CamberDB.updateFornecedor){ CamberDB.updateFornecedor(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); CamberDB.addFornecedor(dados); }
+    } catch (erro) {
+      if (erro.code !== 'DOCUMENTO_DUPLICADO') throw erro;
+      alert(erro.message);
+      document.getElementById('doc').focus();
+      return;
+    }
     // veio de um convite? marca como "cadastrado" (some o botao Criar fornecedor) antes de navegar
     if(conviteToken){
       var sb=null; try{ sb = window.CamberCloud && CamberCloud.client && CamberCloud.client(); }catch(e){}

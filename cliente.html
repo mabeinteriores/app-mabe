@@ -101,7 +101,7 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=20260912215700"></script>
+<script src="projects-data.js?v=20260912220644"></script>
 <script src="shell.js?v=20260912215700"></script>
 <script>
   // PF/PJ alterna rótulos
@@ -326,8 +326,15 @@
       origem: val('cOrigem'), perfil: val('cPerfil'), responsavel: val('cResp'),
       avaliacao: val('cAval'), obs: val('cObs')
     };
+    try {
     if(editId && CamberDB.updateCliente){ CamberDB.updateCliente(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); CamberDB.addCliente(dados); }
+    } catch (erro) {
+      if (erro.code !== 'DOCUMENTO_DUPLICADO') throw erro;
+      alert(erro.message);
+      document.getElementById('doc').focus();
+      return;
+    }
     irPara('clientes.html');
   }
 

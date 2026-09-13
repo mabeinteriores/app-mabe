@@ -88,6 +88,20 @@
     if (read(PKEY, null) === null){ write(PKEY, []); }
   }
 
+  function assertDocumentoUnico(arr, doc, id, tipo){
+    var numeros = String(doc || '').replace(/\D/g, '');
+    if (!numeros) return;
+    var duplicado = arr.find(function(item){
+      return (id == null || String(item.id) !== String(id)) &&
+        String(item.doc || '').replace(/\D/g, '') === numeros;
+    });
+    if (duplicado){
+      var erro = new Error('Este CPF/CNPJ já está cadastrado para outro ' + tipo + '. Abra o cadastro existente para editar.');
+      erro.code = 'DOCUMENTO_DUPLICADO';
+      throw erro;
+    }
+  }
+
   window.CamberDB = {
     rtOf: rtOf,
     loadProjects: function(){ ensureSeed(); return read(PKEY, []); },
@@ -96,6 +110,7 @@
     saveClientes: function(arr){ write('mabe-clientes-v1', arr); },
     addCliente: function(c){
       var arr = this.loadClientes();
+      assertDocumentoUnico(arr, c.doc, null, 'cliente');
       c.id = arr.reduce(function(m,x){ return Math.max(m, x.id||0); }, 0) + 1;
       arr.unshift(c); this.saveClientes(arr); return c;
     },
@@ -103,7 +118,7 @@
     updateCliente: function(id, patch){
       var arr = this.loadClientes();
       var c = arr.find(function(x){ return String(x.id)===String(id); });
-      if (c) { Object.assign(c, patch); this.saveClientes(arr); }
+      if (c) { assertDocumentoUnico(arr, Object.prototype.hasOwnProperty.call(patch, 'doc') ? patch.doc : c.doc, id, 'cliente'); Object.assign(c, patch); this.saveClientes(arr); }
       return c;
     },
     deleteCliente: function(id){
@@ -149,6 +164,7 @@
     },
     addFornecedor: function(f){
       var arr = this.loadFornecedores();
+      assertDocumentoUnico(arr, f.doc, null, 'fornecedor');
       f.id = arr.reduce(function(m,x){ return Math.max(m, x.id||0); }, 0) + 1;
       arr.unshift(f); this.saveFornecedores(arr); return f;
     },
@@ -156,7 +172,7 @@
     updateFornecedor: function(id, patch){
       var arr = this.loadFornecedores();
       var f = arr.find(function(x){ return String(x.id)===String(id); });
-      if (f) { Object.assign(f, patch); this.saveFornecedores(arr); }
+      if (f) { assertDocumentoUnico(arr, Object.prototype.hasOwnProperty.call(patch, 'doc') ? patch.doc : f.doc, id, 'fornecedor'); Object.assign(f, patch); this.saveFornecedores(arr); }
       return f;
     },
     deleteFornecedor: function(id){

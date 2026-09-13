@@ -58,56 +58,56 @@
 
   <div class="card" id="vForm" hidden>
     <h1>Cadastro de fornecedor</h1>
-    <p class="lead">Preencha seus dados para fazer parte da nossa rede de parceiros. Digite o CNPJ e o CEP que preenchemos o resto pra você.</p>
+    <p class="lead">Preencha seus dados para fazer parte da nossa rede de parceiros. Todos os campos são obrigatórios, exceto a data de aniversário. Digite o CNPJ e o CEP para buscar os dados automaticamente.</p>
 
     <div class="sec">Empresa</div>
-    <label>CNPJ</label>
-    <input id="fDoc" inputmode="numeric" placeholder="00.000.000/0000-00" autocomplete="off">
+    <label>CNPJ <span class="req">*</span></label>
+    <input id="fDoc" required inputmode="numeric" placeholder="00.000.000/0000-00" autocomplete="off">
     <div class="hint" id="docHint">digite o CNPJ e saia do campo — buscamos os dados automaticamente</div>
     <label>Razão social <span class="req">*</span></label>
-    <input id="fNome" autocomplete="organization" placeholder="Nome da empresa">
-    <label>Nome fantasia</label>
-    <input id="fFant" placeholder="Como a empresa é conhecida">
+    <input id="fNome" required autocomplete="organization" placeholder="Nome da empresa">
+    <label>Nome fantasia <span class="req">*</span></label>
+    <input id="fFant" required placeholder="Como a empresa é conhecida">
 
     <label>Categoria / tipos de serviço <span class="req">*</span> <span style="color:var(--mut);font-weight:400">(clique em quantos quiser)</span></label>
     <div class="chips" id="cats"></div>
 
     <div class="sec">Contato</div>
     <label>Nome do responsável <span class="req">*</span></label>
-    <input id="fContato" autocomplete="name" placeholder="Com quem falamos">
+    <input id="fContato" required autocomplete="name" placeholder="Com quem falamos">
     <div class="row">
-      <div><label>Telefone / WhatsApp <span class="req">*</span></label><input id="fTel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
-      <div><label>Data de aniversário</label><input id="fAniv" type="date"></div>
+      <div><label>Telefone / WhatsApp <span class="req">*</span></label><input id="fTel" required inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+      <div><label>Data de aniversário (opcional)</label><input id="fAniv" type="date"></div>
     </div>
-    <label>E-mail</label>
-    <input id="fEmail" type="email" autocomplete="email" placeholder="email@empresa.com.br">
+    <label>E-mail <span class="req">*</span></label>
+    <input id="fEmail" required type="email" autocomplete="email" placeholder="email@empresa.com.br">
 
     <div class="sec">Endereço</div>
     <div class="row">
-      <div style="flex:2"><label>CEP</label><input id="fCep" inputmode="numeric" placeholder="00000-000"><div class="hint" id="cepHint">digite o CEP para buscar o endereço</div></div>
-      <div><label>Número</label><input id="fNum" placeholder="Nº"></div>
+      <div style="flex:2"><label>CEP <span class="req">*</span></label><input id="fCep" required inputmode="numeric" placeholder="00000-000"><div class="hint" id="cepHint">digite o CEP para buscar o endereço</div></div>
+      <div><label>Número <span class="req">*</span></label><input id="fNum" required placeholder="Nº"></div>
     </div>
-    <label>Logradouro</label>
-    <input id="fLograd" placeholder="Rua / Avenida">
+    <label>Logradouro <span class="req">*</span></label>
+    <input id="fLograd" required placeholder="Rua / Avenida">
     <div class="row">
-      <div><label>Bairro</label><input id="fBairro" placeholder="Bairro"></div>
-      <div><label>Cidade</label><input id="fCidade" placeholder="Cidade"></div>
-      <div style="max-width:80px"><label>UF</label><input id="fUF" maxlength="2" placeholder="UF"></div>
+      <div><label>Bairro <span class="req">*</span></label><input id="fBairro" required placeholder="Bairro"></div>
+      <div><label>Cidade <span class="req">*</span></label><input id="fCidade" required placeholder="Cidade"></div>
+      <div style="max-width:80px"><label>UF <span class="req">*</span></label><input id="fUF" required maxlength="2" placeholder="UF"></div>
     </div>
 
     <div class="sec">Dados bancários</div>
-    <label>Banco</label>
-    <input id="fBanco" list="bancos" placeholder="Digite o nome ou código do banco" autocomplete="off">
+    <label>Banco <span class="req">*</span></label>
+    <input id="fBanco" required list="bancos" placeholder="Digite o nome ou código do banco" autocomplete="off">
     <datalist id="bancos"></datalist>
     <div class="row">
-      <div><label>Agência</label><input id="fAg" inputmode="numeric" placeholder="0000"></div>
-      <div><label>Conta (c/c)</label><input id="fCc" placeholder="00000-0"></div>
+      <div><label>Agência <span class="req">*</span></label><input id="fAg" required inputmode="numeric" placeholder="0000"></div>
+      <div><label>Conta (c/c) <span class="req">*</span></label><input id="fCc" required placeholder="00000-0"></div>
     </div>
-    <label>Nome do titular da conta</label>
-    <input id="fNomeConta" placeholder="Nome de quem recebe">
+    <label>Nome do titular da conta <span class="req">*</span></label>
+    <input id="fNomeConta" required placeholder="Nome de quem recebe">
     <label class="chk"><input type="checkbox" id="fMesmoNome"> É o mesmo nome do cadastro (razão social)</label>
-    <label>Chave PIX</label>
-    <input id="fPix" placeholder="CNPJ, e-mail, telefone ou chave aleatória">
+    <label>Chave PIX <span class="req">*</span></label>
+    <input id="fPix" required placeholder="CNPJ, e-mail, telefone ou chave aleatória">
 
     <div class="err" id="formErr" hidden></div>
     <button class="btn" id="btnEnviar" onclick="enviar()">Enviar cadastro</button>
@@ -210,6 +210,13 @@
   window.enviar=async function(){
     var err=document.getElementById('formErr'); function fail(m){ err.textContent=m; err.hidden=false; }
     err.hidden=true;
+    syncNomeConta();
+    var obrigatorios={"fDoc":"CNPJ","fNome":"razão social","fFant":"nome fantasia","fContato":"nome do responsável","fTel":"telefone / WhatsApp","fEmail":"e-mail","fCep":"CEP","fNum":"número","fLograd":"logradouro","fBairro":"bairro","fCidade":"cidade","fUF":"UF","fBanco":"banco","fAg":"agência","fCc":"conta","fNomeConta":"nome do titular da conta","fPix":"chave PIX"};
+    for(var id in obrigatorios){
+      var campo=document.getElementById(id);
+      if(!val(id)){ campo.focus(); return fail('Preencha o campo '+obrigatorios[id]+'.'); }
+      if(!campo.disabled && !campo.checkValidity()){ campo.reportValidity(); return fail('Confira o campo '+obrigatorios[id]+'.'); }
+    }
     var nome=val('fNome');
     if(!nome){ return fail('Informe a razão social.'); }
     if(!CATS.length){ return fail('Selecione ao menos uma categoria / serviço.'); }
@@ -227,7 +234,7 @@
     var btn=document.getElementById('btnEnviar'); btn.disabled=true; btn.textContent='Enviando…';
     try{
       var r=await sb.rpc('responder_convite_fornecedor',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
-      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
+      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios e selecione uma categoria. Apenas a data de aniversário é opcional.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
       show('vOk');
     }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
   };
