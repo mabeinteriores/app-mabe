@@ -331,7 +331,7 @@
 
   var salvandoCliente=false;
   async function salvar(){
-    if(salvandoCliente) return;
+    if(salvandoCliente || excluindoCliente) return;
     if(!convitePronto){alert('Aguarde o carregamento de um convite válido.');return;}
     var nome = val('cNome');
     if(!nome){ alert('Informe o nome do cliente.'); document.getElementById('cNome').focus(); return; }
@@ -373,11 +373,25 @@
   }
 
   // excluir cliente (exige senha do usuário logado)
+  var excluindoCliente=false;
   function excluirCliente(){
-    if(!editId) return;
+    if(!editId || excluindoCliente || salvandoCliente) return;
     var c = CamberDB.getCliente ? CamberDB.getCliente(editId) : null;
     var nome = (c && c.nome) || 'este cliente';
-    function fazer(){ if(CamberDB.deleteCliente) CamberDB.deleteCliente(editId); irPara('clientes.html'); }
+    async function fazer(){
+      if(excluindoCliente)return;
+      excluindoCliente=true;
+      var btn=document.getElementById('btnExcluirCli');
+      btn.disabled=true;
+      try{
+        if(!CamberDB.deleteCliente)throw new Error('Exclusão indisponível');
+        CamberDB.deleteCliente(editId);
+        if(window.CamberCloud)await CamberCloud.flush();
+        irPara('clientes.html');
+      }catch(e){
+        alert('Não foi possível confirmar a exclusão no servidor. Confira sua conexão e clique em Excluir novamente.');
+      }finally{excluindoCliente=false;btn.disabled=false;}
+    }
     if(typeof window.pedirSenhaExcluir === 'function'){
       window.pedirSenhaExcluir('o cliente "'+nome+'"', fazer);
     } else {
