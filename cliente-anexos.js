@@ -36,7 +36,20 @@
           try{var data=check(await client().storage.from(BUCKET).createSignedUrl(doc.caminho,60,{download:doc.nome}));var a=element('a');a.href=data.signedUrl;a.rel='noopener';a.target='_blank';document.body.append(a);a.click();a.remove();}
           catch(e){status.textContent='Não foi possível abrir o arquivo. Tente novamente.';}
           finally{download.disabled=false;}
-        };row.append(label,download);list.append(row);
+        };
+        var remove=element('button','Excluir');remove.className='btn';remove.style.color='#b34332';
+        remove.onclick=async function(){
+          if(working||!window.confirm('Excluir o anexo "'+doc.nome+'"? Esta ação não pode ser desfeita.'))return;
+          working=true;remove.disabled=download.disabled=button.disabled=input.disabled=true;
+          var wasDisabled=select.disabled;select.disabled=true;
+          try{
+            check(await client().storage.from(BUCKET).remove([doc.caminho]));
+            var deleted=check(await client().from('cliente_anexos').delete().eq('id',doc.id).select('id'));
+            if(!deleted.length)throw new Error('Exclusão não confirmada');
+            await render();status.textContent='Anexo excluído.';
+          }catch(e){status.textContent='Não foi possível concluir a exclusão. Tente novamente.';}
+          finally{working=false;remove.disabled=download.disabled=false;select.disabled=wasDisabled;input.disabled=button.disabled=!chosen.id||chosen.invite;}
+        };row.append(label,download,remove);list.append(row);
       });
     }catch(e){status.textContent='Não foi possível carregar os anexos. Tente novamente.';}
   }
