@@ -147,7 +147,7 @@
     if(!TOKEN){ invalid('Link inválido','Falta o código do convite no endereço.'); return; }
     try{
       var r=await sb.rpc('get_convite_fornecedor',{p_token:TOKEN}); var d=r.data||{};
-      if(r.error||d.status==='inexistente'){ invalid('Link inválido','Este link não existe. Confira se copiou o endereço completo.'); return; }
+      if(r.error||d.status==='inexistente'||d.status==='expirado'){ invalid('Link indisponível','Este convite foi excluído, expirou ou não existe. Convites sem resposta valem por 20 dias. Peça um novo link à equipe Camber para começar novamente.'); return; }
       if(d.status==='respondido'||d.status==='cadastrado'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
       // categorias (chips)
       try{
@@ -227,7 +227,7 @@
     var btn=document.getElementById('btnEnviar'); btn.disabled=true; btn.textContent='Enviando…';
     try{
       var r=await sb.rpc('responder_convite_fornecedor',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
-      if(r.error||!d.ok){ if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
+      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
       show('vOk');
     }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
   };

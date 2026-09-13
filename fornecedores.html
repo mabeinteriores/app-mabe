@@ -270,7 +270,7 @@
       document.getElementById('lkResult').style.display='block';
       document.getElementById('lkGenBtn').style.display='none';
       document.getElementById('lkCopyBtn').style.display='';
-      st.textContent='✅ Link criado — copie e envie ao fornecedor.';
+      st.textContent='✅ Link criado — copie e envie ao fornecedor. Sem resposta, será excluído após 20 dias.';
       carregarConvites();
     }catch(e){ st.textContent='Erro ao gerar o link.'; }
   }
@@ -280,10 +280,28 @@
     try{ navigator.clipboard && navigator.clipboard.writeText(i.value); }catch(e){}
     var b=document.getElementById('lkCopyBtn'); var t=b.textContent; b.textContent='Copiado!'; setTimeout(function(){ b.textContent=t; },1400);
   }
+  function textoConvite(v){ var el=document.createElement('span'); el.textContent=v||'—'; return el.innerHTML; }
+  async function excluirConvite(token){
+    var sb=_sbc(); if(!sb) return;
+    async function fazer(){
+      try{
+        var r=await sb.from('fornecedor_convites').delete().eq('token',token).in('status',['pendente','respondido']).select('token');
+        if(r.error) throw r.error;
+        if(!r.data || !r.data.length) { alert('O convite não foi excluído. Atualize a lista e verifique sua permissão.'); }
+        await carregarConvites();
+      }catch(e){ alert('Não foi possível excluir o convite. Tente novamente.'); }
+    }
+    if(typeof window.pedirSenhaExcluir==='function') window.pedirSenhaExcluir('o convite (o link será invalidado e será necessário gerar outro)',fazer);
+    else if(confirm('Excluir este convite? O link deixará de funcionar e será necessário começar com um novo convite.')) await fazer();
+  }
+  document.getElementById('convBody').addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-convite]'); if(btn) excluirConvite(btn.getAttribute('data-convite'));
+  });
   async function carregarConvites(){
     var sb=_sbc(); if(!sb) return;
     try{
-      var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').order('created_at',{ascending:false}).limit(40);
+      var limite=new Date(Date.now()-20*24*60*60*1000).toISOString();
+      var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').in('status',['pendente','respondido']).or('status.eq.respondido,created_at.gt.'+limite).order('created_at',{ascending:false});
       if(r.error || !r.data) return;
       var rows=r.data, panel=document.getElementById('convPanel');
       if(!rows.length){ panel.style.display='none'; return; }
@@ -303,11 +321,14 @@
         } else {
           badge='<span class="chip negoc"><span class="d"></span>Pendente</span>';
         }
-        return '<tr><td>'+(c.nome_hint||'—')+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
+        acao+=' <button class="btn sm" data-convite="'+textoConvite(c.token).replace(/"/g,'&quot;')+'">Excluir convite</button>';
+        return '<tr><td>'+textoConvite(c.nome_hint)+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
       }).join('');
     }catch(e){}
   }
   (function(){ var t=0, iv=setInterval(function(){ t++; if(_sbc()){ clearInterval(iv); carregarConvites(); } else if(t>25){ clearInterval(iv); } }, 400); })();
+  window.addEventListener('pageshow',carregarConvites);
+  setInterval(function(){ if(!document.hidden) carregarConvites(); },60000);
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 </script>
 </body>
