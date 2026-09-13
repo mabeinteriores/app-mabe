@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Usuários · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 <style>
   .u-wrap{max-width:920px;margin:0 auto;padding:28px 24px}
   .u-head h1{font-size:26px;margin:0 0 4px}
@@ -50,7 +50,7 @@
 </style>
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="usuarios">
+<div class="camber skin-studio" id="app" data-page="usuarios">
   <div class="body scroll">
     <div class="u-wrap">
       <div class="u-head">
@@ -63,12 +63,12 @@
     </div>
   </div>
 </div>
-<script src="shell.js?v=202609122046"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
 (function () {
   var listEl = document.getElementById('uList');
   var noteEl = document.getElementById('uPendNote');
-  function sb(){ return window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client(); }
+  function sb(){ return window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client(); }
   // chama a função admin; se der erro de sessão/permissão transitório, renova e tenta 1x
   async function invokeAdmin(body){
     var r = await sb().functions.invoke('aprovar-admin', { body: body });
@@ -190,7 +190,7 @@
   // espera o cloud.js?v=202609122046 liberar a tela (usuário aprovado) antes de carregar
   var tries = 0;
   (function wait(){
-    if(document.getElementById('mabeCloudOv') && tries++ < 80){ setTimeout(wait, 400); return; }
+    if(document.getElementById('camberCloudOv') && tries++ < 80){ setTimeout(wait, 400); return; }
     load();
   })();
 })();

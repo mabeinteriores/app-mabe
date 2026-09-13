@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lead · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 <style>
   /* aba Lead do app: largura ampla; o shell (cloud.js?v=202609122046/shell.js?v=202609122046) cuida do resto do layout */
-  #app.mabe .wrap{ max-width:min(1760px, 95vw); margin:0 auto; }
+  #app.camber .wrap{ max-width:min(1760px, 95vw); margin:0 auto; }
 
   #app[data-page="lead"] .lhead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   #app[data-page="lead"] .lhead .crumb{ font-size:12px; color:var(--ink-3); margin-bottom:2px; }
@@ -263,7 +263,7 @@
 </head>
 <body>
 
-<div class="mabe skin-studio" id="app" data-page="lead">
+<div class="camber skin-studio" id="app" data-page="lead">
   <div class="body scroll">
     <div class="wrap" style="padding:18px 0 28px;">
 
@@ -394,18 +394,18 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
-// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202609122046/shell.js?v=202609122046) já fornece MabeCloud, nav, perms e auth.
+// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202609122046/shell.js?v=202609122046) já fornece CamberCloud, nav, perms e auth.
 (function(){ return;
   var SUPABASE_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
   var APP = location.origin + '/hifi/';
   var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
-  // shim do MabeCloud usado pela aba Lead
-  window.MabeCloud = { client: function(){ return sb; } };
-  window.__mabePerms = { admin:true };  // usuários aprovados do painel são admin (excluir lead exige re-senha)
+  // shim do CamberCloud usado pela aba Lead
+  window.CamberCloud = { client: function(){ return sb; } };
+  window.__camberPerms = { admin:true };  // usuários aprovados do painel são admin (excluir lead exige re-senha)
 
   var $ = function(id){ return document.getElementById(id); };
   var app = $('app');
@@ -463,7 +463,7 @@
       try{ var em = u && u.data && u.data.user && u.data.user.email; if(em){ nome = em.split('@')[0]; nome = nome.charAt(0).toUpperCase()+nome.slice(1); } }catch(e){}
       buildTopbar(nome);
     }, function(){ buildTopbar(''); });
-    if (window.MabeLeadLoad) window.MabeLeadLoad();
+    if (window.CamberLeadLoad) window.CamberLeadLoad();
   }
   function showLogin(){ $('app').style.display='none'; $('login').style.display='flex'; }
 
@@ -554,7 +554,7 @@
     return {label:v, tier:1, opp:false};
   }
 
-  // ═══════════ LEAD SCORE MABĒ (0–100) ═══════════
+  // ═══════════ LEAD SCORE CAMBER (0–100) ═══════════
   // Soma os melhores níveis de cada categoria (teto bruto = SCORE_MAX) e normaliza p/ 100.
   var SCORE_MAX = 155;
 
@@ -812,7 +812,7 @@
   }
   function persistStatus(id, s){
     try{
-      var c = window.MabeCloud && window.MabeCloud.client();
+      var c = window.CamberCloud && window.CamberCloud.client();
       if(c) c.from('respostas').update({ status:s, status_em:new Date().toISOString() }).eq('id', id).then(function(){},function(){});
     }catch(_){}
   }
@@ -872,7 +872,7 @@
   }
   // mover fuga entre colunas + registrar estratégia (para relatório futuro)
   function persistFuga(f, patch){
-    var c = window.MabeCloud && window.MabeCloud.client(); if(!c) return;
+    var c = window.CamberCloud && window.CamberCloud.client(); if(!c) return;
     c.from('fugas').update(patch).eq('id', f.id).then(function(){}, function(){});
   }
   window.__moveFuga = function(fid, stage){
@@ -1036,7 +1036,7 @@
     openDelFugaModal(f);
   };
   function fetchFugas(){
-    var c=window.MabeCloud && window.MabeCloud.client(); if(!c) return;
+    var c=window.CamberCloud && window.CamberCloud.client(); if(!c) return;
     c.from('fugas').select('*').eq('concluido',false).order('atualizado_em',{ascending:false}).then(function(out){
       FUGAS=(out && out.data) || []; renderFunil(); renderKanban(); applyView();
     }, function(){});
@@ -1044,7 +1044,7 @@
   var __fgRt=null, __fgTimer=null;
   function subscribeFugasRealtime(){
     if(__fgRt) return;
-    var c=window.MabeCloud && window.MabeCloud.client(); if(!c) return;
+    var c=window.CamberCloud && window.CamberCloud.client(); if(!c) return;
     c.auth.getSession().then(function(r){
       try{ if(r&&r.data&&r.data.session) c.realtime.setAuth(r.data.session.access_token); }catch(_){}
       __fgRt=c.channel('fugas-rt').on('postgres_changes',{event:'*',schema:'public',table:'fugas'},function(){
@@ -1100,7 +1100,7 @@
       '<div style="font-size:12px;color:var(--ink-3);margin:-4px 0 2px">Sobrepõe a temperatura do Lead Score (salvo localmente, não grava no banco).</div>'+
       '<div class="ovrow" id="dOverride">'+ovBtns+'</div></div>';
 
-    var isAdmin = !!(window.__mabePerms && window.__mabePerms.admin);
+    var isAdmin = !!(window.__camberPerms && window.__camberPerms.admin);
     document.getElementById('dBody').innerHTML =
       '<div class="dsec"><h3>Status</h3><div class="statusrow" id="dStatus">'+stbtns+'</div></div>'+
       '<div class="dsec" id="dScoreSec">'+scoreHtml+'</div>'+
@@ -1203,7 +1203,7 @@
 
     document.getElementById('leadPrint').innerHTML =
       '<div class="pdoc">'+
-        '<div class="phead"><div class="pbrand">mabē</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
+        '<div class="phead"><div class="pbrand">camber</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
         '<h1>'+esc(L.nome||'Sem nome')+'</h1>'+
         '<div class="pcontact">'+esc(L.telefone||'')+(email?' &nbsp;·&nbsp; '+esc(email):'')+(origem?' &nbsp;·&nbsp; '+esc(origem):'')+'</div>'+
         '<div class="pchips"><span>'+r.tempLabel+'</span><span>'+esc(r.inv.label)+'</span>'+(r.inv.opp?'<span class="opp">Oportunidade &gt; R$ 300 mil</span>':'')+'</div>'+
@@ -1330,7 +1330,7 @@
     var errEl = document.getElementById('delErr');
     var btn = document.getElementById('delConfirm');
     if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
-    var c = window.MabeCloud && window.MabeCloud.client();
+    var c = window.CamberCloud && window.CamberCloud.client();
     if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
     btn.disabled = true; errEl.style.color=''; errEl.textContent = 'Verificando senha…';
     c.auth.getUser().then(function(ures){
@@ -1367,7 +1367,7 @@
   // ---------- carga ----------
   function load(tries){
     tries = tries||0;
-    var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
+    var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
     if(!c){ if(tries<60){ setTimeout(function(){load(tries+1);},150); } else { document.getElementById('lLoad').textContent='Sem conexão com o servidor.'; } return; }
     c.auth.getUser().then(function(res){
       if(!res || !res.data || !res.data.user){ if(tries<200){ setTimeout(function(){load(tries+1);},500); } return; }
@@ -1380,18 +1380,18 @@
   }
 
   // exposto para o shell disparar (load() trata auth/retry internamente)
-  window.MabeLeadLoad = function(){ load(0); fetchFugas(); subscribeFugasRealtime(); };
+  window.CamberLeadLoad = function(){ load(0); fetchFugas(); subscribeFugasRealtime(); };
 })();
 </script>
 <script>
-// dispara a carga da aba Lead assim que o shell (MabeCloud) estiver pronto
+// dispara a carga da aba Lead assim que o shell (CamberCloud) estiver pronto
 (function(){
   function go(t){ t=t||0;
-    var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
-    if(!c || !window.MabeLeadLoad){ if(t<150) setTimeout(function(){ go(t+1); }, 150); return; }
+    var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
+    if(!c || !window.CamberLeadLoad){ if(t<150) setTimeout(function(){ go(t+1); }, 150); return; }
     // só dispara depois que a sessão do Supabase estiver restaurada (evita corrida no auth)
     c.auth.getSession().then(function(r){
-      if(r && r.data && r.data.session){ window.MabeLeadLoad(); }
+      if(r && r.data && r.data.session){ window.CamberLeadLoad(); }
       else if(t<150){ setTimeout(function(){ go(t+1); }, 200); }
     }, function(){ if(t<150) setTimeout(function(){ go(t+1); }, 200); });
   }

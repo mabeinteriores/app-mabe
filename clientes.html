@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clientes · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="clientes">
+<div class="camber skin-studio" id="app" data-page="clientes">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
@@ -72,8 +72,8 @@
   .cli-st.win{color:#4f6f3b}
   .cli-st.lost{color:#a3422f}
 </style>
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
   function inicial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
@@ -81,7 +81,7 @@
 
   // status manual da carteira (etapas do funil) — salvo por nome do cliente
   var ETAPAS_FALLBACK = [{cor:'prospec',nome:'Prospecção'},{cor:'negoc',nome:'Em negociação'},{cor:'prop',nome:'Proposta enviada'},{cor:'win',nome:'Fechado / Ganho'},{cor:'lost',nome:'Perdido'}];
-  function etapasCfg(){ var l=(MabeDB.loadConfigList?MabeDB.loadConfigList('etapas',[]):[]); return (l&&l.length)?l:ETAPAS_FALLBACK; }
+  function etapasCfg(){ var l=(CamberDB.loadConfigList?CamberDB.loadConfigList('etapas',[]):[]); return (l&&l.length)?l:ETAPAS_FALLBACK; }
   function loadCliStatus(){ try { return JSON.parse(localStorage.getItem('mabe-clientes-status-v1')||'{}')||{}; } catch(_){ return {}; } }
   function saveCliStatus(map){ localStorage.setItem('mabe-clientes-status-v1', JSON.stringify(map)); }
   function setCliStatus(sel){ var m=loadCliStatus(); m[sel.getAttribute('data-cli')]=sel.value; saveCliStatus(m); render(); }
@@ -91,10 +91,10 @@
     '</select>';
   }
 
-  // agrega projetos por cliente (fonte: MabeDB)
+  // agrega projetos por cliente (fonte: CamberDB)
   function carteira(){
     var map = {};
-    MabeDB.loadProjects().forEach(function(p){
+    CamberDB.loadProjects().forEach(function(p){
       var nome = p.cliente || '—';
       if (!map[nome]) map[nome] = { nome:nome, cidade:p.cidade, uf:p.uf, projetos:0, contratado:0, negoc:0, concluido:false, ativo:false };
       var c = map[nome];
@@ -110,7 +110,7 @@
   // inclui também os clientes cadastrados no formulário (sem projeto ainda)
   function carteiraCompleta(){
     var lista = carteira();
-    var regs = (MabeDB.loadClientes ? MabeDB.loadClientes() : []);
+    var regs = (CamberDB.loadClientes ? CamberDB.loadClientes() : []);
     var byName = {}; regs.forEach(function(c){ if(c.nome) byName[c.nome.toLowerCase()] = c; });
     // anexa o id do cliente cadastrado às linhas vindas de projetos (mesmo nome)
     lista.forEach(function(c){ var r=byName[(c.nome||'').toLowerCase()]; if(r){ c.id=r.id; if(!c.cidade){c.cidade=r.cidade||'';c.uf=r.uf||'';} } });

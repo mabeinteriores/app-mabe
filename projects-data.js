@@ -88,7 +88,7 @@
     if (read(PKEY, null) === null){ write(PKEY, []); }
   }
 
-  window.MabeDB = {
+  window.CamberDB = {
     rtOf: rtOf,
     loadProjects: function(){ ensureSeed(); return read(PKEY, []); },
     saveProjects: function(arr){ write(PKEY, arr); },
@@ -122,8 +122,8 @@
     },
     loadResponsaveis: function(){
       // prioridade: usuários aprovados do sistema (login)
-      if (window.MabeCloud && typeof window.MabeCloud.responsaveis === 'function'){
-        var u = window.MabeCloud.responsaveis();
+      if (window.CamberCloud && typeof window.CamberCloud.responsaveis === 'function'){
+        var u = window.CamberCloud.responsaveis();
         if (u && u.length) return u.slice();
       }
       var arr = this.loadConfigList('responsaveis', []);

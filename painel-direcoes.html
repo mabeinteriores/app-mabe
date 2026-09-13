@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestão Camber · Painel — direções hi-fi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
 <style>
   html, body { margin: 0; height: 100%; background: #f0eee9; }
   /* System sheet */
@@ -53,7 +53,7 @@ function Swatch({ c, nm, hex }) {
 
 function SystemSheet() {
   return (
-    <div className="mabe skin-studio" data-theme="light" style={{ display: 'block' }}>
+    <div className="camber skin-studio" data-theme="light" style={{ display: 'block' }}>
       <div className="sys">
         <h2>Sistema visual — Gestão Camber</h2>
         <p className="lead">Base neutra quente (papel + tinta), um acento terracota e uma família grotesca neutra (Archivo). Números em mono (IBM Plex Mono) dão a precisão de ERP. Esta folha vale para as 3 direções ao lado.</p>
@@ -128,22 +128,22 @@ function App() {
 
       <DCSection id="direcoes" title="Painel — 3 direções" subtitle="Mesma estrutura (variação A: KPIs + funil), estéticas diferentes · tema claro">
         <DCArtboard id="paper" label="1 · Ateliê — editorial, papel, sem caixas" width={W} height={H}>
-          <MabeDashboard skin="paper" theme="light" />
+          <CamberDashboard skin="paper" theme="light" />
         </DCArtboard>
         <DCArtboard id="studio" label="2 · Studio — cartões, sombra suave, acento" width={W} height={H}>
-          <MabeDashboard skin="studio" theme="light" />
+          <CamberDashboard skin="studio" theme="light" />
         </DCArtboard>
         <DCArtboard id="tech" label="3 · Mesa técnica — denso, mono, ERP" width={W} height={H}>
-          <MabeDashboard skin="tech" theme="light" />
+          <CamberDashboard skin="tech" theme="light" />
         </DCArtboard>
       </DCSection>
 
       <DCSection id="escuro" title="Prévia · tema escuro" subtitle="A direção escolhida ganha o par claro/escuro completo">
         <DCArtboard id="studio-dark" label="2 · Studio — escuro" width={W} height={H}>
-          <MabeDashboard skin="studio" theme="dark" />
+          <CamberDashboard skin="studio" theme="dark" />
         </DCArtboard>
         <DCArtboard id="tech-dark" label="3 · Mesa técnica — escuro" width={W} height={H}>
-          <MabeDashboard skin="tech" theme="dark" />
+          <CamberDashboard skin="tech" theme="dark" />
         </DCArtboard>
       </DCSection>
     </DesignCanvas>

@@ -1,5 +1,5 @@
 /* ============================================================
-   Precificação (PRC) — portado do MABE, adaptado ao Gestão Camber.
+   Precificação (PRC) — portado do CAMBER, adaptado ao Gestão Camber.
    Tudo escopado em .prcwrap; as variáveis mapeiam os tokens do app.
    ============================================================ */
 .prcwrap{
@@ -13,7 +13,7 @@
   color: var(--ink);
 }
 
-/* ---- componentes genéricos (escopados p/ não colidir com .mabe) ---- */
+/* ---- componentes genéricos (escopados p/ não colidir com .camber) ---- */
 .prcwrap .section-header{margin:2px 0 18px}
 .prcwrap .section-header h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
 .prcwrap .section-header p{margin:4px 0 0;color:var(--ink-3);font-size:13.5px}

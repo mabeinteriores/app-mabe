@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>mabē — Controle de Indicações</title>
+<title>camber — Controle de Indicações</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -309,7 +309,7 @@ textarea { resize:vertical; min-height:70px; }
     </div>
   </nav>
   <div class="sidebar-footer">
-    <p>mabē design de interiores<br>Sistema interno v1.0</p>
+    <p>camber design de interiores<br>Sistema interno v1.0</p>
   </div>
 </aside>
 
@@ -1460,12 +1460,12 @@ function abrirPrecificacaoDaIndicacao(ind){
   catch(e){ try{ window.location.href=url; }catch(e2){} }
 }
 
-// CONEXÃO: ao fechar uma indicação, cria/atualiza um projeto no app Mabe (MabeDB do parent)
+// CONEXÃO: ao fechar uma indicação, cria/atualiza um projeto no app Camber (CamberDB do parent)
 function criarProjetoDaIndicacao(ind){
   try{
     var DB = null;
-    try{ if(window.parent && window.parent.MabeDB) DB = window.parent.MabeDB; }catch(e){}
-    if(!DB && window.MabeDB) DB = window.MabeDB;
+    try{ if(window.parent && window.parent.CamberDB) DB = window.parent.CamberDB; }catch(e){}
+    if(!DB && window.CamberDB) DB = window.CamberDB;
     if(!DB) return;
     var corr = state.corretores.find(function(c){return c.id===ind.corretorId;});
     var ti = (ind.tipoImovel||'').toLowerCase();

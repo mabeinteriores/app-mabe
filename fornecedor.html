@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de fornecedor · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="fornecedores">
+<div class="camber skin-studio" id="app" data-page="fornecedores">
   <div class="body scroll">
     <div class="wrap" style="max-width:1040px;display:flex;flex-direction:column;gap:18px;">
 
@@ -120,11 +120,11 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   // Tipos de serviço vêm da Configuração (refletem o que você cadastra lá)
-  var SERVICOS_CFG = (window.MabeDB && MabeDB.loadConfigList) ? MabeDB.loadConfigList('servicos', []) : [];
+  var SERVICOS_CFG = (window.CamberDB && CamberDB.loadConfigList) ? CamberDB.loadConfigList('servicos', []) : [];
   var RT_FALLBACK = { 'Pisos':7.5,'Vidraçaria':8,'Marcenaria':9,'Móveis soltos':10,'Iluminação':8,'Climatização':6,'Pintura':5,'Paisagismo':6,'Automação':9 };
   var rtMap = {};
   SERVICOS_CFG.forEach(function(s){ if(s && s.nome && s.rt!=null) rtMap[s.nome] = s.rt; });
@@ -138,7 +138,7 @@
     }).join('');
   }
   renderCats();
-  if (window.MabeDB && MabeDB.fillSelectFromConfig) MabeDB.fillSelectFromConfig('fPgto','pagamentos');
+  if (window.CamberDB && CamberDB.fillSelectFromConfig) CamberDB.fillSelectFromConfig('fPgto','pagamentos');
 
   // PJ/PF alterna rótulos
   document.querySelectorAll('#tipoPessoa .opt').forEach(function(o){
@@ -301,8 +301,8 @@
 
   // modo edição: carrega o fornecedor salvo
   (function loadForn(){
-    if(!editId || !MabeDB.getFornecedor) return;
-    var f = MabeDB.getFornecedor(editId);
+    if(!editId || !CamberDB.getFornecedor) return;
+    var f = CamberDB.getFornecedor(editId);
     if(!f){ editId=null; return; }
     document.querySelector('.page-h .crumb').innerHTML = '<a href="fornecedores.html" style="color:var(--ink-3)">Fornecedores</a> › Editar fornecedor';
     document.querySelector('.page-h h1').textContent = 'Editar fornecedor';
@@ -325,7 +325,7 @@
   (function initContatos(){
     var wrap=document.getElementById('ctWrap'); if(!wrap) return;
     var add=document.getElementById('btnAddContato'); if(add) add.addEventListener('click', function(){ addContato({}); });
-    var f = (editId && MabeDB.getFornecedor) ? MabeDB.getFornecedor(editId) : null;
+    var f = (editId && CamberDB.getFornecedor) ? CamberDB.getFornecedor(editId) : null;
     var cts = (f && f.contatos && f.contatos.length) ? f.contatos
             : (f && (f.contato||f.tel||f.cel||f.email||f.site||f.cargo) ? [{nome:f.contato,cargo:f.cargo,tel:f.tel,cel:f.cel,email:f.email,site:f.site,aniversario:f.aniversario}] : []);
     if(cts.length){ cts.slice(0,3).forEach(function(c){ addContato(c); }); }
@@ -338,7 +338,7 @@
     (function(){
       var t=0, iv=setInterval(function(){
         t++;
-        var sb=null; try{ sb = window.MabeCloud && MabeCloud.client && MabeCloud.client(); }catch(e){}
+        var sb=null; try{ sb = window.CamberCloud && CamberCloud.client && CamberCloud.client(); }catch(e){}
         if(sb){ clearInterval(iv); prefillConvite(sb); }
         else if(t>25){ clearInterval(iv); }
       }, 400);
@@ -387,8 +387,8 @@
   function irPara(url){
     var done=false, go=function(){ if(done) return; done=true; location.href=url; };
     try {
-      if (window.MabeCloud && MabeCloud.flush){
-        var p = MabeCloud.flush();
+      if (window.CamberCloud && CamberCloud.flush){
+        var p = CamberCloud.flush();
         if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
       }
     } catch(e){}
@@ -415,11 +415,11 @@
       banco: fval('fBanco'), tipoConta: (document.getElementById('fTipoConta')||{}).value||'',
       agencia: fval('fAg'), conta: fval('fCc'), nomeConta: fval('fNomeConta'), pix: fval('fPix')
     };
-    if(editId && MabeDB.updateFornecedor){ MabeDB.updateFornecedor(editId, dados); }
-    else { dados.data = new Date().toISOString().slice(0,10); MabeDB.addFornecedor(dados); }
+    if(editId && CamberDB.updateFornecedor){ CamberDB.updateFornecedor(editId, dados); }
+    else { dados.data = new Date().toISOString().slice(0,10); CamberDB.addFornecedor(dados); }
     // veio de um convite? marca como "cadastrado" (some o botao Criar fornecedor) antes de navegar
     if(conviteToken){
-      var sb=null; try{ sb = window.MabeCloud && MabeCloud.client && MabeCloud.client(); }catch(e){}
+      var sb=null; try{ sb = window.CamberCloud && CamberCloud.client && CamberCloud.client(); }catch(e){}
       if(sb){
         var done=false, go=function(){ if(done) return; done=true; irPara('fornecedores.html'); };
         try{ sb.from('fornecedor_convites').update({status:'cadastrado'}).eq('token', conviteToken).then(go, go); }catch(e){ go(); }
@@ -432,9 +432,9 @@
 
   function excluirFornec(){
     if(!editId) return;
-    var f = MabeDB.getFornecedor ? MabeDB.getFornecedor(editId) : null;
+    var f = CamberDB.getFornecedor ? CamberDB.getFornecedor(editId) : null;
     var nome = (f && f.nome) || 'este fornecedor';
-    function fazer(){ if(MabeDB.deleteFornecedor) MabeDB.deleteFornecedor(editId); irPara('fornecedores.html'); }
+    function fazer(){ if(CamberDB.deleteFornecedor) CamberDB.deleteFornecedor(editId); irPara('fornecedores.html'); }
     if(typeof window.pedirSenhaExcluir === 'function'){
       window.pedirSenhaExcluir('o fornecedor "'+nome+'"', fazer);
     } else {

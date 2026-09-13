@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   Precificação (PRC) — portado do app MABE para o Gestão Camber.
+   Precificação (PRC) — portado do app CAMBER para o Gestão Camber.
    Camada de compatibilidade (shims) + módulo window.PRC original.
    Os ganchos do app antigo (clientes, propostas, PDF, alertas) foram
    reimplementados de forma autônoma, persistindo em localStorage.
@@ -12,14 +12,14 @@
   function rd(k){ try{var s=localStorage.getItem(k);return s?JSON.parse(s):null;}catch(e){return null;} }
   function wr(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
 
-  // clientes: começa com os clientes dos projetos (MabeDB), se existir
+  // clientes: começa com os clientes dos projetos (CamberDB), se existir
   window.clientes = rd(CKEY);
   if(!Array.isArray(window.clientes)){
     window.clientes = [];
     try{
-      if(window.MabeDB){
+      if(window.CamberDB){
         var seen={};
-        MabeDB.loadProjects().forEach(function(p){
+        CamberDB.loadProjects().forEach(function(p){
           if(p.cliente && !seen[p.cliente]){ seen[p.cliente]=1;
             window.clientes.push({id:Date.now()+Math.floor(Math.random()*1e6),nome:p.cliente,tel:'',email:'',end:(p.cidade?(p.cidade+(p.uf?'/'+p.uf:'')):''),data:''});
           }
@@ -38,7 +38,7 @@
   // responsável padrão = nome do usuário logado (substitui "Você (Arq.)")
   (function setPrcUser(tries){
     tries = tries || 0;
-    var n = window.__mabeProfile && window.__mabeProfile.nome;
+    var n = window.__camberProfile && window.__camberProfile.nome;
     if (n) { window.CFG = window.CFG || {}; window.CFG.user = n; return; }
     if (tries < 40) setTimeout(function(){ setPrcUser(tries+1); }, 200);
   })(0);
@@ -51,17 +51,17 @@
   /* ---- cliente: select + nome ---- */
   // Reconstrói a lista apenas com clientes cadastrados de fato:
   // (a) os criados aqui pelo botão "Novo cliente" (marcados _manual) e
-  // (b) os clientes da carteira de Projetos (MabeDB). Resíduos de demo são descartados.
+  // (b) os clientes da carteira de Projetos (CamberDB). Resíduos de demo são descartados.
   window.refreshClientes = function(){
     try{
       var manuais=(window.clientes||[]).filter(function(c){return c && c._manual;});
       var lista=manuais.slice();
       var seen={};
       lista.forEach(function(c){ if(c.nome) seen[c.nome.toLowerCase()]=true; });
-      if(window.MabeDB){
+      if(window.CamberDB){
         // (b) clientes cadastrados na aba Clientes
-        if(MabeDB.loadClientes){
-          MabeDB.loadClientes().forEach(function(cl){
+        if(CamberDB.loadClientes){
+          CamberDB.loadClientes().forEach(function(cl){
             var nm=(cl.nome||'').trim();
             if(nm && !seen[nm.toLowerCase()]){
               seen[nm.toLowerCase()]=true;
@@ -70,7 +70,7 @@
           });
         }
         // (c) clientes da carteira de Projetos
-        MabeDB.loadProjects().forEach(function(p){
+        CamberDB.loadProjects().forEach(function(p){
           var nm=(p.cliente||'').trim();
           if(nm && !seen[nm.toLowerCase()]){
             seen[nm.toLowerCase()]=true;
@@ -163,13 +163,13 @@
       '.total{margin-top:26px;text-align:right;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#6B6560}.total b{display:block;font-size:28px;color:#B8936A;letter-spacing:0;text-transform:none;margin-top:4px}'+
       '.ft{margin-top:46px;text-align:center;color:#9A8467;font-size:11px;letter-spacing:3px}'+
       '@media print{body{padding:24px}}</style></head><body>'+
-      '<h1>MABE</h1><div class="sub">Arquitetura &amp; Design</div><div class="hr"></div>'+
+      '<h1>CAMBER</h1><div class="sub">Arquitetura &amp; Design</div><div class="hr"></div>'+
       '<div class="meta"><div><b>Cliente:</b> '+(p.cliente||'')+'</div><div><b>Segmento:</b> '+seg+'</div><div><b>Data:</b> '+(p.criado||'')+'</div></div>'+
       imovMeta+
       '<div class="box"><div class="k">Total de cômodos</div><div class="v">'+totalQtd+'</div></div>'+
       corpo+
       '<div class="total">Investimento total<b>'+totalTxt+'</b></div>'+
-      '<div class="ft">MABE &middot; ARQUITETURA &amp; DESIGN</div>'+
+      '<div class="ft">CAMBER &middot; ARQUITETURA &amp; DESIGN</div>'+
       '<scr'+'ipt>window.onload=function(){window.print();}<\/scr'+'ipt></body></html>');
     w.document.close();
   };
@@ -179,7 +179,7 @@
 })();
 
 
-/* ===== Módulo PRC (portado do MABE, sem alterações de lógica) ===== */
+/* ===== Módulo PRC (portado do CAMBER, sem alterações de lógica) ===== */
 window.PRC = (function(){
   "use strict";
   var KEY="mabe_prc_segs_v1";
@@ -569,8 +569,8 @@ window.PRC = (function(){
   function irPara(url){
     var done=false, go=function(){ if(done) return; done=true; location.href=url; };
     try {
-      if (window.MabeCloud && MabeCloud.flush){
-        var p = MabeCloud.flush();
+      if (window.CamberCloud && CamberCloud.flush){
+        var p = CamberCloud.flush();
         if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
       }
     } catch(e){}
@@ -582,9 +582,9 @@ window.PRC = (function(){
     var m={ 'Residencial':'Residencial', 'Corporativos':'Comercial', 'Corporativo':'Comercial', 'Airbnb':'Airbnb', 'Reforma':'Reforma' };
     return m[seg]||seg||'Residencial';
   }
-  // cria (ou atualiza) um Projeto em MabeDB a partir da proposta salva
+  // cria (ou atualiza) um Projeto em CamberDB a partir da proposta salva
   function syncProjetoFromProp(p){
-    if(!p || !window.MabeDB) return;
+    if(!p || !window.CamberDB) return;
     var L=p.localizacao||{};
     var dados={
       nome: (p.cliente||'Cliente') + ' — ' + (p.segmento||p.tipo||'Projeto'),
@@ -596,11 +596,11 @@ window.PRC = (function(){
       resp: (typeof CFG!=='undefined'&&CFG.user)?CFG.user:'Você (Arq.)',
       obs: 'Gerado a partir de proposta de precificação. ' + (p.obs||'')
     };
-    if(p.projId && MabeDB.getProject(p.projId)){
-      MabeDB.updateProject(p.projId, dados);
+    if(p.projId && CamberDB.getProject(p.projId)){
+      CamberDB.updateProject(p.projId, dados);
     } else {
       dados.op=0; dados.pct=0; dados.rt=0; dados.statusLabel='Prospecção'; dados.statusCls='prospec';
-      var novo=MabeDB.addProject(dados);
+      var novo=CamberDB.addProject(dados);
       p.projId=novo.id;
     }
   }
@@ -690,7 +690,7 @@ window.PRC = (function(){
   function whatsapp(){
     if(!proj.length){showAlert('calc-alert','⚠️ Adicione cômodos primeiro.','error');return;}
     var nome=getNome();
-    var L=['*MABE — Arquitetura & Design*','Estimativa · Projeto '+(cur?cur.name:''),''];
+    var L=['*CAMBER — Arquitetura & Design*','Estimativa · Projeto '+(cur?cur.name:''),''];
     if(nome)L.splice(2,0,'Cliente: '+nome);
     proj.forEach(function(it){L.push('• '+(it.cat?it.cat+' — ':'')+it.name+(it.sub?' ('+it.sub+')':'')+(it.qty>1?'  x'+it.qty:''));});
     var bruto=total(); var d=desc>0?Math.min(desc,bruto):0; var liq=Math.max(0,bruto-d);
@@ -698,7 +698,7 @@ window.PRC = (function(){
     L.push('');
     if(_sz>0)L.push('Tamanho do projeto: '+fmtM2(_sz));
     if(d>0){ L.push('Subtotal: '+money(bruto)); L.push('Desconto: -'+money(d)); }
-    L.push('*Investimento total: '+money(liq)+'*'); L.push(''); L.push('_Projeto de design de interiores Mabe._');
+    L.push('*Investimento total: '+money(liq)+'*'); L.push(''); L.push('_Projeto de design de interiores Camber._');
     window.open('https://wa.me/?text='+encodeURIComponent(L.join('\n')),'_blank');
   }
 

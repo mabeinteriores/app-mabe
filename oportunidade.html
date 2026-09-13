@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nova oportunidade · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="">
+<div class="camber skin-studio" id="app" data-page="">
   <div class="body scroll">
     <div class="wrap" style="max-width:1040px;display:flex;flex-direction:column;gap:18px;">
 
@@ -130,8 +130,8 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   var cur = 0, total = 4;
   var panes = [].slice.call(document.querySelectorAll('.wpane'));
@@ -213,24 +213,24 @@
 
   // popula selects de responsável (Configuração)
   (function fillResp(){
-    if(!MabeDB.loadResponsaveis) return;
-    var nomes = MabeDB.loadResponsaveis();
+    if(!CamberDB.loadResponsaveis) return;
+    var nomes = CamberDB.loadResponsaveis();
     var sel=document.getElementById('wResp'); if(!sel) return;
     sel.innerHTML = nomes.map(function(n){ return '<option>'+n+'</option>'; }).join('');
     // padrão = usuário logado (quem está criando)
-    var meu = (window.__mabeProfile && window.__mabeProfile.nome) || '';
+    var meu = (window.__camberProfile && window.__camberProfile.nome) || '';
     if(meu && nomes.indexOf(meu) >= 0) sel.value = meu;
   })();
   // popula tipo de serviço, pagamento e motivos a partir da Configuração
   (function fillServ(){
-    if(!MabeDB.loadServicos) return;
+    if(!CamberDB.loadServicos) return;
     var sel=document.getElementById('wServ'); if(!sel) return;
-    sel.innerHTML = MabeDB.loadServicos().map(function(n){ return '<option>'+n+'</option>'; }).join('');
+    sel.innerHTML = CamberDB.loadServicos().map(function(n){ return '<option>'+n+'</option>'; }).join('');
   })();
-  if (MabeDB.fillSelectFromConfig){ MabeDB.fillSelectFromConfig('wPgto','pagamentos'); MabeDB.fillSelectFromConfig('wMotivo','motivos'); }
+  if (CamberDB.fillSelectFromConfig){ CamberDB.fillSelectFromConfig('wPgto','pagamentos'); CamberDB.fillSelectFromConfig('wMotivo','motivos'); }
 
   // ---------- contexto do projeto + salvar ----------
-  var projetos = MabeDB.loadProjects();
+  var projetos = CamberDB.loadProjects();
   // fornecedores reais, filtrados pelo Tipo de serviço (sem demos, sem bloqueados)
   function escHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
   function wFornMatch(f, serv){
@@ -244,7 +244,7 @@
     var sel = document.getElementById('wForn'); if(!sel) return;
     var serv = (document.getElementById('wServ')||{}).value || '';
     var cur = sel.value;
-    var fs = (MabeDB.loadFornecedores ? MabeDB.loadFornecedores() : []) || [];
+    var fs = (CamberDB.loadFornecedores ? CamberDB.loadFornecedores() : []) || [];
     var seen = {}, html = '';
     fs.filter(function(f){ return f.status!=='Inativo' && wFornMatch(f, serv); }).forEach(function(f){
       var n=f.nome; if(n && !seen[n.toLowerCase()]){ seen[n.toLowerCase()]=1; html += '<option>'+escHtml(n)+'</option>'; }
@@ -292,8 +292,8 @@
   function irPara(url){
     var done=false, go=function(){ if(done) return; done=true; location.href=url; };
     try {
-      if (window.MabeCloud && MabeCloud.flush){
-        var p = MabeCloud.flush();
+      if (window.CamberCloud && CamberCloud.flush){
+        var p = CamberCloud.flush();
         if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
       }
     } catch(e){}
@@ -320,11 +320,11 @@
       dt: (function(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })(new Date())
     };
     if (!opp.val){ alert('Informe o valor do serviço.'); cur = 1; render(); return; }
-    var list = MabeDB.loadOpps(projId);
+    var list = CamberDB.loadOpps(projId);
     opp.id = list.reduce(function(m,o){ return Math.max(m, o.id); }, 0) + 1;
     list.push(opp);
-    MabeDB.saveOpps(projId, list);
-    MabeDB.recalc(projId);
+    CamberDB.saveOpps(projId, list);
+    CamberDB.recalc(projId);
     irPara('projeto.html?id=' + projId);
   }
 

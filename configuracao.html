@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Configuração · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
-<link rel="stylesheet" href="prc.css">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
+<link rel="stylesheet" href="prc.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="config">
+<div class="camber skin-studio" id="app" data-page="config">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
@@ -82,9 +82,9 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=202609122046"></script>
-<script src="prc.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="prc.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
   var CORES = [['prospec','Areia'],['negoc','Ouro'],['prop','Âmbar'],['win','Oliva'],['lost','Ferrugem']];
@@ -222,7 +222,7 @@
     var tries=0;
     (function go(){
       try{
-        var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
+        var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
         if(c){
           c.from('profiles').select('nome,email').eq('aprovado',true).then(function(res){
             if(res && res.data && res.data.length){
@@ -240,10 +240,10 @@
   (function collapsibleSections(){
     var css = document.createElement('style');
     css.textContent =
-      '.mabe .cfg-grid > .panel.cfg-collap > .panel-h{cursor:pointer;user-select:none}' +
-      '.mabe .cfg-grid > .panel.cfg-collap.collapsed > .panel-h{margin-bottom:0}' +
-      '.mabe .cfg-grid > .panel.cfg-collap.collapsed > *:not(.panel-h){display:none!important}' +
-      '.mabe .cfg-chevron{margin-left:8px;color:var(--ink-3);font-size:11px;transition:transform .18s;display:inline-block}';
+      '.camber .cfg-grid > .panel.cfg-collap > .panel-h{cursor:pointer;user-select:none}' +
+      '.camber .cfg-grid > .panel.cfg-collap.collapsed > .panel-h{margin-bottom:0}' +
+      '.camber .cfg-grid > .panel.cfg-collap.collapsed > *:not(.panel-h){display:none!important}' +
+      '.camber .cfg-chevron{margin-left:8px;color:var(--ink-3);font-size:11px;transition:transform .18s;display:inline-block}';
     document.head.appendChild(css);
     var panels = document.querySelectorAll('.cfg-grid > .panel');
     Array.prototype.forEach.call(panels, function(p){

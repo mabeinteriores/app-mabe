@@ -1,4 +1,4 @@
-/* Custos de Terceiros — portado do MABE, adaptado ao Gestão Camber.
+/* Custos de Terceiros — portado do CAMBER, adaptado ao Gestão Camber.
    Escopado em .prc-ov (modais dentro de #app herdam os tokens do tema). */
 #ct-ov .modal{max-width:1180px;width:96vw;max-height:92vh;overflow:auto}
 .prc-ov .ct-sub{font-size:13px;color:var(--ink-3);margin:-6px 0 16px;line-height:1.5}

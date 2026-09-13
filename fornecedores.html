@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fornecedores &amp; RT · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="fornecedores">
+<div class="camber skin-studio" id="app" data-page="fornecedores">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
@@ -100,8 +100,8 @@
   </aside>
 </div>
 
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
   function inicial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
@@ -111,15 +111,15 @@
   // agrega oportunidades por fornecedor (de todos os projetos não-perdidos)
   function carteira(){
     var map = {};
-    MabeDB.loadProjects().forEach(function(p){
+    CamberDB.loadProjects().forEach(function(p){
       if (p.statusCls === 'lost') return;
-      MabeDB.loadOpps(p.id).forEach(function(o){
+      CamberDB.loadOpps(p.id).forEach(function(o){
         var f = (o.forn||'').trim();
         if (!f || f.toLowerCase()==='a definir') return;
         if (!map[f]) map[f] = { nome:f, servicos:{}, op:0, fech:0, fechVal:0, neg:0, rtPrev:0, negs:[] };
         var m = map[f]; m.op++;
         if (o.serv) m.servicos[o.serv] = (m.servicos[o.serv]||0)+1;
-        var rt = MabeDB.rtOf(o);
+        var rt = CamberDB.rtOf(o);
         if (o.et==='win'){ m.fech++; m.fechVal += o.val; m.rtPrev += rt; }
         if (o.et==='negoc'||o.et==='prop') m.neg += o.val;
         m.negs.push({ projId:p.id, proj:p.nome, serv:o.serv, et:o.et, val:o.val, rtv:rt });
@@ -131,7 +131,7 @@
   function carteiraCompleta(){
     var lista = carteira();
     var nomes = {}; lista.forEach(function(m){ nomes[m.nome.toLowerCase()] = true; });
-    (MabeDB.loadFornecedores ? MabeDB.loadFornecedores() : []).forEach(function(f){
+    (CamberDB.loadFornecedores ? CamberDB.loadFornecedores() : []).forEach(function(f){
       var nm = (f.nome||'').trim(); if (!nm || nomes[nm.toLowerCase()]) return;
       nomes[nm.toLowerCase()] = true;
       lista.push({ nome:nm, servicos: f.categoria?(function(){var o={};o[f.categoria]=1;return o;})():{}, op:0, fech:0, fechVal:0, neg:0, rtPrev:0, negs:[] });
@@ -145,7 +145,7 @@
   function render(){
     var q = (document.getElementById('fSearch').value||'').trim().toLowerCase();
     var fornIds = {};
-    (MabeDB.loadFornecedores ? MabeDB.loadFornecedores() : []).forEach(function(f){ if(f.nome) fornIds[f.nome.toLowerCase()] = f.id; });
+    (CamberDB.loadFornecedores ? CamberDB.loadFornecedores() : []).forEach(function(f){ if(f.nome) fornIds[f.nome.toLowerCase()] = f.id; });
     var lista = carteiraCompleta().filter(function(m){ return !q || m.nome.toLowerCase().indexOf(q)>-1; })
       .sort(function(a,b){ return b.fechVal - a.fechVal || b.op - a.op; });
 
@@ -175,7 +175,7 @@
     var all = carteiraCompleta();
     var rtPrev=0, neg=0, somaRt=0, nRt=0;
     all.forEach(function(m){ rtPrev+=m.rtPrev; neg+=m.neg; });
-    MabeDB.loadProjects().forEach(function(p){ if(p.statusCls==='lost')return; MabeDB.loadOpps(p.id).forEach(function(o){ if((o.forn||'').trim() && o.rtTipo!=='brl' && o.rt){ somaRt+=Number(o.rt); nRt++; } }); });
+    CamberDB.loadProjects().forEach(function(p){ if(p.statusCls==='lost')return; CamberDB.loadOpps(p.id).forEach(function(o){ if((o.forn||'').trim() && o.rtTipo!=='brl' && o.rt){ somaRt+=Number(o.rt); nRt++; } }); });
     document.getElementById('kRtPrev').textContent = brl(rtPrev);
     document.getElementById('kRtPrevSub').textContent = 'de ' + all.length + ' fornecedores';
     document.getElementById('kNeg').textContent = brl(neg);
@@ -216,10 +216,10 @@
     if (!curForn) return;
     var novo = prompt('Renomear fornecedor "' + curForn + '" para:', curForn);
     if (novo===null) return; novo = novo.trim(); if (!novo){ alert('Nome inválido.'); return; }
-    MabeDB.loadProjects().forEach(function(p){
-      var arr = MabeDB.loadOpps(p.id), ch=false;
+    CamberDB.loadProjects().forEach(function(p){
+      var arr = CamberDB.loadOpps(p.id), ch=false;
       arr.forEach(function(o){ if ((o.forn||'').trim()===curForn){ o.forn=novo; ch=true; } });
-      if (ch) MabeDB.saveOpps(p.id, arr);
+      if (ch) CamberDB.saveOpps(p.id, arr);
     });
     fecharForn(); render();
   }
@@ -228,10 +228,10 @@
     if (!curForn) return;
     var nome = curForn;
     function fazer(){
-      MabeDB.loadProjects().forEach(function(p){
-        var arr = MabeDB.loadOpps(p.id), ch=false;
+      CamberDB.loadProjects().forEach(function(p){
+        var arr = CamberDB.loadOpps(p.id), ch=false;
         arr.forEach(function(o){ if ((o.forn||'').trim()===nome){ o.forn='a definir'; ch=true; } });
-        if (ch) MabeDB.saveOpps(p.id, arr);
+        if (ch) CamberDB.saveOpps(p.id, arr);
       });
       fecharForn(); render();
     }
@@ -246,7 +246,7 @@
   render();
 
   // ---------- convites de fornecedor (link de auto-cadastro) ----------
-  function _sbc(){ try{ return (window.MabeCloud && MabeCloud.client && MabeCloud.client()) || null; }catch(e){ return null; } }
+  function _sbc(){ try{ return (window.CamberCloud && CamberCloud.client && CamberCloud.client()) || null; }catch(e){ return null; } }
   function abrirGerarLink(){
     document.getElementById('linkScrim').style.display='block';
     document.getElementById('linkModal').style.display='block';
@@ -263,14 +263,14 @@
     if(!sb){ st.textContent='⚠️ Disponível só no app publicado (não no preview local).'; return; }
     st.textContent='Gerando…';
     try{
-      var prof = window.__mabeProfile || {};
+      var prof = window.__camberProfile || {};
       var r = await sb.from('fornecedor_convites').insert({ nome_hint:(document.getElementById('lkNome').value||'').trim()||null, created_by:(prof.email||'') }).select('token').single();
       if(r.error){ st.textContent='Erro: '+r.error.message; return; }
       document.getElementById('lkUrl').value = location.origin + '/cadastro-fornecedor.html?c=' + r.data.token;
       document.getElementById('lkResult').style.display='block';
       document.getElementById('lkGenBtn').style.display='none';
       document.getElementById('lkCopyBtn').style.display='';
-      st.textContent='✅ Link criado — copie e envie ao fornecedor.';
+      st.textContent='✅ Link criado — copie e envie ao fornecedor. Sem resposta, será excluído após 20 dias.';
       carregarConvites();
     }catch(e){ st.textContent='Erro ao gerar o link.'; }
   }
@@ -280,10 +280,28 @@
     try{ navigator.clipboard && navigator.clipboard.writeText(i.value); }catch(e){}
     var b=document.getElementById('lkCopyBtn'); var t=b.textContent; b.textContent='Copiado!'; setTimeout(function(){ b.textContent=t; },1400);
   }
+  function textoConvite(v){ var el=document.createElement('span'); el.textContent=v||'—'; return el.innerHTML; }
+  async function excluirConvite(token){
+    var sb=_sbc(); if(!sb) return;
+    async function fazer(){
+      try{
+        var r=await sb.from('fornecedor_convites').delete().eq('token',token).in('status',['pendente','respondido']).select('token');
+        if(r.error) throw r.error;
+        if(!r.data || !r.data.length) { alert('O convite não foi excluído. Atualize a lista e verifique sua permissão.'); }
+        await carregarConvites();
+      }catch(e){ alert('Não foi possível excluir o convite. Tente novamente.'); }
+    }
+    if(typeof window.pedirSenhaExcluir==='function') window.pedirSenhaExcluir('o convite (o link será invalidado e será necessário gerar outro)',fazer);
+    else if(confirm('Excluir este convite? O link deixará de funcionar e será necessário começar com um novo convite.')) await fazer();
+  }
+  document.getElementById('convBody').addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-convite]'); if(btn) excluirConvite(btn.getAttribute('data-convite'));
+  });
   async function carregarConvites(){
     var sb=_sbc(); if(!sb) return;
     try{
-      var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').order('created_at',{ascending:false}).limit(40);
+      var limite=new Date(Date.now()-20*24*60*60*1000).toISOString();
+      var r = await sb.from('fornecedor_convites').select('token,nome_hint,status,created_at').in('status',['pendente','respondido']).or('status.eq.respondido,created_at.gt.'+limite).order('created_at',{ascending:false});
       if(r.error || !r.data) return;
       var rows=r.data, panel=document.getElementById('convPanel');
       if(!rows.length){ panel.style.display='none'; return; }
@@ -303,11 +321,14 @@
         } else {
           badge='<span class="chip negoc"><span class="d"></span>Pendente</span>';
         }
-        return '<tr><td>'+(c.nome_hint||'—')+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
+        acao+=' <button class="btn sm" data-convite="'+textoConvite(c.token).replace(/"/g,'&quot;')+'">Excluir convite</button>';
+        return '<tr><td>'+textoConvite(c.nome_hint)+'</td><td style="color:var(--ink-2)">'+dt+'</td><td>'+badge+'</td><td class="r">'+acao+'</td></tr>';
       }).join('');
     }catch(e){}
   }
   (function(){ var t=0, iv=setInterval(function(){ t++; if(_sbc()){ clearInterval(iv); carregarConvites(); } else if(t>25){ clearInterval(iv); } }, 400); })();
+  window.addEventListener('pageshow',carregarConvites);
+  setInterval(function(){ if(!document.hidden) carregarConvites(); },60000);
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 </script>
 </body>

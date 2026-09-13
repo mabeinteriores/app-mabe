@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="painel">
+<div class="camber skin-studio" id="app" data-page="painel">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
@@ -133,16 +133,16 @@
     </div>
   </aside>
 </div>
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   function fmtMil(v){
     return 'R$ ' + Math.round(v||0).toLocaleString('pt-BR');
   }
   // nome do usuário logado (substitui o rótulo antigo "Você (Arq.)")
   function meuNome(){
-    var n = (window.__mabeProfile && window.__mabeProfile.nome) || '';
-    if(!n && window.MabeCloud && MabeCloud.responsaveis){ var l=MabeCloud.responsaveis(); if(l && l.length) n=l[0]; }
+    var n = (window.__camberProfile && window.__camberProfile.nome) || '';
+    if(!n && window.CamberCloud && CamberCloud.responsaveis){ var l=CamberCloud.responsaveis(); if(l && l.length) n=l[0]; }
     return (n||'').trim();
   }
   function normResp(r){ r=(r||'').trim(); if(!r || /^você/i.test(r)){ return meuNome() || (r||'—'); } return r; }
@@ -180,7 +180,7 @@
 
   function painelConsolidado(){
     ALLO = [];
-    var projetos = MabeDB.loadProjects();
+    var projetos = CamberDB.loadProjects();
     var STAGES = [
       { k:'prospec', l:'Prospecção' }, { k:'negoc', l:'Montando Orçamentos' },
       { k:'prop', l:'Proposta enviada' }, { k:'win', l:'Fechado / Ganho' }, { k:'lost', l:'Perdido' }
@@ -191,9 +191,9 @@
     projetos.forEach(function(p){
       if (!scopeInclui(p.statusCls)) return;          // filtro do seletor (aberto/todos/concluídos/perdidos)
       nAbertos++; projVal += (p.valor || 0);
-      MabeDB.loadOpps(p.id).forEach(function(o){
+      CamberDB.loadOpps(p.id).forEach(function(o){
         if (!inPeriodo(o.dt)) return;   // filtro de período (Mês / Ano / Tudo)
-        var rt = MabeDB.rtOf(o);
+        var rt = CamberDB.rtOf(o);
         ganhoAll += rt;   // Ganho possível = RT de TODAS as oportunidades (inclusive perdidas)
         ALLO.push({ proj:p.nome, projId:p.id, serv:o.serv, forn:o.forn, resp:o.resp, et:o.et, val:o.val, rt:o.rt, rtTipo:o.rtTipo, rtv:rt, prob:o.prob, motivo:o.motivo, aberto:true });
         byStage[o.et].v += o.val; byStage[o.et].n++;
@@ -233,7 +233,7 @@
     // mapa razão social -> nome fantasia (o ranking exibe a FANTASIA)
     var FORN_FANT = {};
     try {
-      (MabeDB.loadFornecedores ? MabeDB.loadFornecedores() : []).forEach(function(fo){
+      (CamberDB.loadFornecedores ? CamberDB.loadFornecedores() : []).forEach(function(fo){
         var razao = String(fo.nome || '').trim();
         var fant  = String(fo.fantasia || '').trim();
         if (razao) FORN_FANT[razao.toLowerCase()] = fant || razao;   // sem fantasia -> mantém razão
@@ -289,7 +289,7 @@
       }
       projetos.forEach(function(p){
         if (!scopeInclui(p.statusCls)) return;
-        MabeDB.loadOpps(p.id).forEach(function(o){
+        CamberDB.loadOpps(p.id).forEach(function(o){
           if (!o.dt) return;
           var od = new Date(o.dt + 'T00:00:00');
           var b = null;

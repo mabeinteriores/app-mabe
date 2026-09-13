@@ -1,6 +1,6 @@
 // Painel "A" (KPIs + funil) da Gestão Camber — hi-fi.
 // Mesma estrutura, renderizada em 3 peles (paper/studio/tech) e 2 temas.
-// Exporta MabeDashboard para window.
+// Exporta CamberDashboard para window.
 (function () {
   function I(path, props) {
     return React.createElement('svg', Object.assign({ width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, props || {}),
@@ -49,7 +49,7 @@
     { in: 'R', n: 'Rafael', o: '17', c: '59%', rt: 'R$ 11 mil' }
   ];
 
-  function MabeDashboard(props) {
+  function CamberDashboard(props) {
     var skin = props.skin || 'studio';
     var theme = props.theme || 'light';
     var h = React.createElement;
@@ -151,7 +151,7 @@
             h('td', { className: 'r num rtpill' }, r.rt));
         }))));
 
-    return h('div', { className: 'mabe skin-' + skin, 'data-theme': theme },
+    return h('div', { className: 'camber skin-' + skin, 'data-theme': theme },
       top,
       h('div', { className: 'body' },
         pageH,
@@ -162,5 +162,5 @@
         h('div', { className: 'grid-2b' }, ranking, resp)));
   }
 
-  window.MabeDashboard = MabeDashboard;
+  window.CamberDashboard = CamberDashboard;
 })();

@@ -2,7 +2,7 @@
 // Gestão Camber — Camada de Nuvem (Supabase)
 // Adiciona LOGIN e sincroniza todos os dados do app (localStorage) com a
 // nuvem, compartilhados por toda a equipe. Não altera a lógica das telas:
-// intercepta localStorage e espelha as chaves "mabe-*"/"mabe_*".
+// intercepta localStorage e espelha as chaves "camber-*"/"camber_*".
 //
 // Deve ser o PRIMEIRO <script> do <head>, antes de projects-data.js/prc.js.
 // =====================================================================
@@ -24,7 +24,7 @@
   var LOCAL_ONLY = (location.protocol === 'file:') ||
     /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/i.test(location.hostname);
 
-  // NUNCA sincronizar a sessão de login (mabe-auth*) nem chaves de auth — é por usuário e secreto.
+  // NUNCA sincronizar a sessão de login (camber-auth*) nem chaves de auth — é por usuário e secreto.
   // Em modo LOCAL_ONLY, shouldSync sempre retorna false → nada é enviado à nuvem.
   function shouldSync(k) { return !LOCAL_ONLY && SYNC_RE.test(k) && !SKIP[k] && k.indexOf('mabe-auth') !== 0 && k.indexOf('sb-') !== 0; }
 
@@ -71,27 +71,27 @@
   // ---------- 2) overlay (esconde a UI até estar pronto) ----------
   var styleEl = document.createElement('style');
   styleEl.textContent =
-    '#mabeCloudOv{position:fixed;inset:0;z-index:2147483647;background:#F5F0EA;color:#3a3128;' +
+    '#camberCloudOv{position:fixed;inset:0;z-index:2147483647;background:#F5F0EA;color:#3a3128;' +
     'display:flex;align-items:center;justify-content:center;font-family:Archivo,system-ui,sans-serif}' +
-    '#mabeCloudOv .box{width:320px;max-width:88vw;text-align:center}' +
-    '#mabeCloudOv .mk{width:46px;height:46px;border-radius:12px;background:#C0653A;color:#fff;font-weight:700;' +
+    '#camberCloudOv .box{width:320px;max-width:88vw;text-align:center}' +
+    '#camberCloudOv .mk{width:46px;height:46px;border-radius:12px;background:#C0653A;color:#fff;font-weight:700;' +
     'display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px}' +
-    '#mabeCloudOv h1{font-size:18px;margin:0 0 2px}#mabeCloudOv p{font-size:12.5px;color:#8a7d6d;margin:0 0 18px}' +
-    '#mabeCloudOv input{width:100%;box-sizing:border-box;padding:11px 12px;margin:6px 0;border:1px solid #ddd2c4;' +
+    '#camberCloudOv h1{font-size:18px;margin:0 0 2px}#camberCloudOv p{font-size:12.5px;color:#8a7d6d;margin:0 0 18px}' +
+    '#camberCloudOv input{width:100%;box-sizing:border-box;padding:11px 12px;margin:6px 0;border:1px solid #ddd2c4;' +
     'border-radius:9px;font-size:14px;font-family:inherit;background:#fff;color:inherit}' +
-    '#mabeCloudOv button{width:100%;padding:11px;margin-top:8px;border:none;border-radius:9px;background:#C0653A;' +
+    '#camberCloudOv button{width:100%;padding:11px;margin-top:8px;border:none;border-radius:9px;background:#C0653A;' +
     'color:#fff;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit}' +
-    '#mabeCloudOv button.alt{background:transparent;color:#C0653A;font-weight:500;font-size:12.5px;margin-top:10px}' +
-    '#mabeCloudOv .msg{font-size:12px;margin-top:10px;min-height:16px}' +
-    '#mabeCloudOv .spin{width:30px;height:30px;border:3px solid #e4dacb;border-top-color:#C0653A;border-radius:50%;' +
-    'margin:0 auto;animation:mabeSpin .8s linear infinite}@keyframes mabeSpin{to{transform:rotate(360deg)}}';
+    '#camberCloudOv button.alt{background:transparent;color:#C0653A;font-weight:500;font-size:12.5px;margin-top:10px}' +
+    '#camberCloudOv .msg{font-size:12px;margin-top:10px;min-height:16px}' +
+    '#camberCloudOv .spin{width:30px;height:30px;border:3px solid #e4dacb;border-top-color:#C0653A;border-radius:50%;' +
+    'margin:0 auto;animation:camberSpin .8s linear infinite}@keyframes camberSpin{to{transform:rotate(360deg)}}';
   (document.head || document.documentElement).appendChild(styleEl);
 
   var ov = null;
   function overlay() {
     if (isChild) return null; // dentro do iframe não mostramos login
     if (ov) return ov;
-    ov = document.createElement('div'); ov.id = 'mabeCloudOv';
+    ov = document.createElement('div'); ov.id = 'camberCloudOv';
     ov.innerHTML = '<div class="box"><div class="mk">C</div><div class="spin"></div></div>';
     (document.body || document.documentElement).appendChild(ov);
     return ov;
@@ -105,11 +105,11 @@
 
   // Esconde a UI base enquanto carrega
   if (!isChild) {
-    var hide = document.createElement('style'); hide.id = 'mabeHide';
+    var hide = document.createElement('style'); hide.id = 'camberHide';
     hide.textContent = '#app{opacity:0!important}';
     (document.head || document.documentElement).appendChild(hide);
   }
-  function revealApp() { var h = document.getElementById('mabeHide'); if (h) h.remove(); }
+  function revealApp() { var h = document.getElementById('camberHide'); if (h) h.remove(); }
 
   // ---------- 3) login ----------
   function showLogin(msg) {
@@ -231,9 +231,9 @@
   // mostra o primeiro nome do usuário na topbar (no lugar de "Oportunidades")
   function applyUserUI() {
     try {
-      var nome = (window.__mabeProfile && window.__mabeProfile.nome) || '';
+      var nome = (window.__camberProfile && window.__camberProfile.nome) || '';
       var first = (nome.trim().split(/\s+/)[0]) || '';
-      if (!first && window.__mabeUser && window.__mabeUser.email) first = window.__mabeUser.email.split('@')[0];
+      if (!first && window.__camberUser && window.__camberUser.email) first = window.__camberUser.email.split('@')[0];
       if (!first) return;
       var bs = document.querySelector('.top .bs');
       if (bs) bs.textContent = first;
@@ -269,7 +269,7 @@
         var n = (p.nome || '').trim();
         return n || (p.email || '').split('@')[0];
       }).filter(Boolean);
-      if (window.MabeCloud) window.MabeCloud._resp = respList;
+      if (window.CamberCloud) window.CamberCloud._resp = respList;
       repopResp();
     }, function () {});
   }
@@ -279,7 +279,7 @@
       '<div class="mk">C</div><h1>Sem acesso</h1>' +
       '<p style="margin:8px 0 18px">Sua conta ainda não tem nenhuma área liberada. Fale com o administrador.</p>' +
       '<button id="mcOut" class="alt">Sair</button>';
-    o.querySelector('#mcOut').onclick = function () { window.MabeCloud.signOut(); };
+    o.querySelector('#mcOut').onclick = function () { window.CamberCloud.signOut(); };
   }
 
   // verifica se o usuário logado já foi aprovado pelo administrador
@@ -287,16 +287,16 @@
     sb.auth.getUser().then(function (r) {
       var u = r && r.data && r.data.user;
       if (!u) { cb('invalid'); return; }
-      window.__mabeUser = u;
+      window.__camberUser = u;
       sb.from('profiles').select('aprovado,papel,nome,abas_permitidas').eq('id', u.id).maybeSingle()
         .then(function (res) {
-          if (res.error) { perms = { admin: false, abas: ALL_TABS.slice() }; window.__mabePerms = perms; cb('approved'); return; }
+          if (res.error) { perms = { admin: false, abas: ALL_TABS.slice() }; window.__camberPerms = perms; cb('approved'); return; }
           var p = res.data;
-          window.__mabeProfile = p || null;
+          window.__camberProfile = p || null;
           perms = { admin: !!(p && p.papel === 'admin'), abas: (p && p.abas_permitidas) || [] };
-          window.__mabePerms = perms;
+          window.__camberPerms = perms;
           cb(p && p.aprovado ? 'approved' : 'pending');
-        }, function () { perms = { admin: false, abas: ALL_TABS.slice() }; window.__mabePerms = perms; cb('approved'); });
+        }, function () { perms = { admin: false, abas: ALL_TABS.slice() }; window.__camberPerms = perms; cb('approved'); });
     }, function () { cb('invalid'); });
   }
 
@@ -311,7 +311,7 @@
       '<button id="mcRecheck">Já fui autorizado — entrar</button>' +
       '<button id="mcOut" class="alt">Sair</button>';
     o.querySelector('#mcRecheck').onclick = function () { location.reload(); };
-    o.querySelector('#mcOut').onclick = function () { window.MabeCloud.signOut(); };
+    o.querySelector('#mcOut').onclick = function () { window.CamberCloud.signOut(); };
   }
 
   // segue o fluxo normal (hidrata da nuvem e revela o app)
@@ -344,16 +344,16 @@
     try {
       var a = document.activeElement;
       if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return true;
-      if (document.querySelector('.drawer.open, .scrim.open, #delModal.open, #mabeCloudOv')) return true;
+      if (document.querySelector('.drawer.open, .scrim.open, #delModal.open, #camberCloudOv')) return true;
     } catch (e) {}
     return false;
   }
   function showLiveBanner() {
     if (liveBanner || isChild) return;
     liveBanner = document.createElement('div');
-    liveBanner.innerHTML = '🔄&nbsp; Há atualizações novas <button id="mabeLiveBtn">Atualizar</button>';
+    liveBanner.innerHTML = '🔄&nbsp; Há atualizações novas <button id="camberLiveBtn">Atualizar</button>';
     liveBanner.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:2147483600;background:#3a3128;color:#fff;font-family:Archivo,system-ui,sans-serif;font-size:13px;padding:10px 14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px';
-    var b = liveBanner.querySelector('#mabeLiveBtn');
+    var b = liveBanner.querySelector('#camberLiveBtn');
     b.style.cssText = 'background:#C0653A;color:#fff;border:none;border-radius:8px;padding:6px 11px;font:inherit;font-weight:600;cursor:pointer';
     b.onclick = function () { doLiveRefresh(); };
     (document.body || document.documentElement).appendChild(liveBanner);
@@ -419,8 +419,8 @@
       }, function () {});
   }
   function setupLivePolling() {
-    if (isChild || window.__mabeLiveSet) return;
-    window.__mabeLiveSet = true;
+    if (isChild || window.__camberLiveSet) return;
+    window.__camberLiveSet = true;
     checkForUpdates();   // referência inicial
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') checkForUpdates(); });
     window.addEventListener('focus', function () { checkForUpdates(); });
@@ -505,7 +505,7 @@
   }
 
   // API auxiliar para a UI (ex.: botão Sair)
-  window.MabeCloud = {
+  window.CamberCloud = {
     signOut: function () {
       if (!sb) return;
       sessionStorage.removeItem('mabe_cloud_hydrated');

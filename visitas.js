@@ -1,8 +1,8 @@
 // =====================================================================
 // Gestão Camber — Controle de Visitas (por projeto)
 // Abre a partir do menu "Mais" do projeto (Visitas.open()), numa gaveta.
-// Depende de globals do projeto.html: projId, PROJ, meuNome(), MabeDB.
-// Salva em localStorage 'mabe-visitas-v1-<projId>' (sincroniza pela nuvem).
+// Depende de globals do projeto.html: projId, PROJ, meuNome(), CamberDB.
+// Salva em localStorage 'camber-visitas-v1-<projId>' (sincroniza pela nuvem).
 // A meta "visitas previstas" fica no próprio projeto (PROJ.visitasPrev).
 // =====================================================================
 (function () {
@@ -19,8 +19,8 @@
   function vkey() { return 'mabe-visitas-v1-' + projId; }
   function load() { try { return JSON.parse(localStorage.getItem(vkey())) || []; } catch (e) { return []; } }
   function save(v) { try { localStorage.setItem(vkey(), JSON.stringify(v)); } catch (e) {} }
-  function prevQtd() { var p = MabeDB.getProject(projId); return (p && parseInt(p.visitasPrev, 10)) || 0; }
-  function setPrev(n) { MabeDB.updateProject(projId, { visitasPrev: Math.max(0, parseInt(n, 10) || 0) }); render(); }
+  function prevQtd() { var p = CamberDB.getProject(projId); return (p && parseInt(p.visitasPrev, 10)) || 0; }
+  function setPrev(n) { CamberDB.updateProject(projId, { visitasPrev: Math.max(0, parseInt(n, 10) || 0) }); render(); }
 
   // ---------- formatação ----------
   function pad(n) { return (n < 10 ? '0' : '') + n; }

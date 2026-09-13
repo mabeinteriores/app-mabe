@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de cliente · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="clientes">
+<div class="camber skin-studio" id="app" data-page="clientes">
   <div class="body scroll">
     <div class="wrap" style="max-width:1040px;display:flex;flex-direction:column;gap:18px;">
 
@@ -101,8 +101,8 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   // PF/PJ alterna rótulos
   document.querySelectorAll('#tipoPessoa .opt').forEach(function(o){
@@ -254,17 +254,17 @@
 
   // popula o select de responsável a partir da Configuração
   (function(){
-    if(!MabeDB.loadResponsaveis) return;
+    if(!CamberDB.loadResponsaveis) return;
     var sel=document.getElementById('cResp'); if(!sel) return;
-    sel.innerHTML = MabeDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
+    sel.innerHTML = CamberDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
   })();
   // Interesse = Tipos de Projeto (Configuração)
-  if (MabeDB.fillSelectFromConfig) MabeDB.fillSelectFromConfig('cInteresse','projetos', null, 'Selecione…');
+  if (CamberDB.fillSelectFromConfig) CamberDB.fillSelectFromConfig('cInteresse','projetos', null, 'Selecione…');
 
   // modo edição: carrega o cliente salvo e preenche o formulário
   (function loadCliente(){
-    if(!editId || !MabeDB.getCliente) return;
-    var c = MabeDB.getCliente(editId);
+    if(!editId || !CamberDB.getCliente) return;
+    var c = CamberDB.getCliente(editId);
     if(!c){ editId=null; return; }
     document.querySelector('.page-h .crumb').innerHTML = '<a href="clientes.html" style="color:var(--ink-3)">Clientes</a> › Editar cliente';
     document.querySelector('.page-h h1').textContent = 'Editar cliente';
@@ -288,7 +288,7 @@
   (function initContatos(){
     var wrap=document.getElementById('ctWrap'); if(!wrap) return;
     var add=document.getElementById('btnAddContato'); if(add) add.addEventListener('click', function(){ addContato({}); });
-    var c = (editId && MabeDB.getCliente) ? MabeDB.getCliente(editId) : null;
+    var c = (editId && CamberDB.getCliente) ? CamberDB.getCliente(editId) : null;
     var cts = (c && c.contatos && c.contatos.length) ? c.contatos
             : (c && (c.tel||c.cel||c.email||c.instagram||c.nascimento||c.profissao) ? [{nome:c.nome, tel:c.tel, cel:c.cel, email:c.email, instagram:c.instagram, profissao:c.profissao, aniversario:c.nascimento}] : []);
     if(cts.length){ cts.slice(0,3).forEach(function(x){ addContato(x); }); }
@@ -299,8 +299,8 @@
   function irPara(url){
     var done=false, go=function(){ if(done) return; done=true; location.href=url; };
     try {
-      if (window.MabeCloud && MabeCloud.flush){
-        var p = MabeCloud.flush();
+      if (window.CamberCloud && CamberCloud.flush){
+        var p = CamberCloud.flush();
         if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
       }
     } catch(e){}
@@ -326,17 +326,17 @@
       origem: val('cOrigem'), perfil: val('cPerfil'), responsavel: val('cResp'),
       avaliacao: val('cAval'), obs: val('cObs')
     };
-    if(editId && MabeDB.updateCliente){ MabeDB.updateCliente(editId, dados); }
-    else { dados.data = new Date().toISOString().slice(0,10); MabeDB.addCliente(dados); }
+    if(editId && CamberDB.updateCliente){ CamberDB.updateCliente(editId, dados); }
+    else { dados.data = new Date().toISOString().slice(0,10); CamberDB.addCliente(dados); }
     irPara('clientes.html');
   }
 
   // excluir cliente (exige senha do usuário logado)
   function excluirCliente(){
     if(!editId) return;
-    var c = MabeDB.getCliente ? MabeDB.getCliente(editId) : null;
+    var c = CamberDB.getCliente ? CamberDB.getCliente(editId) : null;
     var nome = (c && c.nome) || 'este cliente';
-    function fazer(){ if(MabeDB.deleteCliente) MabeDB.deleteCliente(editId); irPara('clientes.html'); }
+    function fazer(){ if(CamberDB.deleteCliente) CamberDB.deleteCliente(editId); irPara('clientes.html'); }
     if(typeof window.pedirSenhaExcluir === 'function'){
       window.pedirSenhaExcluir('o cliente "'+nome+'"', fazer);
     } else {

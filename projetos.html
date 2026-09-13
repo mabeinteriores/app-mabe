@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609122046"></script>
+<script src="cloud.js?v=20260912215700"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projetos · Gestão Camber</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="painel.css?v=202606162131">
-<link rel="stylesheet" href="app.css?v=202606162131">
+<link rel="stylesheet" href="painel.css?v=20260912215700">
+<link rel="stylesheet" href="app.css?v=20260912215700">
 <style>
   #printReport { display: none; }
   @media print {
     @page { margin: 12mm; size: A4 landscape; }
     body { background: #fff !important; }
-    .mabe .top, .mabe .toolbar, #vTab, #vCard, .scrim, .drawer, .page-h .btnbar { display: none !important; }
-    .mabe, .mabe .body, .mabe .body.scroll { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; }
+    .camber .top, .camber .toolbar, #vTab, #vCard, .scrim, .drawer, .page-h .btnbar { display: none !important; }
+    .camber, .camber .body, .camber .body.scroll { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; }
     .wrap { display: block !important; max-width: none !important; }
     #printReport { display: block !important; color: #111; }
     #printReport * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -24,7 +24,7 @@
 </style>
 </head>
 <body>
-<div class="mabe skin-studio" id="app" data-page="projetos">
+<div class="camber skin-studio" id="app" data-page="projetos">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
@@ -112,12 +112,12 @@
   <input type="file" id="fotoInput" accept="image/*" style="display:none">
 </div>
 
-<script src="projects-data.js?v=202609122046"></script>
-<script src="shell.js?v=202609122046"></script>
+<script src="projects-data.js?v=20260912215700"></script>
+<script src="shell.js?v=20260912215700"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : '—'; }
   // tipo de projeto vem da Configuração (Tipos de Projeto)
-  if (window.MabeDB && MabeDB.fillSelectFromConfig) MabeDB.fillSelectFromConfig('pjTipo','projetos');
+  if (window.CamberDB && CamberDB.fillSelectFromConfig) CamberDB.fillSelectFromConfig('pjTipo','projetos');
 
   // popula o filtro de responsáveis a partir dos projetos
   function fillRespFilter(projetos){
@@ -133,7 +133,7 @@
     var q = (document.getElementById('pjSearch').value||'').trim().toLowerCase();
     var st = document.getElementById('fStatus').value;
     var rp = document.getElementById('fResp').value;
-    return MabeDB.loadProjects().filter(function(p){
+    return CamberDB.loadProjects().filter(function(p){
       if (st && p.statusCls !== st) return false;
       if (rp && p.resp !== rp) return false;
       if (q){
@@ -145,7 +145,7 @@
   }
 
   function render(){
-    fillRespFilter(MabeDB.loadProjects());
+    fillRespFilter(CamberDB.loadProjects());
     var projetos = filtrarProjetos();
     // tabela
     var body = document.getElementById('projBody');
@@ -197,7 +197,7 @@
   var fotoTargetId = null;
   function escolherFoto(id){ fotoTargetId = id; document.getElementById('fotoInput').click(); }
   function removerFoto(id){
-    if (confirm('Remover a foto desta obra?')){ MabeDB.updateProject(id, { foto: '' }); render(); }
+    if (confirm('Remover a foto desta obra?')){ CamberDB.updateProject(id, { foto: '' }); render(); }
   }
   document.getElementById('fotoInput').addEventListener('change', function(){
     var f = this.files && this.files[0]; if (!f || fotoTargetId==null){ this.value=''; return; }
@@ -211,7 +211,7 @@
         cv.width = Math.round(img.width*scale); cv.height = Math.round(img.height*scale);
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
         var data = cv.toDataURL('image/jpeg', 0.82);
-        MabeDB.updateProject(fotoTargetId, { foto: data });
+        CamberDB.updateProject(fotoTargetId, { foto: data });
         fotoTargetId = null; render();
       };
       img.src = e.target.result;
@@ -232,7 +232,7 @@
     { label:'Perdido',    cls:'lost' }
   ];
   function statusMenu(ev, id){
-    var p = MabeDB.getProject(id); if (!p) return;
+    var p = CamberDB.getProject(id); if (!p) return;
     var pop = document.getElementById('statusPop');
     pop.innerHTML = STATUS_OPTS.map(function(o){
       var on = o.label === p.statusLabel;
@@ -254,7 +254,7 @@
     });
   }
   function setStatus(id, cls, label){
-    MabeDB.updateProject(id, { statusCls: cls, statusLabel: label });
+    CamberDB.updateProject(id, { statusCls: cls, statusLabel: label });
     document.getElementById('statusPop').style.display = 'none';
     render();
   }
@@ -322,7 +322,7 @@
     var errEl = document.getElementById('delErr');
     var btn = document.getElementById('delConfirm');
     if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
-    var c = window.MabeCloud && window.MabeCloud.client();
+    var c = window.CamberCloud && window.CamberCloud.client();
     if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
     btn.disabled = true; errEl.textContent = 'Verificando senha…';
     c.auth.getUser().then(function(ures){
@@ -331,7 +331,7 @@
       c.auth.signInWithPassword({ email: email, password: pwd }).then(function(res){
         if(res.error){ errEl.textContent = 'Senha incorreta. Tente novamente.'; btn.disabled=false; return; }
         errEl.textContent = 'Excluindo…';
-        try { MabeDB.deleteProject(DEL_PROJ.id); } catch(e){}
+        try { CamberDB.deleteProject(DEL_PROJ.id); } catch(e){}
         closeDelModal();
         render();
       }, function(){ errEl.textContent = 'Não foi possível verificar a senha.'; btn.disabled=false; });
@@ -364,7 +364,7 @@
     setTimeout(function(){ document.getElementById('pjNome').focus(); }, 60);
   }
   function editar(id){
-    var p = MabeDB.getProject(id);
+    var p = CamberDB.getProject(id);
     if (!p) return;
     editingProj = id;
     document.querySelector('#drawer .dh h2').textContent = 'Editar projeto';
@@ -418,10 +418,10 @@
       obs: document.getElementById('pjObs').value.trim()
     };
     if (editingProj != null){
-      MabeDB.updateProject(editingProj, dados);
+      CamberDB.updateProject(editingProj, dados);
     } else {
       dados.op = 0; dados.pct = 0; dados.rt = 0; dados.statusLabel = 'Prospecção'; dados.statusCls = 'prospec';
-      MabeDB.addProject(dados);
+      CamberDB.addProject(dados);
     }
     editingProj = null;
     ['pjNome','pjCli','pjCep','pjLograd','pjNum','pjBairro','pjCidade','pjUF','pjVal','pjObs'].forEach(function(id){ document.getElementById(id).value=''; });
@@ -462,14 +462,14 @@
   })();
 
   // ---------- balanço consolidado (impressão) ----------
-  function rtAll(opps){ return opps.reduce(function(a,o){ return a + MabeDB.rtOf(o); }, 0); }
+  function rtAll(opps){ return opps.reduce(function(a,o){ return a + CamberDB.rtOf(o); }, 0); }
   function imprimir(){
-    var projetos = MabeDB.loadProjects();
+    var projetos = CamberDB.loadProjects();
     var hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
     var T = { valor:0, op:0, fech:0, rtPrev:0, ganho:0 };
 
     var rows = projetos.map(function(p){
-      var opps = MabeDB.loadOpps(p.id);
+      var opps = CamberDB.loadOpps(p.id);
       var won = opps.filter(function(o){ return o.et==='win'; });
       var fechVal = won.reduce(function(a,o){ return a+o.val; }, 0);
       var rtPrev = rtAll(won);
@@ -541,9 +541,9 @@
   })();
   // popula o select de responsável a partir da Configuração
   (function fillRespProj(){
-    if(!MabeDB.loadResponsaveis) return;
+    if(!CamberDB.loadResponsaveis) return;
     var sel=document.getElementById('pjResp'); if(!sel) return;
-    sel.innerHTML = MabeDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
+    sel.innerHTML = CamberDB.loadResponsaveis().map(function(n){ return '<option>'+n+'</option>'; }).join('');
   })();
   render();
 </script>

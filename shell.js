@@ -48,7 +48,7 @@
         '<div class="mark">C</div>' +
         '<div><div class="bn">Gestão Camber</div><div class="bs">Oportunidades</div></div>' +
       '</a>' +
-      '<div class="brandmenu"><button type="button" class="brandmenu-item" id="mabeSairBtn">↪&nbsp;Sair do app</button></div>' +
+      '<div class="brandmenu"><button type="button" class="brandmenu-item" id="camberSairBtn">↪&nbsp;Sair do app</button></div>' +
     '</div>' +
     '<nav class="nav">' + nav + '</nav>' +
     '<div class="sp"></div>' +
@@ -60,10 +60,10 @@
   app.insertBefore(top, app.firstChild);
 
   // "Sair do app" (no menu do logo) → volta para a tela de login
-  var sairBtn = document.getElementById('mabeSairBtn');
+  var sairBtn = document.getElementById('camberSairBtn');
   if (sairBtn) sairBtn.addEventListener('click', function (e) {
     e.preventDefault();
-    if (window.MabeCloud && window.MabeCloud.signOut) window.MabeCloud.signOut();
+    if (window.CamberCloud && window.CamberCloud.signOut) window.CamberCloud.signOut();
     else { try { localStorage.clear(); sessionStorage.clear(); } catch (er) {} location.reload(); }
   });
 
@@ -130,7 +130,7 @@
       var errEl = document.getElementById('sxErr');
       var btn = document.getElementById('sxConfirm');
       if(!pwd){ errEl.textContent = 'Digite sua senha para confirmar.'; return; }
-      var c = window.MabeCloud && window.MabeCloud.client && window.MabeCloud.client();
+      var c = window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client();
       if(!c){ errEl.textContent = 'Sem conexão com o servidor.'; return; }
       btn.disabled = true; errEl.textContent = 'Verificando senha…';
       c.auth.getUser().then(function(ures){

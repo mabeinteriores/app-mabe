@@ -1,5 +1,5 @@
-/* Custos de Terceiros — adaptado do MABE para operar sobre um PROJETO (MabeDB).
-   Os custos ficam salvos no próprio projeto (campo .custos) via MabeDB.updateProject. */
+/* Custos de Terceiros — adaptado do CAMBER para operar sobre um PROJETO (CamberDB).
+   Os custos ficam salvos no próprio projeto (campo .custos) via CamberDB.updateProject. */
 window.CT = (function(){
   var CATKEY='mabe_ct_cats_v1';
   var brl=function(n){return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});};
@@ -9,7 +9,7 @@ window.CT = (function(){
 
   function loadCats(){try{var c=JSON.parse(localStorage.getItem(CATKEY));if(c&&c.length)cats=c;}catch(e){}}
   function saveCats(){try{localStorage.setItem(CATKEY,JSON.stringify(cats));}catch(e){}}
-  function proj(){ return (window.MabeDB&&pid!=null) ? MabeDB.getProject(pid) : null; }
+  function proj(){ return (window.CamberDB&&pid!=null) ? CamberDB.getProject(pid) : null; }
   function fillCats(){ var s=el('ct-cat'); if(!s)return; var cur=s.value; s.innerHTML=cats.map(function(c){return '<option>'+c+'</option>';}).join(''); if(cur)s.value=cur; }
   function novaCategoria(){ var n=prompt('Nome da nova categoria:'); if(!n)return; n=n.trim(); if(n&&cats.indexOf(n)<0){cats.push(n);saveCats();fillCats();el('ct-cat').value=n;} }
   function editarCategoria(){
@@ -19,7 +19,7 @@ window.CT = (function(){
     if(n!==atual && cats.indexOf(n)>-1){alert('Já existe uma categoria com esse nome.');return;}
     var i=cats.indexOf(atual); if(i>-1)cats[i]=n; saveCats();
     // atualiza os custos que usavam a categoria antiga (em todos os projetos)
-    try{ MabeDB.loadProjects().forEach(function(p){ var arr=MabeDB.loadOpps?null:null; var c=p.custos; if(Array.isArray(c)){ var ch=false; c.forEach(function(it){ if(it.cat===atual){it.cat=n;ch=true;} }); if(ch)MabeDB.updateProject(p.id,{custos:c}); } }); }catch(e){}
+    try{ CamberDB.loadProjects().forEach(function(p){ var arr=CamberDB.loadOpps?null:null; var c=p.custos; if(Array.isArray(c)){ var ch=false; c.forEach(function(it){ if(it.cat===atual){it.cat=n;ch=true;} }); if(ch)CamberDB.updateProject(p.id,{custos:c}); } }); }catch(e){}
     fillCats(); el('ct-cat').value=n; render();
   }
   function excluirCategoria(){
@@ -36,9 +36,9 @@ window.CT = (function(){
   function clearForm(){ ['ct-prest','ct-desc','ct-valor'].forEach(function(i){var e=el(i);if(e)e.value='';}); var d=el('ct-data'); if(d)d.value=today(); }
 
   function persist(custos){
-    if(!window.MabeDB||pid==null)return;
+    if(!window.CamberDB||pid==null)return;
     var total=custos.reduce(function(s,i){return s+(Number(i.valor)||0);},0);
-    MabeDB.updateProject(pid,{custos:custos, custosTotal:total});
+    CamberDB.updateProject(pid,{custos:custos, custosTotal:total});
     if(typeof onChange==='function'){ try{onChange();}catch(e){} }
   }
 
