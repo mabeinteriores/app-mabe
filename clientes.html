@@ -19,6 +19,7 @@
       <div class="page-h">
         <div><div class="crumb">Carteira de clientes</div><h1>Clientes</h1></div>
         <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
+          <button class="btn" onclick="abrirAnexosClientes()">ANEXOS</button>
           <button class="btn" onclick="abrirGerarLink()">🔗&nbsp; Gerar link</button>
           <a class="btn" href="cliente.html">+&nbsp; Novo cliente</a>
         </div>
@@ -319,5 +320,6 @@
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharGerarLink(); });
 
 </script>
+<script src="cliente-anexos.js?v=1"></script>
 </body>
 </html>

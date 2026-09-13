@@ -58,7 +58,7 @@
 
   <div class="card" id="vForm" hidden>
     <h1>Cadastro de cliente</h1>
-    <p class="lead">Preencha seus dados para seu cadastro na Camber. Todos os campos são obrigatórios, exceto a data de aniversário. Digite o CNPJ e o CEP para buscar os dados automaticamente.</p>
+    <p class="lead">Preencha seus dados para seu cadastro na Camber. Todos os campos são obrigatórios, exceto a data de aniversário e a planta baixa. Digite o CNPJ e o CEP para buscar os dados automaticamente.</p>
 
     <div class="sec">Cliente</div>
     <label>CPF ou CNPJ <span class="req">*</span></label>
@@ -91,6 +91,10 @@
       <div style="max-width:80px"><label>UF <span class="req">*</span></label><input id="fUF" required maxlength="2" placeholder="UF"></div>
     </div>
 
+    <div class="sec">Planta baixa (opcional)</div>
+    <label for="fPlanta">Anexar planta baixa</label>
+    <input type="file" id="fPlanta" accept=".pdf,.png,.jpg,.jpeg,.webp,.dwg,.dxf">
+    <div class="hint">PDF, imagem, DWG ou DXF, até 25 MB. Você pode enviar o cadastro sem este arquivo.</div>
     <div class="err" id="formErr" hidden></div>
     <button class="btn" id="btnEnviar" onclick="enviar()">Enviar cadastro</button>
     <div class="foot">Seus dados vão direto e com segurança para a equipe Camber.</div>
@@ -104,6 +108,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="cliente-anexos.js?v=1"></script>
 <script>
 (function(){
   var SB_URL='https://vlvadvlfsbgwcldaxhah.supabase.co';
@@ -166,7 +171,9 @@
     init();
   });
 
+  var plantaState={}, enviando=false;
   window.enviar=async function(){
+    if(enviando)return;
     var err=document.getElementById('formErr'); function fail(m){ err.textContent=m; err.hidden=false; }
     err.hidden=true;
     var obrigatorios={fDoc:'CPF/CNPJ',fNome:'nome completo / razão social',fContato:'nome do contato',fTel:'telefone / WhatsApp',fEmail:'e-mail',fCep:'CEP',fNum:'número',fLograd:'logradouro',fBairro:'bairro',fCidade:'cidade',fUF:'UF'};
@@ -187,12 +194,20 @@
       contato:val('fContato'), tel:val('fTel'), email:val('fEmail'), aniversario:val('fAniv'),
       cep:val('fCep'), logradouro:val('fLograd'), numero:val('fNum'), bairro:val('fBairro'), cidade:val('fCidade'), uf:val('fUF')
     };
+    var planta=document.getElementById('fPlanta');
+    var arquivo=planta.files[0];
+    if(arquivo){try{CamberAnexos.validar(arquivo);}catch(e){return fail(e.message);}}
+    enviando=true;
     var btn=document.getElementById('btnEnviar'); btn.disabled=true; btn.textContent='Enviando…';
     try{
+      if(arquivo){
+        try{await CamberAnexos.enviarPlanta(sb,TOKEN,arquivo,plantaState);}
+        finally{if(plantaState.enviado)planta.disabled=true;}
+      }
       var r=await sb.rpc('responder_convite_cliente',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
-      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios. Apenas a data de aniversário é opcional.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
+      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios. A data de aniversário e a planta baixa são opcionais.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
       show('vOk');
-    }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Erro de conexão. Tente novamente.'); }
+    }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Não foi possível enviar. Confira a conexão e tente novamente.'); } finally{enviando=false;}
   };
 })();
 </script>

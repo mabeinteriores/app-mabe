@@ -360,7 +360,16 @@
       document.getElementById('doc').focus();
       return;
     }
-    irPara('clientes.html');
+    salvandoCliente=true;
+    try{
+      if(window.CamberCloud) await CamberCloud.flush();
+      if(conviteToken){
+        var vinculacao=await CamberCloud.client().rpc('vincular_anexos_cliente',{p_token:conviteToken,p_cliente_id:String(editId)});
+        if(vinculacao.error)throw vinculacao.error;
+      }
+      location.href='clientes.html';
+    }catch(e){alert('Não foi possível confirmar o cadastro e seus anexos. Tente salvar novamente.');}
+    finally{salvandoCliente=false;}
   }
 
   // excluir cliente (exige senha do usuário logado)
