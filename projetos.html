@@ -50,7 +50,7 @@
       <!-- TABELA -->
       <div id="vTab">
         <table class="tbl lined">
-          <thead><tr><th>Projeto</th><th>Cliente</th><th>Localização</th><th class="r">Valor projeto</th><th class="r">Op.</th><th style="width:140px">% fechado</th><th class="r">RT prev.</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Projeto</th><th>Cliente</th><th>Localização</th><th style="text-align:center">Anexos</th><th class="r">Valor projeto</th><th class="r">Op.</th><th style="width:140px">% fechado</th><th class="r">RT prev.</th><th>Status</th><th></th></tr></thead>
           <tbody id="projBody"></tbody>
         </table>
       </div>
@@ -144,18 +144,32 @@
     });
   }
 
+  function abrirAnexosProjeto(id){
+    var projeto=CamberDB.loadProjects().find(function(p){return String(p.id)===String(id);});
+    if(!projeto)return;
+    var clientes=CamberDB.loadClientes();
+    var cliente=projeto.clienteId ? clientes.find(function(c){return String(c.id)===String(projeto.clienteId);}) : null;
+    if(!projeto.clienteId){
+      var matches=clientes.filter(function(c){return String(c.nome||'').trim().toLowerCase()===String(projeto.cliente||'').trim().toLowerCase();});
+      if(matches.length===1)cliente=matches[0];
+    }
+    if(!cliente){alert('Vincule este projeto a um cliente cadastrado para acessar os anexos.');return;}
+    abrirAnexosClientes(String(cliente.id));
+  }
+
   function render(){
     fillRespFilter(CamberDB.loadProjects());
     var projetos = filtrarProjetos();
     // tabela
     var body = document.getElementById('projBody');
     if (!projetos.length){
-      body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-3);padding:28px">Nenhum projeto encontrado.</td></tr>';
+      body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--ink-3);padding:28px">Nenhum projeto encontrado.</td></tr>';
     } else body.innerHTML = projetos.map(function(p){
       return '<tr class="click" onclick="abrir(' + p.id + ')">' +
         '<td class="tcell-strong">' + p.nome + '</td>' +
         '<td>' + p.cliente + '</td>' +
         '<td style="color:var(--ink-2)">' + p.cidade + ' · ' + p.uf + '</td>' +
+        '<td style="text-align:center"><button class="btn sm" onclick="event.stopPropagation();abrirAnexosProjeto(' + p.id + ')">Anexos</button></td>' +
         '<td class="r num">' + brl(p.valor) + '</td>' +
         '<td class="r num">' + p.op + '</td>' +
         '<td><div class="prog"><i style="width:' + p.pct + '%"></i></div><span style="font-size:11px;color:var(--ink-3)">' + p.pct + '%</span></td>' +
@@ -547,5 +561,6 @@
   })();
   render();
 </script>
+<script src="cliente-anexos.js?v=4"></script>
 </body>
 </html>
