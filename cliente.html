@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260912221608"></script>
+<script src="cloud.js?v=20260913-clientes"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de cliente · Gestão Camber</title>
@@ -335,6 +335,10 @@
     if(!convitePronto){alert('Aguarde o carregamento de um convite válido.');return;}
     var nome = val('cNome');
     if(!nome){ alert('Informe o nome do cliente.'); document.getElementById('cNome').focus(); return; }
+    salvandoCliente=true;
+    try{
+      if(window.CamberCloud && CamberCloud.atualizarClientes)await CamberCloud.atualizarClientes();
+    }catch(e){salvandoCliente=false;alert('Não foi possível consultar os clientes atualizados. Confira sua conexão e tente salvar novamente.');return;}
     var pf = (document.querySelector('#tipoPessoa .opt.on')||{}).dataset ? document.querySelector('#tipoPessoa .opt.on').dataset.t : 'pf';
     var ender = [val('lograd'), val('num')].filter(Boolean).join(', ');
     var loc = [val('cidade'), val('uf')].filter(Boolean).join('/');
@@ -355,6 +359,7 @@
     if(editId && CamberDB.updateCliente){ CamberDB.updateCliente(editId, dados); }
     else { dados.data = new Date().toISOString().slice(0,10); editId=CamberDB.addCliente(dados).id; }
     } catch (erro) {
+      salvandoCliente=false;
       if (erro.code !== 'DOCUMENTO_DUPLICADO') throw erro;
       alert(erro.message);
       document.getElementById('doc').focus();

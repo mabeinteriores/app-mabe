@@ -522,6 +522,18 @@
       try { sb.auth.signOut({ scope: 'local' }).then(done, done); } catch (e) { done(); }
     },
     client: function () { return sb; },
+    atualizarClientes: async function () {
+      if(LOCAL_ONLY)return;
+      if(!sb || !ready)throw new Error('Aguarde a conexão com o servidor.');
+      if(!await flush())throw new Error('Não foi possível sincronizar os dados.');
+      var res=await sb.from('kv_store').select('value').eq('workspace',WORKSPACE).eq('key','mabe-clientes-v1').maybeSingle();
+      if(res.error)throw res.error;
+      if(pending['mabe-clientes-v1']!==undefined || activeBatch['mabe-clientes-v1']!==undefined)throw new Error('O cadastro foi alterado durante a consulta. Tente novamente.');
+      var rows=res.data ? res.data.value : [];
+      if(typeof rows==='string')rows=JSON.parse(rows);
+      if(!Array.isArray(rows))throw new Error('Lista de clientes inválida.');
+      _set('mabe-clientes-v1',JSON.stringify(rows));
+    },
     responsaveis: function () { return respList; },
     // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
     flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw new Error('Não foi possível sincronizar os dados.');}); },
