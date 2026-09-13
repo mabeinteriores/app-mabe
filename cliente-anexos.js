@@ -27,10 +27,10 @@
       var query=client().from('cliente_anexos').select('id,nome,caminho,tamanho,criado_em').eq('categoria',category);
       query=chosen.invite?query.eq('convite_token',chosen.id):query.eq('cliente_id',chosen.id);
       var docs=check(await query.order('criado_em',{ascending:false}));if(seq!==sequence)return;
-      if(!docs.length){list.append(element('p','Nenhum arquivo nesta categoria.'));return;}
+      if(!docs.length){var empty=element('div');empty.className='ax-empty';empty.append(element('strong','Seus documentos ficam aqui'),element('p','Nenhum arquivo nesta categoria. Selecione abaixo os documentos que deseja anexar.'));list.append(empty);return;}
       docs.forEach(function(doc){
-        var row=element('div');row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #e5ddd0;';
-        var label=element('span',doc.nome+' · '+(doc.tamanho/1024/1024).toFixed(2)+' MB');label.style.cssText='flex:1;overflow-wrap:anywhere';
+        var row=element('div');row.className='ax-file';
+        var label=element('div');label.className='ax-file-info';label.append(element('strong',doc.nome),element('small',(doc.tamanho/1024/1024).toFixed(2)+' MB'));
         var download=element('button','Baixar');download.className='btn';download.onclick=async function(){
           download.disabled=true;
           try{var data=check(await client().storage.from(BUCKET).createSignedUrl(doc.caminho,60,{download:doc.nome}));var a=element('a');a.href=data.signedUrl;a.rel='noopener';a.target='_blank';document.body.append(a);a.click();a.remove();}
@@ -54,18 +54,44 @@
     }catch(e){status.textContent='Não foi possível carregar os anexos. Tente novamente.';}
   }
   function setup(){
-    dialog=element('dialog');dialog.style.cssText='width:min(720px,92vw);max-height:85vh;border:1px solid var(--line,#e5ddd0);border-radius:16px;padding:24px;color:var(--ink,#2a2620);background:var(--surface,#fff);font:inherit;';
+    var css=element('style');css.textContent=`
+      dialog.ax-modal{box-sizing:border-box;width:min(740px,94vw);max-height:90vh;padding:30px;border:1px solid #e8dfd3;border-radius:24px;background:#fffdf9;color:#302c27;font:inherit;box-shadow:0 24px 90px #29211730}
+      .ax-modal::backdrop{background:#25221c66;backdrop-filter:blur(4px)}
+      .ax-modal h2{font-size:24px;letter-spacing:-.6px;margin:0 0 6px}.ax-modal p{line-height:1.5}
+      .ax-modal .ax-sub{margin:0;color:#8b8073;font-size:13px}
+      .ax-modal .ax-context{margin:24px 0 20px;padding:14px 16px;background:#f5f1ea;border-radius:12px}
+      .ax-modal .ax-context label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#948573;margin-bottom:6px}
+      .ax-modal .ax-context select{width:100%;font:inherit;font-size:13px;border:0;background:transparent;color:#51483e;padding:4px 0;opacity:1}
+      .ax-modal .ax-tabs{display:flex;gap:4px;padding:5px;border-radius:12px;background:#f2eee7;margin-bottom:20px}
+      .ax-modal .ax-tabs .btn{flex:1;justify-content:center;border:0;border-radius:9px;background:transparent;color:#857564;box-shadow:none;padding:11px 8px}
+      .ax-modal .ax-tabs .btn.primary{background:#fffdf9;color:#b55f36;box-shadow:0 2px 6px #40302312}
+      .ax-modal .ax-empty{text-align:center;padding:27px 20px;color:#7c7164;border:1px solid #eee7dc;border-radius:14px}
+      .ax-modal .ax-empty strong{font-size:14px;color:#51483d}.ax-modal .ax-empty p{font-size:12px;max-width:330px;margin:8px auto 0}
+      .ax-modal .ax-file{display:flex;align-items:center;gap:10px;padding:14px;border:1px solid #ebe3d8;border-radius:12px;margin:8px 0;background:white}
+      .ax-modal .ax-file-info{flex:1;min-width:0;overflow-wrap:anywhere}.ax-modal .ax-file-info strong{display:block;font-size:13px;font-weight:500}.ax-modal .ax-file-info small{display:block;color:#9b8a76;margin-top:5px}
+      .ax-modal .ax-upload{margin-top:20px;padding:18px;border:1px dashed #d6b99c;border-radius:14px;background:#fcf8f2}
+      .ax-modal .ax-upload strong{display:block;font-size:13px;margin-bottom:5px}.ax-modal .ax-upload p{font-size:11px;color:#978571;margin:0 0 14px}
+      .ax-modal input[type=file]{width:100%;min-width:0;font:inherit;font-size:12px;color:#897969}
+      .ax-modal input::file-selector-button{font:inherit;font-weight:600;border:1px solid #dfcebb;border-radius:8px;background:#fffdf9;color:#665240;padding:10px 12px;margin-right:12px;cursor:pointer}
+      .ax-modal .ax-footer{display:flex;justify-content:flex-end;margin-top:18px}.ax-modal .ax-footer .btn{padding:12px 22px;border-radius:10px}
+      .ax-modal .ax-status{font-size:12px;color:#986443;margin:14px 0 0}.ax-modal .ax-status:empty{display:none}
+      .ax-modal button:focus-visible,.ax-modal input:focus-visible,.ax-modal select:focus-visible{outline:2px solid #bf693f;outline-offset:3px}
+      @media(max-width:520px){dialog.ax-modal{padding:20px;border-radius:18px}.ax-modal h2{font-size:21px}.ax-modal .ax-file{flex-wrap:wrap}.ax-modal .ax-file-info{flex-basis:100%}.ax-modal .ax-footer .btn{width:100%;justify-content:center}}
+    `;document.head.append(css);
+    dialog=element('dialog');dialog.className='ax-modal';dialog.setAttribute('aria-labelledby','axTitle');
     var head=element('div');head.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:12px';
-    var close=element('button','Fechar');close.className='btn';close.onclick=function(){if(!working)dialog.close();};head.append(element('h2','Anexos de clientes'),close);
+    var close=element('button','Fechar');close.className='btn';close.onclick=function(){if(!working)dialog.close();};var title=element('div'),h=element('h2','Anexos do cliente');h.id='axTitle';var subtitle=element('p','Documentos organizados, sempre à mão.');subtitle.className='ax-sub';title.append(h,subtitle);head.append(title,close);
     var label=element('label','Cliente ou convite');label.htmlFor='anexoCliente';select=element('select');select.id='anexoCliente';select.className='inp';select.style.cssText='width:100%;margin:8px 0 16px';select.onchange=render;
-    var tabs=element('div');tabs.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px';
+    select.style.cssText='';var context=element('div');context.className='ax-context';context.append(label,select);
+    var tabs=element('div');tabs.className='ax-tabs';
     [['contrato','Contrato'],['planta','Planta baixa'],['referencias','Referências']].forEach(function(pair){var b=element('button',pair[1]);b.className='btn'+(pair[0]===category?' primary':'');b.onclick=function(){if(working)return;category=pair[0];Array.from(tabs.children).forEach(x=>x.className='btn');b.className='btn primary';render();};tabs.append(b);});
-    list=element('div');status=element('p');status.setAttribute('role','status');status.style.cssText='font-size:13px;color:#8c5a34';
+    list=element('div');status=element('p');status.setAttribute('role','status');status.className='ax-status';
     input=element('input');input.type='file';input.multiple=true;input.accept='.pdf,.png,.jpg,.jpeg,.webp,.dwg,.dxf,.doc,.docx';input.setAttribute('aria-label','Arquivos para anexar');
     button=element('button','Anexar arquivos');button.className='btn primary';button.onclick=upload;
-    var actions=element('div');actions.style.cssText='display:flex;gap:12px;flex-wrap:wrap;margin-top:16px';actions.append(input,button);
+    var actions=element('div');actions.className='ax-upload';actions.append(element('strong','Adicionar documentos'),element('p','PDF, imagens, DWG, DXF ou Word · Até 25 MB por arquivo'),input);
+    var footer=element('div');footer.className='ax-footer';footer.append(button);
     dialog.addEventListener('cancel',function(e){if(working)e.preventDefault();});
-    dialog.append(head,label,select,tabs,list,status,element('p','PDF, imagens, DWG, DXF, DOC ou DOCX. Até 25 MB por arquivo.'),actions);(document.getElementById('app')||document.body).append(dialog);
+    dialog.append(head,context,tabs,list,actions,status,footer);(document.getElementById('app')||document.body).append(dialog);
   }
   async function upload(){
     if(working)return;var files=Array.from(input.files),chosen=selected();if(!files.length||!chosen.id||chosen.invite)return;
