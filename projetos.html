@@ -144,6 +144,25 @@
     });
   }
 
+  function abrirMapaProjeto(id){
+    var p=CamberDB.getProject(id);if(!p)return;
+    var parts=[];
+    if(p.logradouro)parts.push(p.logradouro+(p.numero?', '+p.numero:''));
+    if(p.bairro)parts.push(p.bairro);
+    if(p.cidade&&p.cidade!=='—')parts.push(p.cidade);
+    if(p.uf)parts.push(p.uf);
+    if(p.cep)parts.push(p.cep);
+    if(!parts.length){alert('Este projeto ainda não tem endereço cadastrado.');return;}
+    var q=encodeURIComponent(parts.join(', ')+', Brasil');
+    var d=document.createElement('dialog');d.style.cssText='padding:24px;border:1px solid #e5d8c7;border-radius:16px;background:var(--surface);color:var(--ink);max-width:90vw';
+    var h=document.createElement('h3');h.textContent='Como chegar';h.style.marginTop='0';
+    var address=document.createElement('p');address.textContent=parts.join(', ');
+    var links=document.createElement('div');links.style.cssText='display:flex;gap:10px;flex-wrap:wrap';
+    [['Google Maps','https://www.google.com/maps/dir/?api=1&destination='+q],['Waze','https://waze.com/ul?q='+q+'&navigate=yes']].forEach(function(pair){var a=document.createElement('a');a.className='btn';a.textContent=pair[0];a.href=pair[1];a.target='_blank';a.rel='noopener';links.append(a);});
+    var close=document.createElement('button');close.className='btn';close.textContent='Fechar';close.onclick=function(){d.close();};links.append(close);
+    d.append(h,address,links);d.addEventListener('close',function(){d.remove();});document.getElementById('app').append(d);d.showModal();
+  }
+
   function abrirAnexosProjeto(id){
     var projeto=CamberDB.loadProjects().find(function(p){return String(p.id)===String(id);});
     if(!projeto)return;
@@ -168,7 +187,7 @@
       return '<tr class="click" onclick="abrir(' + p.id + ')">' +
         '<td class="tcell-strong">' + p.nome + '</td>' +
         '<td>' + p.cliente + '</td>' +
-        '<td style="color:var(--ink-2)">' + p.cidade + ' · ' + p.uf + '</td>' +
+        '<td><button type="button" class="btn ghost" style="padding:0;color:var(--accent);text-align:left" onclick="event.stopPropagation();abrirMapaProjeto(' + p.id + ')">' + p.cidade + ' · ' + p.uf + ' ›</button></td>' +
         '<td style="text-align:center"><button class="btn sm" onclick="event.stopPropagation();abrirAnexosProjeto(' + p.id + ')">Anexos</button></td>' +
         '<td class="r num">' + brl(p.valor) + '</td>' +
         '<td class="r num">' + p.op + '</td>' +
