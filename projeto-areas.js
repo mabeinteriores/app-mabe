@@ -28,9 +28,21 @@ var responsible=field('Responsável','responsible'),start=field('Início','start
 function rows(){return (CamberDB.getProject(projId)||{}).cronograma||[];}
 function reset(){editing=null;form.reset();fillStages();save.textContent='Adicionar etapa';cancel.hidden=true;}
 cancel.onclick=reset;
-async function persist(data){CamberDB.updateProject(projId,{cronograma:data});if(window.CamberCloud)await CamberCloud.flush();}
+async function persist(data){if(!CamberDB.updateProject(projId,{cronograma:data}))throw new Error('Projeto não encontrado. Atualize a página.');if(window.CamberCloud)await CamberCloud.flush();}
 function draw(){list.replaceChildren();var data=rows();if(!data.length)list.append(e('p','Nenhuma etapa cadastrada. Adicione a primeira etapa da obra.'));data.forEach(function(r){var row=e('div');row.className='schedule-row';var desc=e('div');desc.append(e('strong',r.title),e('p',[r.responsible,r.start,r.end,r.status].filter(Boolean).join(' · ')));var actions=e('div'),edit=e('button','Editar'),del=e('button','Excluir');edit.className=del.className='btn';edit.onclick=function(){if(busy)return;editing=r.id;fillStages(r.title);responsible.value=r.responsible||'';start.value=r.start||'';end.value=r.end||'';select.value=r.status;save.textContent='Salvar etapa';cancel.hidden=false;name.focus();};del.onclick=async function(){if(busy||!confirm('Excluir a etapa "'+r.title+'"?'))return;busy=true;try{await persist(rows().filter(function(x){return x.id!==r.id;}));reset();draw();status.textContent='Etapa excluída.';}catch(err){draw();status.textContent='Não foi possível sincronizar. Confira sua conexão antes de sair.';}finally{busy=false;}};actions.append(edit,del);row.append(desc,actions);list.append(row);});}
-form.onsubmit=async function(ev){ev.preventDefault();if(busy)return;if(start.value&&end.value&&end.value<start.value){status.textContent='O fim previsto deve ser igual ou posterior ao início. Corrija a data para salvar.';end.focus();return;}busy=true;save.disabled=true;var id=editing||crypto.randomUUID(),data=rows().slice(),record={id:id,title:name.value.trim(),responsible:responsible.value.trim(),start:start.value,end:end.value,status:select.value};if(!record.title||record.title==='__nova__'){busy=false;save.disabled=false;return;}var idx=data.findIndex(function(r){return r.id===id;});if(idx<0)data.push(record);else data[idx]=record;editing=id;try{await persist(data);reset();draw();status.textContent='Cronograma salvo.';}catch(err){draw();status.textContent='Não foi possível confirmar o salvamento. Confira sua conexão e tente salvar novamente.';}finally{busy=false;save.disabled=false;}};fillStages();
+form.onsubmit=async function(ev){
+ ev.preventDefault();if(busy)return;
+ if(!name.value||name.value==='__nova__'){status.textContent='Selecione uma etapa antes de salvar.';name.focus();return;}
+ if(start.value&&end.value&&end.value<start.value){status.textContent='O fim previsto deve ser igual ou posterior ao início. Corrija a data para salvar.';end.focus();return;}
+ busy=true;save.disabled=true;status.textContent='Salvando etapa…';
+ try{
+  var id=editing || (window.crypto && typeof window.crypto.randomUUID==='function' ? window.crypto.randomUUID() : 'etapa-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  var data=rows().slice(),record={id:id,title:name.value.trim(),responsible:responsible.value.trim(),start:start.value,end:end.value,status:select.value};
+  var idx=data.findIndex(function(r){return r.id===id;});if(idx<0)data.push(record);else data[idx]=record;editing=id;
+  await persist(data);reset();draw();status.textContent='Cronograma salvo.';
+ }catch(err){status.textContent='Não foi possível salvar a etapa. '+(err && err.message ? err.message : 'Tente novamente.');}
+ finally{busy=false;save.disabled=false;}
+};fillStages();
 
 var mode='lista',originalDraw=draw,originalReset=reset;
 var dialog=e('dialog');dialog.style.cssText='width:min(540px,94vw);max-height:90vh;padding:28px;border:1px solid var(--hair-2);border-radius:18px;background:var(--surface);color:var(--ink)';
