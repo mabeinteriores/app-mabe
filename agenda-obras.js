@@ -30,7 +30,7 @@
     work.value = String(options.projectId || '');
     var people = Array.from(new Set(projects.flatMap(function (p) { return (p.cronograma || []).map(function (t) { return (t.responsible || '').trim(); }); }).filter(Boolean))).sort();
     var person = filter('Responsável', [['', 'Todos os responsáveis'], ['__none', 'Sem responsável']].concat(people.map(function (p) { return [p, p]; })));
-    var status = filter('Situação', [['pending', 'Todas as pendentes'], ['late', 'Atrasadas'], ['A iniciar', 'A iniciar'], ['Em andamento', 'Em andamento'], ['Concluído', 'Concluídas'], ['all', 'Todas as atividades']]);
+    var status = filter('Situação', [['pending', 'Todas as pendentes'], ['late', 'Atrasadas'], ['A iniciar', 'A iniciar'], ['Em andamento', 'Em andamento'], ['Pausada', 'Pausadas'], ['Concluído', 'Concluídas'], ['all', 'Todas as atividades']]);
     root.append(filters);
     var toolbar = el('div', null, 'ag-toolbar'), nav = el('div', null, 'ag-nav'), title = el('strong'); title.setAttribute('aria-live', 'polite');
     function button(text, action, parent) { var b = el('button', text); b.type = 'button'; b.onclick = action; parent.append(b); return b; }

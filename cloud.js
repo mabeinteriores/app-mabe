@@ -605,6 +605,17 @@
       try { sb.auth.signOut({ scope: 'local' }).then(done, done); } catch (e) { done(); }
     },
     client: function () { return sb; },
+    atualizarProjetos: async function () {
+      if(LOCAL_ONLY)return;
+      if(!sb||!ready)throw new Error('Aguarde a conexão com o servidor.');
+      if(!await flush())throw syncError||new Error('Há alterações pendentes.');
+      var res=await sb.from('kv_store').select('value').eq('workspace',WORKSPACE).eq('key','mabe-projects-v3').maybeSingle();
+      if(res.error)throw res.error;
+      if(pending['mabe-projects-v3']!==undefined||activeBatch['mabe-projects-v3']!==undefined)throw new Error('Há outra gravação em andamento. Tente novamente.');
+      var projects=res.data?res.data.value:[];
+      if(!Array.isArray(projects))throw new Error('Lista de projetos inválida.');
+      _set('mabe-projects-v3',JSON.stringify(projects));
+    },
     atualizarClientes: async function () {
       if(LOCAL_ONLY)return;
       if(!sb || !ready)throw new Error('Aguarde a conexão com o servidor.');
