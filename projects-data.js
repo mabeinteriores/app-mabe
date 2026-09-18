@@ -102,7 +102,13 @@
     }
   }
 
+  function newId(){
+    if(!window.crypto || !window.crypto.getRandomValues)throw new Error('Navegador sem gerador seguro de identificadores.');
+    var bytes=new Uint32Array(2);window.crypto.getRandomValues(bytes);
+    return (bytes[0] & 0x1fffff)*4294967296+bytes[1] || newId();
+  }
   window.CamberDB = {
+    newId: newId,
     rtOf: rtOf,
     loadProjects: function(){ ensureSeed(); return read(PKEY, []); },
     saveProjects: function(arr){ write(PKEY, arr); },
@@ -111,7 +117,7 @@
     addCliente: function(c){
       var arr = this.loadClientes();
       assertDocumentoUnico(arr, c.doc, null, 'cliente');
-      c.id = arr.reduce(function(m,x){ return Math.max(m, x.id||0); }, 0) + 1;
+      c.id = newId();
       arr.unshift(c); this.saveClientes(arr); return c;
     },
     getCliente: function(id){ return this.loadClientes().find(function(c){ return String(c.id)===String(id); }) || null; },
@@ -165,7 +171,7 @@
     addFornecedor: function(f){
       var arr = this.loadFornecedores();
       assertDocumentoUnico(arr, f.doc, null, 'fornecedor');
-      f.id = arr.reduce(function(m,x){ return Math.max(m, x.id||0); }, 0) + 1;
+      f.id = newId();
       arr.unshift(f); this.saveFornecedores(arr); return f;
     },
     getFornecedor: function(id){ return this.loadFornecedores().find(function(f){ return String(f.id)===String(id); }) || null; },
@@ -182,7 +188,7 @@
     getProject: function(id){ ensureSeed(); return read(PKEY, []).find(function(p){ return String(p.id) === String(id); }) || null; },
     addProject: function(p){
       var arr = this.loadProjects();
-      p.id = arr.reduce(function(m,x){ return Math.max(m, x.id); }, 0) + 1;
+      p.id = newId();
       arr.unshift(p); this.saveProjects(arr);
       // Projetos Residencial/Comercial nascem com oportunidades padrão em Prospecção
       try { this.seedOppsPadrao(p); } catch(e) {}
@@ -206,7 +212,7 @@
         if (pr.projId != null && byId[String(pr.projId)]) return;   // projeto já existe
         var L = pr.localizacao || {};
         var seg = pr.segmento || pr.tipo || 'Projeto';
-        var novoId = (pr.projId != null && !byId[String(pr.projId)]) ? pr.projId : (++maxId);
+        var novoId = (pr.projId != null && !byId[String(pr.projId)]) ? pr.projId : newId();
         var proj = {
           id: novoId,
           nome: (pr.cliente || 'Cliente') + ' — ' + seg,

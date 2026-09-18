@@ -35,44 +35,123 @@
   var sb = null, ready = false, pending = {}, pushTimer = null, lastStamp = null;
 
   // ---------- 1) intercepta localStorage IMEDIATAMENTE ----------
+  var _get = localStorage.getItem.bind(localStorage);
+  var pendingBase = {}, syncError = null;
   var _set = localStorage.setItem.bind(localStorage);
   var _remove = localStorage.removeItem.bind(localStorage);
-  localStorage.setItem = function (k, v) {
+  function syncedSet(k, v) {
+    var before = _get(k);
     _set(k, v);
-    if (shouldSync(k)) queuePush(k, v);
+    if (shouldSync(k)) queuePush(k, v, before);
   };
-  localStorage.removeItem = function (k) {
+  function syncedRemove(k) {
+    var before = _get(k);
     _remove(k);
-    if (shouldSync(k)) queuePush(k, null);
+    if (shouldSync(k)) queuePush(k, null, before);
   };
-  function queuePush(k, v) {
+  // Storage instances have named setters: assigning instance methods can create
+  // storage keys instead of replacing the native methods. Patch the prototype.
+  if(typeof Storage!=='undefined') {
+    var nativeSet=Storage.prototype.setItem,nativeRemove=Storage.prototype.removeItem;
+    Storage.prototype.setItem=function(k,v){return this===localStorage?syncedSet(String(k),String(v)):nativeSet.call(this,k,v);};
+    Storage.prototype.removeItem=function(k){return this===localStorage?syncedRemove(String(k)):nativeRemove.call(this,k);};
+  } else {localStorage.setItem=syncedSet;localStorage.removeItem=syncedRemove;}
+  function queuePush(k, v, before) {
+    if (!Object.prototype.hasOwnProperty.call(pending, k)) pendingBase[k] = before;
     pending[k] = v; // v = string JSON ou null (remoção)
     if (!ready) return;
     clearTimeout(pushTimer);
     pushTimer = setTimeout(flush, 300);
   }
   var inFlight=null, activeBatch={};
+  function decode(raw) { if(raw===null || raw===undefined)return undefined;try{return JSON.parse(raw);}catch(e){return raw;} }
+  function same(a,b) {
+    if(a===b)return true;
+    if(!a||!b||typeof a!=='object'||typeof b!=='object'||Array.isArray(a)!==Array.isArray(b))return false;
+    var ak=Object.keys(a),bk=Object.keys(b);
+    return ak.length===bk.length && ak.every(function(k){return Object.prototype.hasOwnProperty.call(b,k)&&same(a[k],b[k]);});
+  }
+  function conflict(path) { var err=new Error('Conflito de edição em '+path+'. Suas alterações continuam neste navegador. Confira com a equipe antes de recarregar.');err.code='SYNC_CONFLICT';throw err; }
+  function merge(base,local,remote,path) {
+    if(same(local,base))return remote;
+    if(same(remote,base)||same(local,remote))return local;
+    // An absent root can be treated as an empty collection. Missing records cannot.
+    if(base===undefined&&Array.isArray(local)&&Array.isArray(remote))base=[];
+    if(Array.isArray(base)&&Array.isArray(local)&&Array.isArray(remote)) {
+      function byId(rows){var out=new Map();rows.forEach(function(r){if(!r||r.id==null||out.has(String(r.id)))conflict(path+' (identificadores)');out.set(String(r.id),r);});return out;}
+      var bm=byId(base),lm=byId(local),rm=byId(remote),result=[];
+      var ids=Array.from(new Set(Array.from(rm.keys()).concat(Array.from(lm.keys()),Array.from(bm.keys()))));
+      ids.forEach(function(id){var row=merge(bm.get(id),lm.get(id),rm.get(id),path+'/'+id);if(row!==undefined)result.push(row);});
+      return result;
+    }
+    if(base&&local&&remote&&typeof base==='object'&&typeof local==='object'&&typeof remote==='object'&&!Array.isArray(base)&&!Array.isArray(local)&&!Array.isArray(remote)) {
+      var obj={};Array.from(new Set(Object.keys(base).concat(Object.keys(local),Object.keys(remote)))).forEach(function(k){
+        if(k==='__proto__'||k==='constructor'||k==='prototype')conflict(path);
+        var v=merge(base[k],local[k],remote[k],path+'/'+k);if(v!==undefined)obj[k]=v;
+      });return obj;
+    }
+    conflict(path);
+  }
+  function validateMerged(k,value,remote) {
+    if(k!=='mabe-clientes-v1'&&k!=='mabe-fornecedores-v1')return;
+    function counts(rows){var result=new Map();(rows||[]).forEach(function(row){var doc=String(row.doc||'').replace(/\D/g,'');if(doc)result.set(doc,(result.get(doc)||0)+1);});return result;}
+    var previous=counts(remote),next=counts(value);
+    next.forEach(function(count,doc){if(count>1&&count>(previous.get(doc)||0))conflict(k+' (CPF/CNPJ duplicado)');});
+  }
+  async function commit(k,base,local) {
+    for(var attempt=0;attempt<32;attempt++) {
+      var read=await sb.from('kv_store').select('value,updated_at').eq('workspace',WORKSPACE).eq('key',k).maybeSingle();
+      if(read.error)throw read.error;
+      var exists=!!read.data,remote=exists?read.data.value:undefined;
+      var value=merge(base,local,remote,k);validateMerged(k,value,remote);
+      if(same(value,remote))return value;
+      // Monotonic timestamp is a compare-and-swap token, not a client's wall clock.
+      var stamp=new Date(Math.max(Date.now(),exists?(Date.parse(read.data.updated_at)||0)+1:0)).toISOString();
+      var query;
+      if(!exists)query=sb.from('kv_store').insert({workspace:WORKSPACE,key:k,value:value,updated_at:stamp}).select('key');
+      else {
+        query=value===undefined?sb.from('kv_store').delete():sb.from('kv_store').update({value:value,updated_at:stamp});
+        query=query.eq('workspace',WORKSPACE).eq('key',k);
+        query=read.data.updated_at==null?query.is('updated_at',null):query.eq('updated_at',read.data.updated_at);
+        query=query.select('key');
+      }
+      var res=await query;
+      if(res.error){if(!exists&&res.error.code==='23505')continue;throw res.error;}
+      if(res.data&&res.data.length){lastStamp=stamp;return value;}
+      // Another writer won the comparison; reread and recompute, never blind upsert.
+    }
+    throw new Error('Muitas alterações simultâneas. As alterações continuam pendentes; tente salvar novamente.');
+  }
+  function reportSyncError(err) {
+    syncError=err;
+    if(typeof document==='undefined'||!document.body)return;
+    var banner=document.getElementById('camberSyncError');
+    if(!banner){banner=document.createElement('div');banner.id='camberSyncError';banner.setAttribute('role','alert');banner.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;z-index:2147483647;padding:16px;background:#fff0e8;color:#842b15;border:1px solid #ba725a;border-radius:10px;font:14px system-ui';document.body.appendChild(banner);}
+    banner.textContent=err.code==='SYNC_CONFLICT'?err.message:'Gravação não confirmada. Suas alterações continuam pendentes neste navegador. Tente salvar novamente antes de sair.';
+  }
   function flush() {
-    if(inFlight) return inFlight.then(function(ok){ return ok ? flush() : false; });
-    if(!Object.keys(pending).length) return Promise.resolve(true);
-    if(!sb || !ready) return Promise.resolve(false);
-    var batch=pending; pending={}; activeBatch=batch;
-    var ts=new Date().toISOString(); lastStamp=ts;
-    inFlight=Promise.all(Object.keys(batch).map(function(k){
-      return Promise.resolve().then(function(){
-        var raw=batch[k];
-        if(raw===null) return sb.from('kv_store').delete().eq('workspace',WORKSPACE).eq('key',k);
-        var val; try{val=JSON.parse(raw);}catch(e){val=raw;}
-        return sb.from('kv_store').upsert({workspace:WORKSPACE,key:k,value:val,updated_at:ts},{onConflict:'workspace,key'});
-      }).then(function(res){ if(res && res.error) throw res.error; return true; }).catch(function(){
-        if(!Object.prototype.hasOwnProperty.call(pending,k)) pending[k]=batch[k];
-        return false;
-      });
+    if(inFlight)return inFlight.then(function(ok){return ok?flush():false;});
+    if(!Object.keys(pending).length)return Promise.resolve(true);
+    if(!sb||!ready)return Promise.resolve(false);
+    var batch=pending,bases=pendingBase;pending={};pendingBase={};activeBatch=batch;
+    inFlight=Promise.all(Object.keys(batch).map(async function(k){
+      var sent=decode(batch[k]);
+      try {
+        await commit(k,decode(bases[k]),sent);
+        // Keep the snapshot currently used by the form. Injecting merged rows
+        // only into storage would make the next stale form save look like a deletion.
+        // Normal hydration refreshes storage and the UI together after editing.
+        return true;
+      }catch(err){
+        if(!Object.prototype.hasOwnProperty.call(pending,k))pending[k]=batch[k];
+        pendingBase[k]=bases[k];reportSyncError(err);return false;
+      }
     })).then(function(results){
-      inFlight=null; activeBatch={};
-      return results.every(Boolean);
+      inFlight=null;activeBatch={};var ok=results.every(Boolean);
+      if(ok){syncError=null;if(typeof document!=='undefined'){var b=document.getElementById('camberSyncError');if(b)b.remove();}}
+      return ok;
     });
-    return inFlight.then(function(ok){return ok && Object.keys(pending).length ? flush() : ok;});
+    return inFlight.then(function(ok){return ok&&Object.keys(pending).length?flush():ok;});
   }
 
   // ---------- 2) overlay (esconde a UI até estar pronto) ----------
@@ -540,10 +619,11 @@
     },
     responsaveis: function () { return respList; },
     // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
-    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw new Error('Não foi possível sincronizar os dados.');}); },
+    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw syncError || new Error('Não foi possível sincronizar os dados.');}); },
     pendente: function () { return !!inFlight || Object.keys(pending).length > 0; }
   };
 
+  window.addEventListener('beforeunload', function(ev){if(inFlight||Object.keys(pending).length){ev.preventDefault();ev.returnValue='';}});
   // rede de segurança: tenta enviar pendências antes da página sair
   window.addEventListener('pagehide', function () { try { clearTimeout(pushTimer); flush(); } catch (e) {} });
 })();

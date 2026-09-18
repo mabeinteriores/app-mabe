@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=202609130108"></script>
+<script src="cloud.js?v=20260918-concurrency"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nova oportunidade · Gestão Camber</title>
@@ -130,7 +130,7 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=202609130108"></script>
+<script src="projects-data.js?v=20260918-concurrency"></script>
 <script src="shell.js?v=202609130108"></script>
 <script>
   var cur = 0, total = 4;
@@ -303,12 +303,13 @@
     try {
       if (window.CamberCloud && CamberCloud.flush){
         var p = CamberCloud.flush();
-        if (p && p.then){ p.then(go, go); setTimeout(go, 2500); return; }
+        if (p && p.then){ p.then(go, function(err){ alert(err.message || 'Gravação não confirmada. Tente novamente antes de sair.'); }); return; }
       }
-    } catch(e){}
+    } catch(e){ alert(e.message || 'Gravação não confirmada.'); return; }
     go();
   }
 
+  var pendingOpportunityId=null;
   function saveOpportunity(){
     var projId = document.getElementById('wProj').value;
     var et = (document.querySelector('#etapas .opt.on')||{}).dataset ? document.querySelector('#etapas .opt.on').dataset.et : 'negoc';
@@ -330,8 +331,10 @@
     };
     if (!opp.val){ alert('Informe o valor do serviço.'); cur = 1; render(); return; }
     var list = CamberDB.loadOpps(projId);
-    opp.id = list.reduce(function(m,o){ return Math.max(m, o.id); }, 0) + 1;
-    list.push(opp);
+    opp.id = pendingOpportunityId || CamberDB.newId();
+    pendingOpportunityId = opp.id;
+    var existingIndex=list.findIndex(function(row){return row.id===opp.id;});
+    if(existingIndex>=0)list[existingIndex]=opp;else list.push(opp);
     CamberDB.saveOpps(projId, list);
     CamberDB.recalc(projId);
     irPara('projeto.html?area=oportunidades&id=' + projId);
