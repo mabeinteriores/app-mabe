@@ -17,7 +17,13 @@
     return [a, b];
   }
   function span(task) { var a = day(task.start), b = day(task.end); return a && b && b >= a ? [a, b] : null; }
-  function overdue(task, today) { var end = day(task.end); return task.status !== 'Concluído' && end && end < today; }
+  function lateDays(task, today) {
+    var end = day(task.end), current = today || new Date();
+    if(task.status === 'Concluído' || !end) return 0;
+    return Math.max(0, Math.round((Date.UTC(current.getFullYear(),current.getMonth(),current.getDate())-Date.UTC(end.getFullYear(),end.getMonth(),end.getDate()))/86400000));
+  }
+  function overdue(task, today) { return lateDays(task, today)>0; }
+  function lateLabel(task, today) { var days=lateDays(task,today); return days ? '⚠ Atrasada há '+days+(days===1?' dia':' dias') : ''; }
   function mount(host, options) {
     options = options || {};
     var now = options.today ? day(options.today) : new Date(), today = add(now, 0), anchor = add(today, 0), view = 'semana';
@@ -46,12 +52,12 @@
       var b = el('button', null, 'ag-task' + (overdue(task, today) ? ' ag-late' : task.status === 'Concluído' ? ' ag-done' : '')); b.type = 'button';
       var owner = el('span', null, 'ag-responsible');
       owner.append(el('span', 'Responsável:', 'ag-responsible-label'), el('strong', (task.responsible || '').trim() || 'Não definido'));
-      b.append(el('strong', task.title || 'Etapa sem título'), el('span', task.projectName), owner, el('small', overdue(task, today) ? 'Atrasada' : task.status || 'A iniciar'));
+      b.append(el('strong', task.title || 'Etapa sem título'), el('span', task.projectName), owner, el('small', overdue(task, today) ? lateLabel(task, today) + ' · ' + (task.status || 'A iniciar') : task.status || 'A iniciar'));
       b.onclick = function () { details(task, b); }; return b;
     }
     function details(task, trigger) {
       var d = el('dialog', null, 'ag-dialog'); d.append(el('small', task.projectName), el('h2', task.title || 'Etapa sem título'));
-      [['Responsável', task.responsible || 'Não definido'], ['Início', day(task.start) ? day(task.start).toLocaleDateString('pt-BR') : 'Não definido'], ['Fim previsto', day(task.end) ? day(task.end).toLocaleDateString('pt-BR') : 'Não definido'], ['Situação', overdue(task, today) ? 'Atrasada · ' + task.status : task.status || 'A iniciar']].forEach(function (pair) { var p = el('p'); p.append(el('strong', pair[0] + ': '), document.createTextNode(pair[1])); d.append(p); });
+      [['Responsável', task.responsible || 'Não definido'], ['Início', day(task.start) ? day(task.start).toLocaleDateString('pt-BR') : 'Não definido'], ['Fim previsto', day(task.end) ? day(task.end).toLocaleDateString('pt-BR') : 'Não definido'], ['Situação', overdue(task, today) ? lateLabel(task, today) + ' · ' + (task.status || 'A iniciar') : task.status || 'A iniciar']].forEach(function (pair) { var p = el('p'); p.append(el('strong', pair[0] + ': '), document.createTextNode(pair[1])); d.append(p); });
       var link = el('a', 'Abrir cronograma da obra →', 'ag-manage'); link.href = 'projeto.html?id=' + encodeURIComponent(task.projectId) + '&area=cronograma'; d.append(link);
       button('Fechar', function () { d.close(); }, d); d.addEventListener('close', function () { d.remove(); trigger.focus(); }); root.append(d); d.showModal();
     }
@@ -80,5 +86,5 @@
     }
     render();
   }
-  window.CamberAgenda = { mount: mount, range: range, span: span, overdue: overdue, day: day };
+  window.CamberAgenda = { mount: mount, range: range, span: span, overdue: overdue, lateDays: lateDays, lateLabel: lateLabel, day: day };
 })();

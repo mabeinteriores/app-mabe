@@ -6,3 +6,5 @@
 #app article.area-card > .area-link::after{content:"";position:absolute;inset:0;border-radius:18px;z-index:1;cursor:pointer}
 #app article.area-card > .area-agenda{z-index:2}
 #app article.area-card > .area-link:focus-visible::after{outline:3px solid var(--accent,#b96f48);outline-offset:3px}
+
+.schedule-late-badge{display:block;width:fit-content;margin-top:10px;padding:6px 10px;border:1px solid #f1aaa3;border-radius:7px;background:#fff0ed;color:#a32419;font-size:12px;font-weight:700;line-height:1.5}.schedule-late-summary{display:flex;gap:10px;flex-direction:column;border:1px solid #edaaa1;border-left:5px solid #b42318;border-radius:12px;padding:18px 22px;margin:16px 0;background:#fff0ed;color:#912018}.schedule-late-summary[hidden]{display:none}.schedule-late-summary span{font-size:13px;line-height:1.5}.ag-late{background:#fff0ed;color:#912018;border-left:4px solid #b42318}.ag-late small{font-size:12px}

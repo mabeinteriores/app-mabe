@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260918-concurrency"></script>
+<script src="cloud.js?v=20260918-execution"></script>
+<script src="indicacoes-validacao.js?v=1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>camber — Controle de Indicações</title>
@@ -941,7 +942,7 @@ function salvarInfluenciador(){
     rede:document.getElementById('nfRede').value, seguidores:document.getElementById('nfSeguidores').value.trim(),
     nicho:document.getElementById('nfNicho').value.trim(), obs:document.getElementById('nfObs').value.trim() };
   if(editingInfluId){ const idx=state.influenciadores.findIndex(x=>x.id===editingInfluId); if(idx>-1) Object.assign(state.influenciadores[idx],dados); editingInfluId=null; }
-  else { dados.id=Date.now(); dados.dataCad=new Date().toISOString().slice(0,10); state.influenciadores.unshift(dados); }
+  else { dados.id=ReferralRules.id(); dados.dataCad=new Date().toISOString().slice(0,10); state.influenciadores.unshift(dados); }
   save(); closeModal('modalInfluenciador'); ['nfNome','nfTel','nfEmail','nfSeguidores','nfNicho','nfObs'].forEach(i=>document.getElementById(i).value=''); renderInfluenciadores();
 }
 function editarInfluenciador(id){ const p=state.influenciadores.find(x=>x.id===id); if(!p)return; editingInfluId=id;
@@ -966,7 +967,7 @@ function salvarConstrutora(){
     email:document.getElementById('ncEmail').value.trim(), site:document.getElementById('ncSite').value.trim(),
     cidade:document.getElementById('ncCidade').value.trim(), uf:document.getElementById('ncUF').value.trim().toUpperCase(), obs:document.getElementById('ncObs').value.trim() };
   if(editingConstrId){ const idx=state.construtoras.findIndex(x=>x.id===editingConstrId); if(idx>-1) Object.assign(state.construtoras[idx],dados); editingConstrId=null; }
-  else { dados.id=Date.now(); dados.dataCad=new Date().toISOString().slice(0,10); state.construtoras.unshift(dados); }
+  else { dados.id=ReferralRules.id(); dados.dataCad=new Date().toISOString().slice(0,10); state.construtoras.unshift(dados); }
   save(); closeModal('modalConstrutora'); ['ncNome','ncResp','ncTel','ncEmail','ncSite','ncCidade','ncUF','ncObs'].forEach(i=>document.getElementById(i).value=''); renderConstrutoras();
 }
 function editarConstrutora(id){ const p=state.construtoras.find(x=>x.id===id); if(!p)return; editingConstrId=id;
@@ -1043,7 +1044,7 @@ function salvarImob() {
     editingImobEditId=null;
   } else {
     // NOVO
-    state.imobiliarias.push({ id:state.nextImobId++, dataCad:today(), ...dados });
+    state.imobiliarias.push({ id:ReferralRules.id(), dataCad:today(), ...dados });
   }
   save(); closeModal('modalImob'); _limparImob();
   renderImobiliarias(); populateCorretorSelects();
@@ -1142,7 +1143,7 @@ function salvarCorretorImob() {
     editingCorrImobId=null;
   } else {
     // NOVO
-    state.corretores.push({ id:state.nextCorrId++, dataCad:today(), ...dados });
+    state.corretores.push({ id:ReferralRules.id(), dataCad:today(), ...dados });
   }
   save(); closeModal('modalCorretorImob');
   renderImobiliarias(); renderCorretores(); populateCorretorSelects();
@@ -1293,7 +1294,7 @@ function salvarCorretor() {
     if(idx>-1) Object.assign(state.corretores[idx], dados);
     editingCorrId=null;
   } else {
-    state.corretores.push({ id:state.nextCorrId++, dataCad:today(), ...dados });
+    state.corretores.push({ id:ReferralRules.id(), dataCad:today(), ...dados });
   }
   save(); closeModal('modalCorretor');
   ['cNome','cTel','cEmail','cEndereco','cImobManual','cCreci','cCargo','cObs'].forEach(id=>document.getElementById(id).value='');
@@ -1377,30 +1378,34 @@ function renderCorretores() {
 // ══════════════════════════════════════════════════
 // INDICAÇÕES
 // ══════════════════════════════════════════════════
-function salvarIndicacao() {
-  const cid=parseInt(document.getElementById('fCorretor').value);
-  const cn=document.getElementById('fClienteNome').value.trim();
-  const ct=document.getElementById('fClienteTel').value.trim();
-  if(!cid||!cn||!ct){alert('Preencha o parceiro, nome e telefone do cliente.');return;}
-  const ve=parseFloat(document.getElementById('fValorEstimado').value.replace(/\D/g,''))||0;
-  const ehInflu=(state.influenciadores||[]).some(x=>x.id===cid);
-  const ehConstr=(state.construtoras||[]).some(x=>x.id===cid);
-  state.indicacoes.push({
-    id:state.nextId++, corretorId:cid,
-    influId: ehInflu?cid:null, construtoraId: ehConstr?cid:null,
-    clienteNome:cn, clienteTel:ct,
-    tipoImovel:document.getElementById('fTipoImovel').value,
-    valorEstimado:ve, valorReal:null, status:'Novo Lead',
-    contexto:document.getElementById('fContexto').value,
-    obs:document.getElementById('fObs').value,
-    dataRegistro:today(),
-    logs:[{data:today(),status:'Novo Lead',nota:'Lead registrado no sistema.',tipo:'blue'}]
-  });
-  save(); closeModal('modalIndicacao');
-  ['fClienteNome','fClienteTel','fValorEstimado','fContexto','fObs'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fCorretor').value='';
-  document.getElementById('fTipoImovel').value='';
-  renderDashboard(); renderIndicacoes();
+let referralBusy=false,referralPending=null;
+async function runReferralChange(change,done){
+ if(referralBusy)return;referralBusy=true;
+ try{
+  if(referralPending){if(window.CamberCloud)await CamberCloud.flush();var finish=referralPending;referralPending=null;finish();return;}
+  var user=await ReferralRules.actor();
+  var before=JSON.stringify(state);
+  try{change(user);save();}catch(error){var restored=JSON.parse(before);Object.keys(state).forEach(function(key){delete state[key];});Object.assign(state,restored);throw error;}
+  referralPending=done;
+  if(window.CamberCloud)await CamberCloud.flush();
+  referralPending=null;done();
+ }catch(err){alert(err.message||'Não foi possível confirmar a gravação. Tente novamente antes de sair.');}
+ finally{referralBusy=false;}
+}
+async function salvarIndicacao() {
+ return runReferralChange(function(user){
+  const cid=document.getElementById('fCorretor').value,cn=document.getElementById('fClienteNome').value.trim(),raw=document.getElementById('fClienteTel').value.trim();
+  if(!cid||!cn||!raw)throw new Error('Preencha o parceiro, nome e telefone do cliente.');
+  const partner=ReferralRules.partner(state,cid),ct=ReferralRules.phone(raw);
+  if(ReferralRules.duplicate(state,ct))throw new Error('Este telefone já tem uma indicação. Localize o cadastro existente antes de continuar.');
+  const stamp=new Date().toISOString();
+  state.indicacoes.push({id:ReferralRules.id(),corretorId:partner.person.id,partnerType:partner.type,partnerName:partner.person.nome,imobId:partner.person.imobId||null,
+   influId:partner.type==='Influenciador'?partner.person.id:null,construtoraId:partner.type==='Construtora'?partner.person.id:null,
+   clienteNome:cn,clienteTel:ct,tipoImovel:document.getElementById('fTipoImovel').value,
+   valorEstimado:parseFloat(document.getElementById('fValorEstimado').value.replace(/\D/g,''))||0,valorReal:null,status:'Novo Lead',
+   contexto:document.getElementById('fContexto').value,obs:document.getElementById('fObs').value,dataRegistro:today(),createdAt:stamp,createdBy:user.id,
+   logs:[{id:ReferralRules.id(),data:stamp,status:'Novo Lead',nota:'Lead registrado no sistema.',tipo:'blue',userId:user.id,userName:user.name}]});
+ },function(){closeModal('modalIndicacao');['fClienteNome','fClienteTel','fValorEstimado','fContexto','fObs','fCorretor','fTipoImovel'].forEach(id=>document.getElementById(id).value='');renderDashboard();renderIndicacoes();});
 }
 
 let editingId = null;
@@ -1429,22 +1434,17 @@ function abrirStatus(id) {
   openModal('modalStatus');
 }
 
-function salvarStatus() {
-  const ind=state.indicacoes.find(i=>i.id===editingId);
-  if(!ind)return;
+async function salvarStatus() {
+ let saved;
+ return runReferralChange(function(user){
+  const ind=state.indicacoes.find(i=>i.id===editingId);if(!ind)throw new Error('Indicação não encontrada.');
   const novoStatus=document.getElementById('sStatus').value;
-  const log=document.getElementById('sLog').value;
-  const data=document.getElementById('sData').value||today();
-  if(novoStatus==='Fechado'){
-    const vr=parseFloat(document.getElementById('sValorReal').value.replace(/\D/g,''));
-    if(vr) ind.valorReal=vr;
-  }
-  ind.status=novoStatus;
-  if(log) ind.logs.push({data,status:novoStatus,nota:log,
-    tipo:novoStatus==='Fechado'?'green':novoStatus==='Perdido'?'red':'default'});
-  save(); closeModal('modalStatus');
-  renderDashboard(); renderIndicacoes(); renderTrimestre(); renderComissoes();
-  if(novoStatus==='Fechado'){ abrirPrecificacaoDaIndicacao(ind); }
+  if(STATUSES.indexOf(novoStatus)<0)throw new Error('Selecione um status válido.');
+  const previous=ind.status,log=document.getElementById('sLog').value.trim();
+  if(novoStatus==='Fechado'){const vr=parseFloat(document.getElementById('sValorReal').value.replace(/\D/g,''));if(vr)ind.valorReal=vr;}
+  ind.status=novoStatus;ind.logs=ind.logs||[];
+  ind.logs.push({id:ReferralRules.id(),data:new Date().toISOString(),effectiveDate:document.getElementById('sData').value||today(),previousStatus:previous,status:novoStatus,nota:log||('Status alterado de '+previous+' para '+novoStatus+'.'),userId:user.id,userName:user.name,tipo:novoStatus==='Fechado'?'green':novoStatus==='Perdido'?'red':'default'});saved=ind;
+ },function(){closeModal('modalStatus');renderDashboard();renderIndicacoes();renderTrimestre();renderComissoes();if(saved&&saved.status==='Fechado')abrirPrecificacaoDaIndicacao(saved);});
 }
 
 // Ao fechar: abre a Precificação já preenchida. O projeto só é criado ao salvar a proposta.
@@ -1527,7 +1527,7 @@ function renderIndicacoes() {
 function verLog(id) {
   const ind=state.indicacoes.find(i=>i.id===id);
   if(!ind)return;
-  alert(`Log de ${ind.clienteNome}:\n\n`+ind.logs.map(l=>`[${l.data}] ${l.status}\n${l.nota}`).join('\n\n'));
+  alert(`Log de ${ind.clienteNome}:\n\n`+ind.logs.map(l=>`[${l.data.includes("T")?new Date(l.data).toLocaleString("pt-BR"):l.data}] ${l.status}\nResponsável: ${l.userName||"Não registrado (histórico antigo)"}\n${l.nota}`).join('\n\n'));
 }
 
 function excluirIndicacao(id) {
@@ -1677,7 +1677,7 @@ function renderTrimestre() {
           <th>Cliente</th><th>Data Fechamento</th><th>Valor</th><th>Comissão</th>
         </tr></thead><tbody>${ciclo.itens.map(i=>`<tr>
           <td>${i.clienteNome}</td>
-          <td style="font-size:12px;color:var(--warm-gray)">${i.logs.find(l=>l.status==='Fechado')?.data||i.dataRegistro}</td>
+          <td style="font-size:12px;color:var(--warm-gray)">${i.logs.find(l=>l.status==='Fechado')?.effectiveDate||i.logs.find(l=>l.status==='Fechado')?.data||i.dataRegistro}</td>
           <td style="color:var(--green);font-weight:500">${fmt(i.valorReal)}</td>
           <td style="color:var(--brown);font-weight:500">${(()=>{const r=i.commRate!=null?i.commRate:COMM_RATE(i.valorReal||0);return fmt((i.valorReal||0)*r)+' ('+fmtPct(r)+')';})()} </td>
         </tr>`).join('')}</tbody></table>`:'<div style="color:var(--warm-gray);font-size:13px;padding:12px 0">Nenhum contrato fechado neste ciclo ainda.</div>'}
@@ -1906,7 +1906,7 @@ function renderComissoes() {
       return `<tr>
         <td><b>${i.clienteNome}</b></td>
         <td style="font-size:12px">${c?c.nome:'—'}</td>
-        <td style="font-size:12px;color:var(--warm-gray)">${logFech?.data||'—'}</td>
+        <td style="font-size:12px;color:var(--warm-gray)">${logFech?.effectiveDate||logFech?.data||'—'}</td>
         <td style="font-weight:500;color:var(--green)">${fmt(i.valorReal)}</td>
         <td>
           <span style="font-weight:600;color:var(--brown)">${(rate*100).toFixed(1)}%</span>

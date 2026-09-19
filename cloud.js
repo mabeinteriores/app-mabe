@@ -330,7 +330,7 @@
   }
 
   // ---------- "Responsável" = usuários aprovados do sistema ----------
-  var respList = [];
+  var respList = [], respUsers = [];
   function repopResp() {
     if (!respList.length) return;
     try {
@@ -350,8 +350,10 @@
   }
   function fetchResponsaveis() {
     if (!sb) return;
-    sb.from('profiles').select('nome,email').eq('aprovado', true).then(function (res) {
+    return sb.from('profiles').select('id,nome,email').eq('aprovado', true).then(function (res) {
       if (res.error || !res.data) return;
+      respUsers = res.data.map(function(p){return {id:p.id,nome:(p.nome||p.email||'').trim()};}).filter(function(p){return p.id&&p.nome;});
+      window.dispatchEvent(new Event('camber-responsaveis'));
       respList = res.data.map(function (p) {
         var n = (p.nome || '').trim();
         return n || (p.email || '').split('@')[0];
@@ -629,6 +631,7 @@
       _set('mabe-clientes-v1',JSON.stringify(rows));
     },
     responsaveis: function () { return respList; },
+    usuariosObra: function () { return respUsers.slice(); },
     // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
     flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw syncError || new Error('Não foi possível sincronizar os dados.');}); },
     pendente: function () { return !!inFlight || Object.keys(pending).length > 0; }

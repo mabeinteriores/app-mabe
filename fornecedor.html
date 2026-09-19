@@ -40,6 +40,7 @@
           <div class="field"><label id="lblFantasia">Nome fantasia</label><input class="inp" id="fFant" placeholder="Marcenaria Bianco"></div>
           <div class="field"><label id="lblDoc">CNPJ <span class="req">*</span></label><input class="inp" id="doc" placeholder="00.000.000/0000-00" inputmode="numeric"><span class="hint" id="docHint">digite o CNPJ e saia do campo para buscar os dados</span></div>
           <div class="field" id="fieldIE"><label>Inscrição estadual</label><input class="inp" id="fIE" placeholder="ISENTO ou número"></div>
+          <div class="field"><label><input type="checkbox" id="fHabilitadoObra"> Habilitado para etapas de obra</label><span class="hint">Quando ativo, pode ser selecionado como responsável no cronograma.</span></div>
           <div class="field"><label>Status</label>
             <div class="choice"><span class="opt on" data-s="on">Ativo</span><span class="opt" data-s="off">Inativo</span></div>
             <span class="hint"><b>Inativo = bloqueado</b>: some das oportunidades, mas não é apagado</span></div>
@@ -309,6 +310,7 @@
     var bx = document.getElementById('btnExcluirForn'); if(bx) bx.style.display = '';
     var tp = f.tipoPessoa==='pj' ? 'pj' : 'pf';
     var opt = document.querySelector('#tipoPessoa .opt[data-t="'+tp+'"]'); if(opt) opt.click();
+    document.getElementById('fHabilitadoObra').checked=f.habilitadoObra===true;
     fsetV('fRazao', f.nome); fsetV('fFant', f.fantasia); fsetV('doc', f.doc); fsetV('fIE', f.ie);
     setCats(f.categorias && f.categorias.length ? f.categorias : (f.categoria ? [f.categoria] : []));
     fsetV('fCep', f.cep); fsetV('fLograd', f.logradouro); fsetV('fNum', f.numero); fsetV('fCompl', f.complemento);
@@ -405,7 +407,7 @@
     var contatos = getContatos(); var c0 = contatos[0] || {};
     var dados = {
       tipoPessoa: pj?'pj':'pf', nome: nome, fantasia: fval('fFant'), doc: fval('doc'), ie: fval('fIE'),
-      categorias: cats, categoria: cats[0], status: statusOn?'Ativo':'Inativo',
+      habilitadoObra:document.getElementById('fHabilitadoObra').checked, categorias: cats, categoria: cats[0], status: statusOn?'Ativo':'Inativo',
       contatos: contatos,
       contato: c0.nome||'', cargo: c0.cargo||'', tel: c0.tel||'', cel: c0.cel||'',
       email: c0.email||'', site: c0.site||'', aniversario: c0.aniversario||'',
