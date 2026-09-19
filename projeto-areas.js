@@ -11,7 +11,25 @@ var back=e('a',area?'← Áreas do projeto':'← Todos os projetos');back.href=a
 if(area==='oportunidades'){wrap.prepend(back);return;}
 Array.from(wrap.children).forEach(function(n){n.hidden=true;});wrap.append(back);
 var h=e('h1',area==='servicos'?'Serviços terceirizados':area==='visitas'?'Controle de visitas':area==='cronograma'?'Cronograma da obra':area==='agenda'?'Agenda de Obras':PROJ.nome);h.className='area-heading';wrap.append(h,e('p',area?PROJ.nome:[PROJ.cliente,PROJ.cidade,PROJ.uf].filter(Boolean).join(' · ')));
-if(!area){var grid=e('div');grid.className='area-grid';[['oportunidades','▥','Oportunidades comerciais','Acompanhe propostas, negociações e fechamentos.'],['cronograma','▦','Cronograma da obra','Organize etapas, prazos e responsáveis pela execução.'],['servicos','◇','Serviços terceirizados','Reúna prestadores, serviços contratados e custos.'],['visitas','◎','Controle de visitas','Registre horários, localização e acompanhamento da obra.']].forEach(function(m){var a=e(m[0]==='cronograma'?'article':'a');if(m[0]!=='cronograma')a.href=url(m[0]);a.className='area-card';var icon=e('span',m[1]);icon.className='area-icon';var link=e(m[0]==='cronograma'?'a':'span','Acessar →');if(m[0]==='cronograma'){link.href=url('cronograma');var agenda=e('a');agenda.className='area-agenda';agenda.href=url('agenda');agenda.append(e('span','▦ Agenda de Obras'),e('small','Prazos e responsáveis →'));a.append(agenda);}link.className='area-link';a.append(icon,e('h2',m[2]),e('p',m[3]),link);grid.append(a);});wrap.append(grid);return;}
+if(!area){
+ var grid=e('div');grid.className='area-grid';
+ var projectOpps=CamberDB.loadOpps(projId)||[];
+ var possibleGain=projectOpps.reduce(function(total,op){return total+(Number(CamberDB.rtOf(op))||0);},0);
+ [['oportunidades','▥','Oportunidades comerciais','Acompanhe propostas, negociações e fechamentos.'],['cronograma','▦','Cronograma da obra','Organize etapas, prazos e responsáveis pela execução.'],['servicos','◇','Serviços terceirizados','Reúna prestadores, serviços contratados e custos.'],['visitas','◎','Controle de visitas','Registre horários, localização e acompanhamento da obra.']].forEach(function(m){
+  var a=e(m[0]==='cronograma'?'article':'a');if(m[0]!=='cronograma')a.href=url(m[0]);a.className='area-card';
+  var top=e('div');top.className='area-card-top';var icon=e('span',m[1]);icon.className='area-icon';top.append(icon);
+  var title=e('h2',m[2]);
+  var link=e(m[0]==='cronograma'?'a':'span','Acessar →');link.className='area-link';
+  if(m[0]==='oportunidades'){
+   var gain=e('div');gain.className='area-gain';gain.append(e('small','Ganho possível'),e('strong',possibleGain.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})));top.append(gain);
+   var count=e('span',String(projectOpps.length));count.className='area-opportunity-count';count.setAttribute('aria-label',projectOpps.length+' oportunidades neste projeto');title.append(count);
+  }
+  if(m[0]==='cronograma'){
+   link.href=url('cronograma');var agenda=e('a');agenda.className='area-agenda';agenda.href=url('agenda');agenda.append(e('span','▦ Agenda de Obras'),e('small','Ver prazos e responsáveis →'));top.append(agenda);
+  }
+  a.append(top,title,e('p',m[3]),link);grid.append(a);
+ });wrap.append(grid);return;
+}
 if(area==='servicos'){document.getElementById('app').classList.add('area-services');var panel=document.getElementById('ct-ov');wrap.append(panel);CT.open(projId,function(){});return;}
 if(area==='visitas'){document.body.classList.add('area-visits');wrap.append(document.getElementById('visDrawer'));Visitas.open();return;}
 if(area==='agenda'){CamberAgenda.mount(wrap,{projectId:projId});return;}

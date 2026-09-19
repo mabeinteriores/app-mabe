@@ -1,0 +1,10 @@
+#app .area-card-top{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:112px}
+#app .area-card-top .area-icon{flex-shrink:0}
+#app .area-gain{text-align:right;min-width:0}
+#app .area-gain small{display:block;color:var(--ink-3);font-size:12px;margin-bottom:8px}
+#app .area-gain strong{display:block;font-size:clamp(22px,2.2vw,30px);color:var(--accent,#bd653d);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#app .area-card h2{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#app .area-opportunity-count{display:inline-grid;place-items:center;min-width:38px;min-height:34px;padding:4px 11px;border-radius:10px;background:#f3e5d8;color:#98512c;font-size:20px;font-weight:700}
+#app .area-card-top .area-agenda{position:relative;inset:auto;z-index:2;display:flex;justify-content:center;min-height:112px;width:250px;max-width:calc(100% - 64px);padding:24px;border-radius:15px;font-size:19px;line-height:1.35;gap:12px;box-sizing:border-box}
+#app .area-card-top .area-agenda small{font-size:12px;line-height:1.5}
+@media(max-width:520px){#app .area-card{padding:20px}#app .area-card-top{gap:12px}#app .area-card-top .area-agenda{padding:18px;font-size:17px;max-width:calc(100% - 58px)}#app .area-gain strong{font-size:23px}}
