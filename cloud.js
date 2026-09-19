@@ -427,7 +427,7 @@
   // ---------- 5b) atualizações AO VIVO (Supabase Realtime) ----------
   // Ouve mudanças no banco (kv_store/respostas/profiles) e atualiza a tela
   // quase em tempo real. Se o usuário estiver digitando, adia e mostra um aviso.
-  var liveOn = false, liveTimer = null, livePending = false, liveBanner = null;
+  var liveOn = false, liveTimer = null, livePending = false, liveBanner = null, liveRefreshing = false;
 
   function isBusyEditing() {
     if(inFlight || Object.keys(pending).length) return true;
@@ -435,6 +435,10 @@
       if (window.CamberReferralsBusy || document.querySelector('dialog[open]')) return true;
       var frame=document.getElementById('indiFrame');
       if(frame && frame.contentWindow && (frame.contentWindow.CamberReferralsBusy || frame.contentDocument.querySelector('dialog[open], .modal-overlay.open'))) return true;
+      if(frame && frame.contentDocument){
+        var childActive=frame.contentDocument.activeElement;
+        if(childActive && (/^(INPUT|TEXTAREA|SELECT)$/.test(childActive.tagName) || childActive.isContentEditable)) return true;
+      }
       var a = document.activeElement;
       if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return true;
       if (document.querySelector('.drawer.open, .scrim.open, #delModal.open, #camberCloudOv')) return true;
@@ -458,15 +462,21 @@
   }
   function tryLive() {
     if (!livePending) return;
-    if (isBusyEditing()) { showLiveBanner(); return; }
-    doLiveRefresh();
+    // Background notifications must never navigate or restart a page. Some
+    // screens save derived values at startup, including from other open tabs.
+    showLiveBanner();
   }
   function doLiveRefresh() {
-    if(inFlight || Object.keys(pending).length){ showLiveBanner(); return; }
-    livePending = false;
-    if (!sb) { location.reload(); return; }
+    if(liveRefreshing)return;
+    if(isBusyEditing()){ showLiveBanner(); return; }
+    if (!sb) { showLiveBanner(); return; }
+    liveRefreshing=true;
     // re-hidrata o kv_store (pega o estado novo) e recarrega UMA vez para renderizar
     sb.from('kv_store').select('key,value').eq('workspace', WORKSPACE).then(function (res) {
+      // The user may have started editing while this request was in flight.
+      if(res.error || !Array.isArray(res.data) || isBusyEditing()){
+        liveRefreshing=false;showLiveBanner();return;
+      }
       try {
         if (!res.error) {
           var remote = {};
@@ -478,8 +488,9 @@
           Object.keys(localStorage).forEach(function (k) { if (shouldSync(k) && !remote[k]) { try { _remove(k); } catch (e) {} } });
         }
       } catch (e) {}
+      livePending=false;
       location.reload();
-    }, function () { location.reload(); });
+    }, function () { liveRefreshing=false;showLiveBanner(); });
   }
   function onRemoteChange(payload) {
     try {
