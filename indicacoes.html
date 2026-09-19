@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=20260918-concurrency"></script>
+<script src="cloud.js?v=20260919-referrals"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indicações · Gestão Camber</title>
@@ -20,7 +20,7 @@
 <div class="camber skin-studio" id="app" data-page="indicacoes">
   <div class="body scroll" style="display:flex;flex-direction:column">
     <div id="indiWrap">
-      <iframe id="indiFrame" src="indicacoes-app.html" title="Controle de Indicações"></iframe>
+      <iframe id="indiFrame" src="indicacoes-painel.html?v=1" title="Controle de Indicações"></iframe>
     </div>
   </div>
 </div>
@@ -30,7 +30,7 @@
   // a aba de Indicações (iframe) pede para abrir outra página do app
   window.addEventListener('message', function(e){
     var d = e && e.data;
-    if(d && d.type==='mabe-open' && typeof d.url==='string'){ window.location.href = d.url; }
+    if(e.origin===location.origin && e.source===document.getElementById('indiFrame').contentWindow && d && d.type==='mabe-open' && typeof d.url==='string'){ window.location.href = d.url; }
   });
 </script>
 </body>

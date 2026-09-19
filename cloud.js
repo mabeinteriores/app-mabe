@@ -432,6 +432,9 @@
   function isBusyEditing() {
     if(inFlight || Object.keys(pending).length) return true;
     try {
+      if (window.CamberReferralsBusy || document.querySelector('dialog[open]')) return true;
+      var frame=document.getElementById('indiFrame');
+      if(frame && frame.contentWindow && (frame.contentWindow.CamberReferralsBusy || frame.contentDocument.querySelector('dialog[open], .modal-overlay.open'))) return true;
       var a = document.activeElement;
       if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return true;
       if (document.querySelector('.drawer.open, .scrim.open, #delModal.open, #camberCloudOv')) return true;
