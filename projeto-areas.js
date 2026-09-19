@@ -22,7 +22,8 @@ if(!area){
   var link=e(m[0]==='cronograma'?'a':'span','Acessar →');link.className='area-link';
   if(m[0]==='oportunidades'){
    var gain=e('div');gain.className='area-gain';gain.append(e('small','Ganho possível'),e('strong',possibleGain.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})));top.append(gain);
-   var count=e('span',String(projectOpps.length));count.className='area-opportunity-count';count.setAttribute('aria-label',projectOpps.length+' oportunidades neste projeto');title.append(count);
+   var count=e('div');count.className='area-opportunity-summary';count.append(e('small','Quantidade de oportunidades'),e('strong',String(projectOpps.length)));
+   a.classList.add('area-opportunities');a.append(title,gain,count,link);grid.append(a);return;
   }
   if(m[0]==='cronograma'){
    link.href=url('cronograma');var agenda=e('a');agenda.className='area-agenda';agenda.href=url('agenda');agenda.append(e('span','▦ Agenda de Obras'),e('small','Ver prazos e responsáveis →'));top.append(agenda);
