@@ -17,13 +17,18 @@
     return [a, b];
   }
   function span(task) { var a = day(task.start), b = day(task.end); return a && b && b >= a ? [a, b] : null; }
-  function lateDays(task, today) {
-    var end = day(task.end), current = today || new Date();
-    if(task.status === 'Concluído' || !end) return 0;
-    return Math.max(0, Math.round((Date.UTC(current.getFullYear(),current.getMonth(),current.getDate())-Date.UTC(end.getFullYear(),end.getMonth(),end.getDate()))/86400000));
+  function lateness(task, today) {
+    if(task.status === 'Concluído') return {days:0};
+    var current = today || new Date();
+    function elapsed(value){var date=day(value);return date?Math.max(0,Math.round((Date.UTC(current.getFullYear(),current.getMonth(),current.getDate())-Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()))/86400000)):0;}
+    var finish=elapsed(task.end);
+    if(finish>0)return {days:finish,type:'end'};
+    var start=(!task.status||task.status==='A iniciar')?elapsed(task.start):0;
+    return {days:start,type:'start'};
   }
-  function overdue(task, today) { return lateDays(task, today)>0; }
-  function lateLabel(task, today) { var days=lateDays(task,today); return days ? '⚠ Atrasada há '+days+(days===1?' dia':' dias') : ''; }
+  function lateDays(task,today){return lateness(task,today).days;}
+  function overdue(task,today){return lateDays(task,today)>0;}
+  function lateLabel(task,today){var late=lateness(task,today);return late.days?'⚠ '+(late.type==='start'?'Início atrasado há ':'Prazo final vencido há ')+late.days+(late.days===1?' dia':' dias'):'';}
   function mount(host, options) {
     options = options || {};
     var now = options.today ? day(options.today) : new Date(), today = add(now, 0), anchor = add(today, 0), view = 'semana';

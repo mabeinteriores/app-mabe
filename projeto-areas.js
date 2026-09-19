@@ -89,7 +89,7 @@ draw=function(){
  tabs.replaceChildren();tabNames.forEach(function(t){var b=e('button',t[1]);b.className='btn'+(mode===t[0]?' primary':'');b.onclick=function(){if(!busy){mode=t[0];draw();}};tabs.append(b);});
  var lateCount=rows().filter(function(r){return CamberAgenda.lateDays(r)>0;}).length;
  lateSummary.hidden=!lateCount;lateSummary.replaceChildren();
- if(lateCount){lateSummary.append(e('strong','⚠ '+lateCount+(lateCount===1?' etapa atrasada':' etapas atrasadas')),e('span','Prazo vencido e etapa ainda não concluída. Confira o responsável e atualize o andamento.'));}
+ if(lateCount){lateSummary.append(e('strong','⚠ '+lateCount+(lateCount===1?' etapa atrasada':' etapas atrasadas')),e('span','Início previsto ou prazo final em atraso. Confira o responsável e atualize o andamento.'));}
  originalDraw();
  Array.from(list.children).forEach(function(row,index){var task=rows()[index];if(task)markLate(row.firstChild,task);});
  Array.from(list.children).forEach(function(row){if(!row.lastChild||!row.lastChild.firstChild)return;var b=row.lastChild.firstChild;if(b.tagName!=='BUTTON')return;var fn=b.onclick;b.onclick=function(){if(busy)return;fn();dialogTitle.textContent='Editar etapa';openStageDialog();};});
