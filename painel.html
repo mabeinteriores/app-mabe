@@ -10,34 +10,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="painel.css?v=20260912215700">
 <link rel="stylesheet" href="app.css?v=20260912215700">
+<link rel="stylesheet" href="painel-layout.css?v=1">
 </head>
 <body>
 <div class="camber skin-studio" id="app" data-page="painel">
   <div class="body scroll">
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
-      <div class="page-h">
-        <div>
-          <div class="crumb">Visão geral</div>
-          <h1>Painel</h1>
-        </div>
-        <div class="seg">
-          <button onclick="setPeriodo('mes',this)">Mês</button>
-          <button class="on" onclick="setPeriodo('ano',this)">Ano</button>
-          <button onclick="setPeriodo('tudo',this)">Tudo</button>
-        </div>
-      </div>
-
-      <div class="sect-title" style="margin-bottom:-4px;display:flex;align-items:center;gap:12px">
-        <h3 id="scopeTitle">Projetos em aberto</h3><span class="count" id="openCount">—</span>
-        <span style="flex:1"></span>
-        <select id="scopeSel" onchange="setScope(this.value)" class="sel" style="width:auto;min-width:200px;font-size:13px;padding:7px 30px 7px 11px">
+      <header class="dashboard-header">
+        <div class="dashboard-title"><div class="crumb">Visão geral</div><h1>Painel</h1></div>
+        <div class="dashboard-scope"><h3 id="scopeTitle">Projetos em aberto</h3><span class="count" id="openCount">—</span></div>
+        <div class="dashboard-filters"><select id="scopeSel" onchange="setScope(this.value)" class="sel" style="width:auto;min-width:200px;font-size:13px;padding:7px 30px 7px 11px">
           <option value="aberto">Projetos em aberto</option>
           <option value="todos">Todos os projetos</option>
           <option value="win">Projetos concluídos</option>
           <option value="lost">Projetos perdidos</option>
-        </select>
-      </div>
+        </select><div class="seg">
+          <button onclick="setPeriodo('mes',this)">Mês</button>
+          <button class="on" onclick="setPeriodo('ano',this)">Ano</button>
+          <button onclick="setPeriodo('tudo',this)">Tudo</button>
+        </div></div>
+      </header>
 
       <!-- KPIs consolidados (todos os projetos em aberto) -->
       <div class="kpis k7">

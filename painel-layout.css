@@ -1,0 +1,21 @@
+/* Layout fluido do painel, sem alterar formularios de outras paginas. */
+#app[data-page="painel"]>.body{padding:20px 24px 28px}
+#app[data-page="painel"] .wrap{max-width:none;width:100%;min-width:0;gap:16px!important}
+#app[data-page="painel"] .dashboard-header{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:4px}
+#app[data-page="painel"] .dashboard-title h1{font-size:24px;margin:3px 0 0;line-height:1.2}
+#app[data-page="painel"] .dashboard-title .crumb{font-size:12px;color:var(--ink-3)}
+#app[data-page="painel"] .dashboard-scope{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-left:24px;border-left:1px solid var(--hair-2)}
+#app[data-page="painel"] .dashboard-scope h3{font-size:14px;margin:0}
+#app[data-page="painel"] .dashboard-scope .count{font-size:12px;color:var(--ink-3)}
+#app[data-page="painel"] .dashboard-filters{display:flex;align-items:center;gap:12px;margin-left:auto;flex-wrap:wrap}
+#app[data-page="painel"] .kpis.k7{grid-template-columns:repeat(7,minmax(0,1fr));gap:14px}
+#app[data-page="painel"] .kpi{min-width:0;padding:18px;min-height:122px}
+#app[data-page="painel"] .kpi .ml{white-space:normal;line-height:1.45;letter-spacing:.08em}
+#app[data-page="painel"] .kpi .kd{white-space:normal;line-height:1.45;overflow-wrap:anywhere}
+#app[data-page="painel"] .kpi .kv{font-size:clamp(20px,1.35vw,28px);white-space:normal;overflow-wrap:anywhere}
+#app[data-page="painel"] .grid-2b{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+#app[data-page="painel"] .panel{min-width:0}
+#app[data-page="painel"] .panel-h{flex-wrap:wrap;gap:8px}
+@media(max-width:1500px){#app[data-page="painel"] .kpis.k7{grid-template-columns:repeat(4,minmax(0,1fr))}#app[data-page="painel"] .kpi.hero{grid-column:span 2}}
+@media(max-width:1000px){#app[data-page="painel"] .dashboard-filters{width:100%;margin-left:0}#app[data-page="painel"] .grid-2b{grid-template-columns:1fr}#app[data-page="painel"] .kpis.k7{grid-template-columns:repeat(2,minmax(0,1fr))}#app[data-page="painel"] .kpi.hero{grid-column:auto}}
+@media(max-width:520px){#app[data-page="painel"]>.body{padding:16px 12px}#app[data-page="painel"] .dashboard-header{gap:14px}#app[data-page="painel"] .dashboard-scope{padding-left:12px}#app[data-page="painel"] .dashboard-filters{gap:8px}#app[data-page="painel"] .kpis.k7{grid-template-columns:1fr}#app[data-page="painel"] .kpi{min-height:108px}}
