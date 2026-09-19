@@ -350,7 +350,7 @@
   }
   function fetchResponsaveis() {
     if (!sb) return;
-    return sb.from('profiles').select('id,nome,email').eq('aprovado', true).then(function (res) {
+    return sb.from('profiles').select('id,nome,email').eq('aprovado', true).eq('ativo', true).then(function (res) {
       if (res.error || !res.data) return;
       respUsers = res.data.map(function(p){return {id:p.id,nome:(p.nome||p.email||'').trim()};}).filter(function(p){return p.id&&p.nome;});
       window.dispatchEvent(new Event('camber-responsaveis'));

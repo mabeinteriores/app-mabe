@@ -29,6 +29,7 @@
     var now = options.today ? day(options.today) : new Date(), today = add(now, 0), anchor = add(today, 0), view = 'semana';
     var root = el('section', null, 'obras-agenda'); root.setAttribute('aria-label', 'Agenda de Obras'); host.append(root);
     var intro = el('div', null, 'ag-intro'); intro.append(el('p', 'Etapas, prazos e responsáveis dos seus cronogramas.'));
+    intro.append(el('p','Lembrete por e-mail: no dia anterior ao prazo final, a partir das 8h (Brasília). O responsável precisa estar selecionado no cadastro e ter e-mail válido.'));
     var edit = el('a', 'Gerenciar cronograma →', 'ag-manage'); edit.href = 'projeto.html?id=' + encodeURIComponent(options.projectId) + '&area=cronograma'; intro.append(edit); root.append(intro);
     var filters = el('div', null, 'ag-filters');
     function filter(label, entries) { var l = el('label', label), s = el('select'); entries.forEach(function (x) { s.add(new Option(x[1], x[0])); }); l.append(s); filters.append(l); s.onchange = render; return s; }
@@ -47,12 +48,13 @@
     nav.append(title); toolbar.append(nav);
     var tabs = el('div', null, 'ag-tabs'); tabs.setAttribute('aria-label', 'Visualização');
     [['dia', 'Dia'], ['semana', 'Semana'], ['quinzena', 'Quinzena'], ['mes', 'Mês']].forEach(function (v) { var b = button(v[1], function () { view = v[0]; render(); }, tabs); b.dataset.view = v[0]; }); toolbar.append(tabs); root.append(toolbar);
-    var summary = el('p', null, 'ag-summary'), content = el('div'), extras = el('div'); summary.setAttribute('aria-live', 'polite'); root.append(summary, content, extras);
+    var summary = el('p', null, 'ag-summary'), content = el('div'), extras = el('div'); summary.setAttribute('aria-live', 'polite'); root.append(summary, extras, content);
     function card(task) {
       var b = el('button', null, 'ag-task' + (overdue(task, today) ? ' ag-late' : task.status === 'Concluído' ? ' ag-done' : '')); b.type = 'button';
       var owner = el('span', null, 'ag-responsible');
       owner.append(el('span', 'Responsável:', 'ag-responsible-label'), el('strong', (task.responsible || '').trim() || 'Não definido'));
       b.append(el('strong', task.title || 'Etapa sem título'), el('span', task.projectName), owner, el('small', overdue(task, today) ? lateLabel(task, today) + ' · ' + (task.status || 'A iniciar') : task.status || 'A iniciar'));
+      if(task.status !== 'Concluído' && !task.responsibleKey)b.append(el('small','Para receber o lembrete, selecione novamente o responsável no cronograma.'));
       b.onclick = function () { details(task, b); }; return b;
     }
     function details(task, trigger) {
@@ -81,7 +83,7 @@
         matches.forEach(function (t) { column.append(card(t)); }); if (!matches.length) column.append(el('p', 'Sem atividades', 'ag-empty')); grid.append(column);
       }
       function extra(titleText, list) { if (!list.length) return; var section = el('section', null, 'ag-extra'); section.append(el('h3', titleText + ' (' + list.length + ')')); var cards = el('div', null, 'ag-extra-cards'); list.forEach(function (t) { cards.append(card(t)); }); section.append(cards); extras.append(section); }
-      extra('Atrasadas fora do período', tasks.filter(function (t) { return span(t) && overdue(t, today) && visible.indexOf(t) < 0; }));
+      extra('Atenção: atividades atrasadas', tasks.filter(function (t) { return overdue(t, today); }));
       extra('Datas a definir ou revisar', tasks.filter(function (t) { return !span(t); }));
     }
     render();

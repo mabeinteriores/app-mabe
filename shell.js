@@ -36,12 +36,14 @@
   var sun = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var moon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 
-  var nav = pages.map(function (p) {
-    return '<a class="' + (p.id === current ? 'on' : '') + '" href="' + p.href + '">' + p.t + '</a>';
+  var icons=['▦','◇','▤','♙','▣','↗','◎','♙','⚙'];
+  var nav = pages.map(function (p,i) {
+    return '<a class="' + (p.id === current ? 'on' : '') + '" href="' + p.href + '" aria-label="'+p.t+'"'+(p.id===current?' aria-current="page"':'')+'><span class="nav-icon" aria-hidden="true">'+icons[i]+'</span><span class="nav-label">' + p.t + '</span></a>';
   }).join('');
 
   var top = document.createElement('div');
-  top.className = 'top';
+  top.className = 'top camber-sidebar';top.id='camberSidebar';app.classList.add('has-sidebar');
+  var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=2';document.head.appendChild(sideCss);
   top.innerHTML =
     '<div class="brandwrap">' +
       '<a class="brand" href="painel.html" style="text-decoration:none;color:inherit">' +
@@ -50,7 +52,7 @@
       '</a>' +
       '<div class="brandmenu"><button type="button" class="brandmenu-item" id="camberSairBtn">↪&nbsp;Sair do app</button></div>' +
     '</div>' +
-    '<nav class="nav">' + nav + '</nav>' +
+    '<nav class="nav" aria-label="Menu principal">' + nav + '</nav>' +
     '<div class="sp"></div>' +
     '<form class="ipt search" id="topSearch" style="gap:8px;text-align:left"><span>⌕</span><input id="topSearchInput" placeholder="Buscar projeto, cliente…" style="border:none;background:transparent;outline:none;font-family:inherit;font-size:13px;color:inherit;width:170px"></form>' +
     '<button class="iconbtn" id="themeBtn" title="Alternar tema">' + (saved === 'dark' ? sun : moon) + '</button>' +
@@ -58,6 +60,11 @@
     '<div class="av">MA</div>';
 
   app.insertBefore(top, app.firstChild);
+  var toggle=document.createElement('button');toggle.type='button';toggle.className='sidebar-toggle';toggle.textContent='☰ Menu';toggle.setAttribute('aria-controls','camberSidebar');toggle.setAttribute('aria-expanded','false');app.appendChild(toggle);
+  function closeMenu(){top.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
+  toggle.onclick=function(){var open=top.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));};
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeMenu();});
+  document.addEventListener('click',function(ev){if(!top.contains(ev.target)&&!toggle.contains(ev.target))closeMenu();});
 
   // "Sair do app" (no menu do logo) → volta para a tela de login
   var sairBtn = document.getElementById('camberSairBtn');
