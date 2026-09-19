@@ -19,3 +19,6 @@
 @media(max-width:1500px){#app[data-page="painel"] .kpis.k7{grid-template-columns:repeat(4,minmax(0,1fr))}#app[data-page="painel"] .kpi.hero{grid-column:span 2}}
 @media(max-width:1000px){#app[data-page="painel"] .dashboard-filters{width:100%;margin-left:0}#app[data-page="painel"] .grid-2b{grid-template-columns:1fr}#app[data-page="painel"] .kpis.k7{grid-template-columns:repeat(2,minmax(0,1fr))}#app[data-page="painel"] .kpi.hero{grid-column:auto}}
 @media(max-width:520px){#app[data-page="painel"]>.body{padding:16px 12px}#app[data-page="painel"] .dashboard-header{gap:14px}#app[data-page="painel"] .dashboard-scope{padding-left:12px}#app[data-page="painel"] .dashboard-filters{gap:8px}#app[data-page="painel"] .kpis.k7{grid-template-columns:1fr}#app[data-page="painel"] .kpi{min-height:108px}}
+
+#app[data-page="painel"] .dashboard-wordmark{font-size:28px;font-weight:700;letter-spacing:.16em;line-height:1.2;color:var(--ink);padding-right:24px;white-space:nowrap}
+@media(max-width:520px){#app[data-page="painel"] .dashboard-wordmark{font-size:22px;padding-right:0;letter-spacing:.12em}}

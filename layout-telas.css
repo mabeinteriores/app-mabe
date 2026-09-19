@@ -1,0 +1,62 @@
+/* Shared screen geometry for all sidebar destinations. */
+@media screen{
+#app.has-sidebar{width:100%;height:100dvh;min-width:0}
+#app.has-sidebar>.body{padding:20px 24px 28px;min-width:0;min-height:0}
+#app.has-sidebar .body>.wrap,#app.has-sidebar .body>.u-wrap{width:100%;max-width:none!important;min-width:0;margin:0;box-sizing:border-box}
+#app.has-sidebar .body>.u-wrap{padding:0}
+#app.has-sidebar .page-h{align-items:center;flex-wrap:wrap;gap:12px;margin:0}
+#app.has-sidebar .page-h h1,#app.has-sidebar .u-head h1{font-size:24px;line-height:1.2}
+#app.has-sidebar .panel,#app.has-sidebar .card,#app.has-sidebar .col,#app.has-sidebar .field{min-width:0}
+#app.has-sidebar .panel-h{flex-wrap:wrap;gap:10px;align-items:center}
+#app.has-sidebar .panel-h h3,#app.has-sidebar .panel-h .meta{white-space:normal}
+#app.has-sidebar .kpis:not(.k7):not(.k6){grid-template-columns:repeat(4,minmax(0,1fr))}
+#app.has-sidebar .kpi{min-width:0}
+#app.has-sidebar .kpi .ml,#app.has-sidebar .kpi .kd{white-space:normal;line-height:1.45}
+#app.has-sidebar .kpi .kv{overflow-wrap:anywhere;white-space:normal;font-size:clamp(21px,1.5vw,28px)}
+#app.has-sidebar .grid-2,#app.has-sidebar .grid-2b{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+#app.has-sidebar[data-page="clientes"] .grid-2b{grid-template-columns:minmax(0,2fr) minmax(280px,1fr)!important}
+#app.has-sidebar .cards{grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}
+#app.has-sidebar .toolbar{gap:10px;flex-wrap:wrap}
+#app.has-sidebar .toolbar>*{max-width:100%;min-width:0}
+#app.has-sidebar .table-viewport{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+#app.has-sidebar .table-viewport>table{width:100%}
+#app.has-sidebar .form-grid{min-width:0}
+#app.has-sidebar .form-grid>*,#app.has-sidebar input,#app.has-sidebar select,#app.has-sidebar textarea{min-width:0;max-width:100%;box-sizing:border-box}
+#app.has-sidebar .cfg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#app.has-sidebar .prcwrap .calc-layout{grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr)}
+#app.has-sidebar .prcwrap .prc-cli{flex-wrap:wrap}
+#app.has-sidebar .u-row{flex-wrap:wrap}
+#app.has-sidebar .u-mail{overflow-wrap:anywhere}
+#app.has-sidebar[data-page="lead"] .lstats{grid-template-columns:repeat(6,minmax(0,1fr))}
+#app.has-sidebar[data-page="lead"] .lgrid{grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr))}
+#app.has-sidebar[data-page="indicacoes"]>.body{padding:0}
+#app.has-sidebar #indiWrap{width:100%;min-width:0;min-height:0;display:flex}
+#app.has-sidebar #indiFrame{flex:1;min-width:0}
+@media(max-width:1250px){
+#app.has-sidebar[data-page="clientes"] .grid-2b{grid-template-columns:minmax(0,1fr)!important}
+#app.has-sidebar[data-page="clientes"] .grid-2b>.col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#app.has-sidebar .kanban{overflow-x:auto;grid-template-columns:repeat(5,minmax(220px,1fr));padding-bottom:12px}
+#app.has-sidebar[data-page="lead"] .lstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:1000px){
+#app.has-sidebar .grid-2,#app.has-sidebar .grid-2b,#app.has-sidebar .prcwrap .calc-layout{grid-template-columns:minmax(0,1fr)}
+#app.has-sidebar .cfg-grid{grid-template-columns:minmax(0,1fr)}
+#app.has-sidebar .kpis:not(.k7):not(.k6){grid-template-columns:repeat(2,minmax(0,1fr))}
+#app.has-sidebar .form-grid[style*="repeat(6"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+#app.has-sidebar>.body{padding:16px 14px 24px}
+#app.has-sidebar .page-h{align-items:stretch}
+#app.has-sidebar .page-h h1,#app.has-sidebar .u-head h1{font-size:22px}
+#app.has-sidebar[data-page="clientes"] .grid-2b>.col{grid-template-columns:1fr}
+#app.has-sidebar .panel{padding:16px}
+#app.has-sidebar .panel-h>.ipt{width:100%;min-width:0!important}
+#app.has-sidebar .u-perms{padding-left:16px;padding-right:16px}
+#app.has-sidebar .u-perms-foot{flex-wrap:wrap}
+#app.has-sidebar .wizard{grid-template-columns:minmax(0,1fr)}
+#app.has-sidebar .prcwrap .form-grid{grid-template-columns:minmax(0,1fr)}
+#app.has-sidebar .form-grid[style*="repeat(6"]{grid-template-columns:minmax(0,1fr)!important}
+#app.has-sidebar .form-grid[style*="repeat(6"]>*{grid-column:auto!important}
+}
+@media(max-width:480px){#app.has-sidebar .kpis:not(.k7):not(.k6){grid-template-columns:minmax(0,1fr)}#app.has-sidebar[data-page="lead"] .lstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+}

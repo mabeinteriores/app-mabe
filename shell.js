@@ -44,6 +44,8 @@
   var top = document.createElement('div');
   top.className = 'top camber-sidebar';top.id='camberSidebar';app.classList.add('has-sidebar');
   var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=2';document.head.appendChild(sideCss);
+  var layoutCss=document.createElement('link');layoutCss.rel='stylesheet';layoutCss.href='layout-telas.css?v=1';document.head.appendChild(layoutCss);
+  document.querySelectorAll('#app .body table').forEach(function(table){if(table.parentElement.classList.contains('table-viewport'))return;var frame=document.createElement('div');frame.className='table-viewport';frame.tabIndex=0;frame.setAttribute('role','region');frame.setAttribute('aria-label','Tabela com rolagem horizontal');table.before(frame);frame.appendChild(table);});
   top.innerHTML =
     '<div class="brandwrap">' +
       '<a class="brand" href="painel.html" style="text-decoration:none;color:inherit">' +
