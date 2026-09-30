@@ -80,6 +80,7 @@
 <link rel="stylesheet" href="agenda-obras.css?v=4">
 <link rel="stylesheet" href="etapa-execucao.css?v=1">
 <link rel="stylesheet" href="projeto-cartoes.css?v=2">
+<link rel="stylesheet" href="oportunidade-propostas.css?v=1">
 </head>
 <body>
 <div class="camber skin-studio" id="app" data-page="projetos">
@@ -120,7 +121,7 @@
       <div class="toolbar">
         <div class="sect-title"><h3>Oportunidades da obra</h3><span class="count" id="oppCount"></span></div>
         <div class="sp"></div>
-        <span class="hint" style="margin-right:4px">clique para editar · arraste (ou toque em ⇄) para mudar a etapa</span>
+        <span class="hint" style="margin-right:4px">clique para ver fornecedores · arraste (ou toque em ⇄) para mudar a etapa</span>
         <div class="seg">
           <button class="on" id="segFunil" onclick="viewOpp('funil')">Funil</button>
           <button id="segTab" onclick="viewOpp('tab')">Tabela</button>
@@ -246,6 +247,7 @@
 </div>
 
 <script src="projects-data.js?v=20260918-concurrency"></script>
+<script src="oportunidade-propostas-model.js?v=1"></script>
 <script src="ct.js?v=202609130108"></script>
 <script src="shell.js?v=20260919-layout"></script>
 <script>
@@ -311,7 +313,7 @@
   function maskVal(el){ var d = (el.value||'').replace(/[^\d]/g,''); el.value = d ? Number(d).toLocaleString('pt-BR') : ''; }
   function rtv(o){ return CamberDB.rtOf(o); }                 // em reais (entende % ou R$)
   function rtLabel(o){ return o.rtTipo==='brl' ? ('R$ '+Number(o.rt||0).toLocaleString('pt-BR')) : ((o.rt||0)+'%'); }
-  function rtTxt(o){ var v = rtv(o); return 'RT ' + v.toLocaleString('pt-BR',{maximumFractionDigits:1}) + 'k'; }
+  function rtTxt(o){ var v = rtv(o); return 'RT ' + brl(v); }
   function esc(s){ return String(s||'').replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
   function meuNome(){
     var n = (window.__camberProfile && window.__camberProfile.nome) || '';
@@ -390,10 +392,10 @@
         else if (o.et === 'prospec' || o.rt === 0) trail = '<span class="chip ' + o.et + '"><span class="d"></span>' + o.prob + '%</span>';
         else trail = '<span class="miniRT">' + rtTxt(o) + '</span>';
         var pc = probColor(o.prob);
-        return '<div class="opp" draggable="true" data-id="' + o.id + '" onclick="openEdit(' + o.id + ')" style="padding-top:26px;border-left:3px solid ' + pc.bd + ';background:color-mix(in srgb, ' + pc.hue + ' ' + pc.mix + '%, var(--surface))">' +
+        return '<div class="opp" draggable="true" data-id="' + o.id + '" onclick="openOpportunity(' + o.id + ')" style="padding-top:26px;border-left:3px solid ' + pc.bd + ';background:color-mix(in srgb, ' + pc.hue + ' ' + pc.mix + '%, var(--surface))">' +
           '<button class="opp-move" title="Mover para outra etapa" onclick="event.stopPropagation();abrirMover(event,' + o.id + ')">⇄</button>' +
           '<span class="opp-prob" title="Probabilidade de fechamento" style="position:absolute;top:7px;left:8px;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:11px;border:1px solid ' + pc.bd + ';background:' + pc.bg + ';color:' + pc.fg + '">' + (parseInt(o.prob,10)||0) + '%</span>' +
-          '<div class="ot">' + esc(o.serv) + '</div><div class="of">' + esc(o.forn) + '</div>' +
+          '<div class="ot">' + esc(o.serv) + '</div><div class="of">' + esc(o.forn) + '</div><div class="of">' + CamberProposals.normalize(o).proposals.length + ' fornecedores · Ver propostas →</div>' +
           '<div class="om"><span class="ov num">' + brl(o.val) + '</span>' + trail + '</div>' + prazoBadgeHtml(o) + '</div>';
       }).join('');
       return '<div class="kcol" data-stage="' + s.k + '"><div class="kh"><span class="kt"><span class="dot ' + s.k + '"></span>' + s.l +
@@ -404,12 +406,12 @@
 
     // tabela
     document.getElementById('tabBody').innerHTML = opps.map(function(o){
-      return '<tr class="click" onclick="openEdit(' + o.id + ')"' + (o.et==='lost'?' style="opacity:.72"':'') + '>' +
+      return '<tr class="click" onclick="openOpportunity(' + o.id + ')"' + (o.et==='lost'?' style="opacity:.72"':'') + '>' +
         '<td class="tcell-strong">' + esc(o.serv) + '</td><td>' + esc(o.forn) + '</td><td>' + esc(normResp(o.resp)) + '</td>' +
         '<td><span class="chip ' + o.et + '"><span class="d"></span>' + SLAB[o.et].replace(' / Ganho','').replace('Em ','') + '</span></td>' +
         '<td class="r num">' + brl(o.val) + '</td>' +
         '<td class="r num">' + (o.rt? rtLabel(o) :'—') + '</td>' +
-        '<td class="r num' + (o.rt?' rtpill':'') + '">' + (o.rt? 'R$ ' + rtv(o).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' mil':'—') + '</td>' +
+        '<td class="r num' + (o.rt?' rtpill':'') + '">' + (o.rt? brl(rtv(o)):'—') + '</td>' +
         '<td class="r num">' + (o.et==='win'?'—':o.prob+'%') + '</td></tr>';
     }).join('');
 
@@ -485,6 +487,7 @@
   }
 
   function openEdit(id){
+    if(id!==null){openOpportunity(id);return;}
     editing = id;
     var isNew = id === null;
     var o = isNew ? { serv:'', forn:'a definir', resp:(meuNome()||'Você (Arq.)'), val:'', rt:'', rtTipo:'pct', prob:50, et:'prospec', motivo:'Preço acima do concorrente', obs:'', prazo:'' }
@@ -583,6 +586,7 @@
   function moveOpp(id, stage){
     var o = opps.find(function(x){ return x.id===id; });
     if (!o || o.et === stage) return;
+    if(stage==='win'||o.et==='win'){alert('Escolha o fornecedor ou reabra a comparação no painel da oportunidade.');openOpportunity(id);return;}
     var temForn = o.forn && o.forn !== 'a definir' && o.forn.trim() !== '';
     var temValor = (Number(o.val)||0) > 0;
     var temRT = (Number(o.rt)||0) > 0;
@@ -932,5 +936,6 @@
 <script src="etapa-execucao.js?v=1"></script>
 <script src="responsaveis-obra.js?v=1"></script>
 <script src="projeto-areas.js?v=13"></script>
+<script src="oportunidade-propostas.js?v=1"></script>
 </body>
 </html>

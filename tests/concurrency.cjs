@@ -164,6 +164,14 @@ async function run() {
   record('10 inícios na mesma etapa: apenas um confirmado',1,outcomes.filter(Boolean).length);
   record('Etapa tem apenas um período em execução',1,server.values[keys.projects][0].cronograma[0].execution.sessions.length);
 
+  const M=require('../oportunidade-propostas-model.js');
+  const oppKey='mabe-opps-v3-1';
+  server=backend({[keys.projects]:[{id:1,nome:'Obra'}],[oppKey]:[{id:7,serv:'Marcenaria',forn:'a definir',val:0,rt:0,et:'prospec',dt:'2026-09-30',proposals:[]}]});
+  users=Array.from({length:10},()=>session(server));
+  users.forEach((s,i)=>{let rows=s.db.loadOpps(1);rows[0]=M.apply(rows[0],'proposal',{id:'p'+i,name:'Fornecedor '+i,supplierId:i+1,value:10000+i,rt:10,rtTipo:'pct',days:30});rows[0].supplierMutation='change-'+i;s.db.saveOpps(1,rows);});
+  outcomes=await Promise.all(users.map(s=>s.flush()));
+  record('Propostas concorrentes na mesma oportunidade: um confirmado',1,outcomes.filter(Boolean).length);
+  record('Referência e valor permanecem coerentes',true,server.values[oppKey][0].val===M.reference(server.values[oppKey][0]).value);
   const result={generatedAt:new Date().toISOString(),scope:'Simulação isolada, funções reais de persistência; banco, rede, login e interface não exercitados.',sessions:10,sourceHashes:{data:crypto.createHash('sha256').update(dataSource).digest('hex'),cloud:crypto.createHash('sha256').update(cloudSource).digest('hex')},checks:report};
   fs.writeFileSync(path.join(__dirname,'concurrency-results.json'),JSON.stringify(result,null,2));
   const lines=['# Teste de concorrência — Gestão Camber','',result.scope,'','10 sessões independentes. Dados fictícios somente em memória. Nenhum acesso à produção.','', '| Verificação | Esperado | Obtido | Resultado |','|---|---:|---:|---|',...report.map(r=>`| ${r.name} | ${r.expected} | ${r.actual} | ${r.passed?'PASSOU':'FALHOU'} |`),'','## Conclusão','','Os cenários testados preservaram cadastros e alterações independentes. A gravação compara a versão lida antes de atualizar, combina alterações por registro e campo e rejeita conflitos reais. Novos IDs numéricos usam aleatoriedade criptográfica, mantendo compatibilidade com os cadastros antigos.','','Não é um teste de carga do Supabase nem de 10 navegadores autenticados. Não mede latência real, capacidade do servidor, permissões ou todos os módulos do sistema. É uma reprodução determinística da condição em que vários usuários partem da mesma versão dos dados.','','## Próxima etapa','','Validar o adaptador contra Supabase em homologação: SELECT/INSERT/UPDATE/DELETE sob as políticas existentes e updated_at monotônico, dez contas autenticadas e conflitos na interface. Atualizar todos os pontos de gravação antes de produção: clientes antigos ou integrações que ainda fazem upsert completo podem sobrescrever os dados. Não houve publicação nem alteração do banco remoto.',''];

@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),M=require('../oportunidade-propostas-model.js');
+const old={id:7,serv:'Marcenaria',forn:'Fornecedor antigo',val:45000,rt:10,et:'negoc',resp:'Rafael',obs:'Histórico preservado'};
+let o=M.normalize(old);assert.equal(o.proposals.length,1);assert.equal(old.proposals,undefined);assert.equal(M.commission(M.reference(o)),4500);
+o=M.apply(o,'proposal',{id:'b',name:'B',supplierId:2,value:48000,rt:12,rtTipo:'pct',days:45,payment:'3x',scope:'Completo',status:'Proposta recebida'});assert.equal(o.proposals.length,2);assert.equal(o.val,45000);
+o=M.apply(o,'favorite',{id:'b'});assert.equal(o.val,48000);assert.equal(o.rt,12);assert.equal(M.commission(M.reference(o)),5760);assert.equal(o.obs,'Histórico preservado');
+o=M.apply(o,'choose',{id:'b'});assert.equal(o.et,'win');assert.equal(o.selectedProposalId,'b');assert.equal(o.proposals.length,2);assert.throws(()=>M.apply(o,'favorite',{id:'legacy-7'}),/Reabra/);
+o=M.apply(o,'reopen',{});assert.equal(o.et,'negoc');assert.equal(o.selectedProposalId,null);assert.equal(o.favoriteProposalId,'b');
+assert.throws(()=>M.apply(o,'proposal',{id:'c',name:'B',supplierId:2,value:4,rt:0,rtTipo:'pct',days:null}),/já está/);
+assert.throws(()=>M.validate({name:'A',value:2,rt:101,rtTipo:'pct',days:null}),/comissão/);
+assert.throws(()=>M.validate({name:'A',value:2,rt:1,rtTipo:'pct',days:0}),/prazo/);
+assert.equal(M.commission({value:10000,rt:1200,rtTipo:'brl'}),1200);
+const a=M.analyze([{value:45000,days:60},{value:48000,days:45},{value:46500,days:50},{value:0,days:null}]);assert.equal(a.minPrice,45000);assert.equal(a.minDays,45);assert.equal(a.missingPrice.length,1);assert.equal(a.missingDays.length,1);assert.equal(Math.round((48000-a.minPrice)/a.minPrice*1000)/10,6.7);
+assert.equal(M.analyze([{value:5,days:10},{value:5,days:10}]).cheap.length,2);assert.equal(M.analyze([]).minPrice,null);
+const closed=M.normalize({...old,et:'win'});assert.equal(closed.selectedProposalId,'legacy-7');
+console.log('PASS: migração sem perda, múltiplas propostas, referência única, escolha/reabertura, validação, empates, prazo ausente e diferença percentual.');
