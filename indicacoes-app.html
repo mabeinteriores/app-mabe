@@ -45,9 +45,10 @@ body { font-family:'Jost',sans-serif; background:var(--cream); color:var(--dark)
 }
 .sidebar-logo { padding:28px 24px 20px;
   border-bottom:1px solid rgba(201,169,110,0.15); }
-.logo-main { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:300;
-  color:var(--white); letter-spacing:-1px; line-height:1; }
-.logo-main span { color:var(--gold); font-style:italic; }
+.logo-main { position:relative; width:172px; max-width:100%; aspect-ratio:600 / 180;
+  overflow:hidden; border-radius:4px; background:#f8f5f2; }
+.logo-main img { position:absolute; width:180%; max-width:none; height:auto;
+  left:50%; top:50%; transform:translate(-50%,-50%); }
 .logo-sub { font-size:9px; letter-spacing:4px; color:var(--warm-gray);
   text-transform:uppercase; margin-top:4px; }
 .sidebar-nav { flex:1; padding:16px 0; }
@@ -281,7 +282,7 @@ textarea { resize:vertical; min-height:70px; }
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-main">mab<span>ē</span></div>
+    <div class="logo-main"><img src="camber-logo-indicacoes.jpg" alt="Camber" width="1080" height="1350"></div>
     <div class="logo-sub">Gestão Interna</div>
   </div>
   <nav class="sidebar-nav">
