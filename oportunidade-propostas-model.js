@@ -1,6 +1,9 @@
 (function(root){
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),idEqual=(a,b)=>String(a)===String(b);
+function serviceKey(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase();}
+function eligible(f,service){if(!f||f.ativo===false||serviceKey(f.status)==='inativo'||!serviceKey(service))return false;const cats=Array.isArray(f.categorias)&&f.categorias.length?f.categorias:[f.categoria];return cats.some(c=>serviceKey(c)===serviceKey(service));}
+function dates(data){for(const key of ['deliveryDate','assemblyStart','assemblyEnd']){const v=data[key];if(v&&(!/^\d{4}-\d{2}-\d{2}$/.test(v)||!Number.isFinite(Date.parse(v+'T12:00:00Z'))||new Date(v+'T12:00:00Z').toISOString().slice(0,10)!==v))throw Error('Confira as datas previstas.');}if(data.assemblyStart&&data.assemblyEnd&&data.assemblyEnd<data.assemblyStart)throw Error('O fim da montagem não pode ser anterior ao início.');return data;}
 function normalize(input){const o=copy(input);if(!Array.isArray(o.proposals)){o.proposals=[];if(o.forn&&o.forn.trim()&&o.forn!=='a definir'){const id='legacy-'+o.id;o.proposals.push({id,supplierId:null,name:o.forn,value:Number(o.val)||0,rt:Number(o.rt)||0,rtTipo:o.rtTipo||'pct',days:null,payment:o.payment||'',scope:o.obs||'',status:'Proposta recebida'});o.favoriteProposalId=id;if(o.et==='win')o.selectedProposalId=id;}}return o;}
 function reference(o){return (o.proposals||[]).find(p=>idEqual(p.id,o.selectedProposalId||o.favoriteProposalId))||null;}
 function project(o){const p=reference(o);if(p){o.forn=p.name;o.val=p.value;o.rt=p.rt;o.rtTipo=p.rtTipo;}else if(!o.proposals.length){o.forn=o.forn||'a definir';o.val=Number(o.val)||0;o.rt=Number(o.rt)||0;o.rtTipo=o.rtTipo||'pct';}return o;}
@@ -10,9 +13,9 @@ function apply(input,action,payload){const o=normalize(input);let p;
  if(action==='proposal'){if(o.selectedProposalId)throw Error('Reabra a comparação antes de alterar propostas.');p=validate(copy(payload));if(o.proposals.some(x=>!idEqual(x.id,p.id)&&((p.supplierId&&idEqual(x.supplierId,p.supplierId))||x.name.trim().toLowerCase()===p.name.trim().toLowerCase())))throw Error('Este fornecedor já está nesta oportunidade. Edite a proposta existente.');const i=o.proposals.findIndex(x=>idEqual(x.id,p.id));if(i<0)o.proposals.push(p);else o.proposals[i]=p;if(!o.favoriteProposalId)o.favoriteProposalId=p.id;
  }else if(action==='favorite'||action==='choose'){if(o.selectedProposalId)throw Error('Reabra a comparação antes de mudar o fornecedor.');p=o.proposals.find(x=>idEqual(x.id,payload.id));if(!p)throw Error('Proposta não encontrada.');if(action==='choose'){if(p.value<=0)throw Error('Informe o valor do contrato antes de escolher.');o.selectedProposalId=p.id;o.et='win';o.prob=100;}o.favoriteProposalId=p.id;
  }else if(action==='reopen'){o.selectedProposalId=null;o.et='negoc';o.prob=50;
- }else if(action==='metadata'){if(!payload.serv?.trim())throw Error('Informe o serviço.');o.serv=payload.serv.trim();o.titulo=payload.titulo.trim();o.resp=payload.resp;o.prazo=payload.prazo;o.obs=payload.obs;
+ }else if(action==='metadata'){if(!payload.serv?.trim())throw Error('Informe o serviço.');o.serv=payload.serv.trim();o.titulo=payload.titulo.trim();o.resp=payload.resp;o.prazo=payload.prazo;o.obs=payload.obs;dates(payload);for(const key of ['deliveryDate','assemblyStart','assemblyEnd'])o[key]=payload[key]||'';
  }else throw Error('Ação inválida.');return project(o);
 }
 function analyze(list){const prices=list.filter(p=>Number.isFinite(p.value)&&p.value>0),deadlines=list.filter(p=>Number.isInteger(p.days)&&p.days>0);const minPrice=prices.length?Math.min(...prices.map(p=>p.value)):null,minDays=deadlines.length?Math.min(...deadlines.map(p=>p.days)):null;return {minPrice,minDays,cheap:prices.filter(p=>p.value===minPrice),fast:deadlines.filter(p=>p.days===minDays),missingPrice:list.filter(p=>!(p.value>0)),missingDays:list.filter(p=>!(p.days>0))};}
-const api={normalize,reference,project,commission,validate,apply,analyze};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.CamberProposals=api;
+const api={eligible,dates,normalize,reference,project,commission,validate,apply,analyze};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.CamberProposals=api;
 })(typeof window!=='undefined'?window:globalThis);

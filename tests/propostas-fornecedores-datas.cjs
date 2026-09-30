@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),M=require('../oportunidade-propostas-model.js');
+assert(M.eligible({categorias:['Marcenaria','Vidraçaria'],status:'Ativo'},'VIDRACARIA'));
+assert(!M.eligible({categorias:['Marcenaria']},'Vidraçaria'));
+assert(!M.eligible({categoria:'Vidraçaria',status:'Inativo'},'Vidraçaria'));
+assert(!M.eligible({nome:'Vidraçaria A'},'Vidraçaria'));
+assert(!M.eligible({categoria:'Vidraçaria especial'},'Vidraçaria'));
+assert(M.eligible({categoria:' Vidraçaria '},'Vidraçaria'));
+assert.throws(()=>M.dates({assemblyStart:'2026-10-20',assemblyEnd:'2026-10-19'}),/anterior/);
+assert.throws(()=>M.dates({deliveryDate:'2026-02-30'}),/datas/);
+const o=M.apply({id:1,proposals:[]},'metadata',{serv:'Vidraçaria',titulo:'',resp:'Rafael',prazo:'',obs:'',deliveryDate:'2026-10-19',assemblyStart:'2026-10-20',assemblyEnd:'2026-10-21'});
+assert.equal(o.deliveryDate,'2026-10-19');assert.equal(o.assemblyEnd,'2026-10-21');
+console.log('PASS: filtro por serviço, categoria antiga, inativos, ausência de serviço e datas.');
