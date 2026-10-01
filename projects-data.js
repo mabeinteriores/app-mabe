@@ -72,6 +72,10 @@
   // RT de uma oportunidade, em reais. rtTipo: 'pct' (% do valor) ou 'brl' (valor fixo em R$).
   function rtOf(o){
     if (!o) return 0;
+    var p=(o.proposals||[]).find(function(p){return String(p.id)===String(o.selectedProposalId||o.favoriteProposalId);});
+    if(p&&p.remuneration){var m=p.remuneration,r=p.quoteResponse||{},cost=Number(r.total===undefined?p.value:r.total)||0,base=m.rtBase==='custom'?Number(m.customBase):m.rtBase==='products'?Math.max(0,Number(r.subtotal||0)-Number(r.discount||0)):cost;
+      var rt=m.mode==='markup'?0:m.rtType==='brl'?Number(m.rt):Math.round(base*Number(m.rt)/100*100)/100,markup=m.mode==='rt'?0:m.markupType==='pct'?Math.round(cost*Number(m.markup)/100*100)/100:Number(m.markup);return Math.round((rt+markup)*100)/100;}
+
     return o.rtTipo === 'brl' ? (Number(o.rt) || 0) : (o.val * (Number(o.rt) || 0) / 100);
   }
 

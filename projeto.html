@@ -246,8 +246,8 @@
   </div>
 </div>
 
-<script src="projects-data.js?v=20260918-concurrency"></script>
-<script src="oportunidade-propostas-model.js?v=remove1"></script>
+<script src="projects-data.js?v=remuneracao1"></script>
+<script src="oportunidade-propostas-model.js?v=remuneracao1"></script>
 <script src="ct.js?v=202609130108"></script>
 <script src="shell.js?v=central2"></script>
 <script>
@@ -312,7 +312,7 @@
   function parseMoney(s){ return parseFloat(String(s==null?'':s).replace(/\./g,'').replace(',','.')) || 0; }
   function maskVal(el){ var d = (el.value||'').replace(/[^\d]/g,''); el.value = d ? Number(d).toLocaleString('pt-BR') : ''; }
   function rtv(o){ return CamberDB.rtOf(o); }                 // em reais (entende % ou R$)
-  function rtLabel(o){ return o.rtTipo==='brl' ? ('R$ '+Number(o.rt||0).toLocaleString('pt-BR')) : ((o.rt||0)+'%'); }
+  function rtLabel(o){ var p=(o.proposals||[]).find(function(p){return String(p.id)===String(o.selectedProposalId||o.favoriteProposalId);});if(p&&p.remuneration)return {rt:'RT',markup:'Acréscimo',both:'RT + Acréscimo'}[p.remuneration.mode];return o.rtTipo==='brl' ? ('R$ '+Number(o.rt||0).toLocaleString('pt-BR')) : ((o.rt||0)+'%'); }
   function rtTxt(o){ var v = rtv(o); return 'RT ' + brl(v); }
   function esc(s){ return String(s||'').replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];}); }
   function meuNome(){
@@ -928,11 +928,13 @@
 <script src="responsaveis-obra.js?v=1"></script>
 <script src="projeto-areas.js?v=13"></script>
 <link rel="stylesheet" href="cotacoes.css?v=continue1">
+<script src="remuneracao-model.js?v=remuneracao1"></script>
 <script src="cotacoes-model.js?v=central2"></script>
-<script src="cotacoes-shared.js?v=uuid1"></script><script src="cotacoes-layout.js?v=1"></script>
+<script src="cotacoes-shared.js?v=uuid1"></script><script src="cotacoes-layout.js?v=remuneracao1"></script>
 <script src="cotacoes-office.js?v=uuid1"></script>
-<script src="cotacoes-templates.js?v=templates1"></script><script src="cotacoes-wizard.js?v=attachments1"></script>
-<script src="oportunidade-propostas.js?v=compareondemand1"></script>
+<script src="cotacoes-templates.js?v=templates1"></script><script src="remuneracao-ui.js?v=remuneracao1"></script>
+<script src="cotacoes-wizard.js?v=attachments1"></script>
+<script src="oportunidade-propostas.js?v=remuneracao1"></script>
 <link rel="stylesheet" href="cotacoes-kanban.css?v=flow1">
 <script src="cotacoes-kanban.js?v=flow1"></script>
 <script src="cotacoes-opportunity.js?v=attachments1"></script>

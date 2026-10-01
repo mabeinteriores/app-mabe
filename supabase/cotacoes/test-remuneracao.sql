@@ -1,0 +1,24 @@
+do $$ declare a uuid;v jsonb;res jsonb;keyname text:='mabe-opps-v3-qa-remuneracao-20261001';spec jsonb;request jsonb;before_response jsonb;
+begin
+select id into a from public.profiles where ativo and aprovado and papel='admin' limit 1;
+if a is null then raise exception 'Admin necessário para fixture';end if;
+before_response='{"total":10000,"subtotal":9500,"discount":500,"freight":800,"assembly":200}';
+insert into public.kv_store(workspace,key,value,updated_by) values('mabe',keyname,jsonb_build_array(jsonb_build_object('id','qa-o','favoriteProposalId','qa-p','supplierMutation','qa-v1','proposals',jsonb_build_array(jsonb_build_object('id','qa-p','name','Fornecedor fictício QA','value',10000,'rt',10,'rtTipo','pct','quoteResponse',before_response)))),a);
+v='{"mode":"both","rt":10,"rtType":"pct","rtBase":"total","customBase":0,"markup":2000,"markupType":"brl","payer":"office","rtReceived":500,"rtDate":"2026-10-01","markupReceived":1000,"markupDate":"2026-10-01"}';
+request=jsonb_build_object('projectId','qa-remuneracao-20261001','opportunityId','qa-o','proposalId','qa-p','expectedMutation','qa-v1','remuneration',v);
+res=public.camber_proposal_remuneration('remuneration_save',request,a);
+res=public.camber_proposal_remuneration('remuneration_read',request,a);
+if res#>'{proposal,quoteResponse}'<>before_response then raise exception 'Alterou resposta fornecedor';end if;
+res=public.camber_remuneration_values(res->'proposal');
+if res->>'client'<>'12000.00' and (res->>'client')::numeric<>12000 then raise exception 'Preço incorreto %',res;end if;
+if (res->>'earned')::numeric<>3000 or (res->>'received')::numeric<>1500 or (res->>'pending')::numeric<>1500 then raise exception 'Remuneração incorreta %',res;end if;
+if (public.camber_remuneration_values(jsonb_build_object('value',10000,'quoteResponse',before_response,'remuneration',v||'{"rtBase":"products"}'))->>'rt')::numeric<>900 then raise exception 'Base produtos incorreta';end if;
+if (public.camber_remuneration_values(jsonb_build_object('value',10000,'remuneration',v||'{"mode":"markup","markupType":"pct","markup":20}'))->>'earned')::numeric<>2000 then raise exception 'Acréscimo percentual incorreto';end if;
+begin perform public.camber_proposal_remuneration('remuneration_save',request,a);raise exception 'stale accepted';exception when raise_exception then if sqlerrm='stale accepted' then raise;end if;end;
+begin perform public.camber_proposal_remuneration('remuneration_read',request,null);raise exception 'anonymous accepted';exception when insufficient_privilege then null;end;
+request=jsonb_set(request,'{expectedMutation}',public.camber_proposal_remuneration('remuneration_read',request,a)->'mutation');
+request=jsonb_set(request,'{remuneration,rt}',to_jsonb(-1));
+begin perform public.camber_proposal_remuneration('remuneration_save',request,a);raise exception 'negative accepted';exception when raise_exception then if sqlerrm='negative accepted' then raise;end if;end;
+if has_function_privilege('anon','public.camber_proposal_remuneration(text,jsonb,uuid)','execute') or has_function_privilege('authenticated','public.camber_proposal_remuneration(text,jsonb,uuid)','execute') then raise exception 'RPC exposed';end if;
+end $$;
+select 'PASS: remuneração 10000/12000/3000, base produtos, acréscimo percentual, recebimentos, histórico, resposta preservada, concorrência, acesso e negativos. Fixture rollback.' as result;
