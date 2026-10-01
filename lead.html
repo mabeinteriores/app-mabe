@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=cotacoes3"></script>
+<script src="camber-brand.js?v=brand1"></script>
+<script src="cloud.js?v=brand1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lead · Gestão Camber</title>
@@ -11,10 +12,7 @@
 <link rel="stylesheet" href="painel.css?v=20260912215700">
 <link rel="stylesheet" href="app.css?v=20260912215700">
 <style>
-  /* aba Lead do app: largura ampla; o shell (cloud.js?v=202609130108/shell.js?v=202609130108) cuida do resto do layout */
-  #app.camber .wrap{ max-width:min(1760px, 95vw); margin:0 auto; }
-
-  #app[data-page="lead"] .lhead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  /* aba Lead do app: largura ampla; o shell (cloud.js?v=brand1"lead"] .lhead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   #app[data-page="lead"] .lhead .crumb{ font-size:12px; color:var(--ink-3); margin-bottom:2px; }
   #app[data-page="lead"] .lhead h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:-.01em; }
   #app[data-page="lead"] .lstats{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:16px 0 6px; }
@@ -395,11 +393,9 @@
 </div>
 
 <script src="projects-data.js?v=remuneracao1"></script>
-<script src="shell.js?v=central2"></script>
+<script src="shell.js?v=brand1"></script>
 <script>
-// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=202609130108/shell.js?v=202609130108) já fornece CamberCloud, nav, perms e auth.
-(function(){ return;
-  var SUPABASE_URL = 'https://vlvadvlfsbgwcldaxhah.supabase.co';
+// bootstrap standalone DESATIVADO — no app, o shell (cloud.js?v=brand1'https://vlvadvlfsbgwcldaxhah.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
   var APP = location.origin + '/hifi/';
   var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ persistSession:true, autoRefreshToken:true } });
@@ -435,8 +431,8 @@
     $('appTop').innerHTML =
       '<div class="brandwrap" style="position:relative">' +
         '<a class="brand" href="'+APP+'painel.html" style="text-decoration:none;color:inherit">' +
-          '<div class="mark">C</div>' +
-          '<div><div class="bn">Gestão Camber</div><div class="bs">'+(nome||'Comercial')+'</div></div>' +
+          '<img class="camber-logo" src="camber-logo.jpeg?v=brand1" alt="Camber" width="168" height="46">' +
+          '' +
         '</a>' +
       '</div>' +
       '<nav class="nav">' + nav + '</nav>' +
@@ -1203,7 +1199,7 @@
 
     document.getElementById('leadPrint').innerHTML =
       '<div class="pdoc">'+
-        '<div class="phead"><div class="pbrand">camber</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
+        '<div class="phead"><div class="pbrand"><img class="camber-logo" src="camber-logo.jpeg?v=brand1" alt="Camber" width="168" height="46"></div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
         '<h1>'+esc(L.nome||'Sem nome')+'</h1>'+
         '<div class="pcontact">'+esc(L.telefone||'')+(email?' &nbsp;·&nbsp; '+esc(email):'')+(origem?' &nbsp;·&nbsp; '+esc(origem):'')+'</div>'+
         '<div class="pchips"><span>'+r.tempLabel+'</span><span>'+esc(r.inv.label)+'</span>'+(r.inv.opp?'<span class="opp">Oportunidade &gt; R$ 300 mil</span>':'')+'</div>'+

@@ -120,13 +120,13 @@
       '.total{margin-top:26px;text-align:right;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#6B6560}.total b{display:block;font-size:28px;color:#B8936A;letter-spacing:0;text-transform:none;margin-top:4px}'+
       '.ft{margin-top:46px;text-align:center;color:#9A8467;font-size:11px;letter-spacing:3px}'+
       '@media print{body{padding:24px}}</style></head><body>'+
-      '<h1>CAMBER</h1><div class="sub">Arquitetura &amp; Design</div><div class="hr"></div>'+
+      CamberBrand.html()+'<div class="sub">Arquitetura &amp; Design</div><div class="hr"></div>'+
       '<div class="meta"><div><b>Cliente:</b> '+(p.cliente||'')+'</div><div><b>Segmento:</b> '+seg+'</div><div><b>Data:</b> '+(p.criado||'')+'</div></div>'+
       imovMeta+
       '<div class="box"><div class="k">Total de cômodos</div><div class="v">'+totalQtd+'</div></div>'+
       corpo+
       '<div class="total">Investimento total<b>'+totalTxt+'</b></div>'+
-      '<div class="ft">CAMBER &middot; ARQUITETURA &amp; DESIGN</div>'+
+      '<div class="ft">'+CamberBrand.html()+'</div>'+
       '<scr'+'ipt>window.onload=function(){window.print();}<\/scr'+'ipt></body></html>');
     w.document.close();
   };

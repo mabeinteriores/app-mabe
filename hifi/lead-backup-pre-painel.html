@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script src="../camber-brand.js?v=brand1"></script>
 <script src="cloud.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1003,7 +1004,7 @@
 
     document.getElementById('leadPrint').innerHTML =
       '<div class="pdoc">'+
-        '<div class="phead"><div class="pbrand">mabē</div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
+        '<div class="phead"><div class="pbrand"><img class="camber-logo" src="../camber-logo.jpeg?v=brand1" alt="Camber" width="168" height="46"></div><div class="pmeta">Lead recebido em '+quando+'</div></div>'+
         '<h1>'+esc(L.nome||'Sem nome')+'</h1>'+
         '<div class="pcontact">'+esc(L.telefone||'')+(email?' &nbsp;·&nbsp; '+esc(email):'')+(origem?' &nbsp;·&nbsp; '+esc(origem):'')+'</div>'+
         '<div class="pchips"><span>'+r.tempLabel+'</span><span>'+esc(r.inv.label)+'</span>'+(r.inv.opp?'<span class="opp">Oportunidade &gt; R$ 300 mil</span>':'')+'</div>'+

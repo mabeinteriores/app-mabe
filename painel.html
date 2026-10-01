@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="cloud.js?v=cotacoes3"></script>
+<script src="camber-brand.js?v=brand1"></script>
+<script src="cloud.js?v=brand1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel · Gestão Camber</title>
@@ -18,7 +19,7 @@
     <div class="wrap" style="display:flex;flex-direction:column;gap:18px;">
 
       <header class="dashboard-header">
-        <div class="dashboard-wordmark">CAMBER</div>
+        <div class="dashboard-wordmark"><img class="camber-logo" src="camber-logo.jpeg?v=brand1" alt="Camber" width="168" height="46"></div>
         <div class="dashboard-title"><div class="crumb">Visão geral</div><h1>Painel</h1></div>
         <div class="dashboard-scope"><h3 id="scopeTitle">Projetos em aberto</h3><span class="count" id="openCount">—</span></div>
         <div class="dashboard-filters"><select id="scopeSel" onchange="setScope(this.value)" class="sel" style="width:auto;min-width:200px;font-size:13px;padding:7px 30px 7px 11px">
@@ -128,7 +129,7 @@
   </aside>
 </div>
 <script src="projects-data.js?v=remuneracao1"></script>
-<script src="shell.js?v=central2"></script>
+<script src="shell.js?v=brand1"></script>
 <script>
   function fmtMil(v){
     return 'R$ ' + Math.round(v||0).toLocaleString('pt-BR');
