@@ -77,3 +77,4 @@
   @media(max-width:700px) { #app.has-sidebar{padding-left:0;padding-top:58px} #app .camber-sidebar{width:248px;padding-top:72px} #app .camber-sidebar .search,#app .camber-sidebar>.btn.primary{display:none} #app .camber-sidebar .nav{min-height:490px} #app .camber-sidebar .brandmenu{top:110px} #app .sidebar-toggle{background:#222b30;color:#fff;border-color:#222b30} #app.has-sidebar>.body{padding:15px} #app .phead .meta-row{grid-template-columns:repeat(2,minmax(0,1fr))} #app .phead .statline .sv{font-size:17px} }
 }
 @media screen and (min-width:881px){#app #vFunil.kanban{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}}
+@media screen{#app #vFunil .opp .om{gap:7px;flex-wrap:wrap}#app #vFunil .opp .ov,#app #vFunil .opp .miniRT{white-space:nowrap}#app #vFunil .opp .miniRT{font-size:10px}}

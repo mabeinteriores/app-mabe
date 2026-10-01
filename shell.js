@@ -48,7 +48,7 @@
   top.className = 'top camber-sidebar';top.id='camberSidebar';app.classList.add('has-sidebar');
   var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=3';document.head.appendChild(sideCss);
   var layoutCss=document.createElement('link');layoutCss.rel='stylesheet';layoutCss.href='layout-telas.css?v=1';document.head.appendChild(layoutCss);
-  var studioCss=document.createElement('link');studioCss.rel='stylesheet';studioCss.href='camber-layout.css?v=2';document.head.appendChild(studioCss);
+  var studioCss=document.createElement('link');studioCss.rel='stylesheet';studioCss.href='camber-layout.css?v=3';document.head.appendChild(studioCss);
   document.querySelectorAll('#app .body table').forEach(function(table){if(table.parentElement.classList.contains('table-viewport'))return;var frame=document.createElement('div');frame.className='table-viewport';frame.tabIndex=0;frame.setAttribute('role','region');frame.setAttribute('aria-label','Tabela com rolagem horizontal');table.before(frame);frame.appendChild(table);});
   top.innerHTML =
     '<div class="brandwrap">' +
