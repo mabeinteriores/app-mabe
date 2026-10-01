@@ -68,3 +68,9 @@ Para repetir testes HTTP, crie uma fixture descartável no banco e forneça seu 
 ## Próximas extensões previstas no pedido
 
 Escolha de combinação por item, aprovações/pagamentos de compras, logística completa e painéis históricos têm estrutura preparada; sua interface completa não faz parte desta etapa, conforme as exceções do escopo. Notificações automáticas seguem desativadas por orientação do usuário.
+
+## Atualização visual de 01/10/2026
+
+Layout adaptado à referência enviada: menu escuro com nomes, cards compactos, criação em quatro etapas com fornecedores selecionados à direita, comparativo com resumo lateral e portal com tabela de itens no computador e blocos no celular. Arquivos de apresentação: camber-layout.css, cotacoes-layout.css e cotacoes-layout.js. Mantém os mesmos contratos de gravação e autenticação.
+
+Verificações desta atualização: navegação das abas dentro da oportunidade, comparação com participante aguardando, seleção e remoção de fornecedores, avanço do formulário e total de R$ 5.900,00, largura móvel sem rolagem horizontal da página, regressões existentes e sintaxe das páginas.

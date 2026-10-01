@@ -249,7 +249,7 @@
 <script src="projects-data.js?v=20260918-concurrency"></script>
 <script src="oportunidade-propostas-model.js?v=2"></script>
 <script src="ct.js?v=202609130108"></script>
-<script src="shell.js?v=cotacoes3"></script>
+<script src="shell.js?v=layout20261001"></script>
 <script>
   var STAGES = [
     { k:'prospec', l:'Prospecção' },
@@ -296,7 +296,7 @@
       document.getElementById('mvTipo').textContent = PROJ.tipo || '—';
       document.getElementById('mvValor').textContent = PROJ.valor ? brl(PROJ.valor) : '—';
       var bn = document.getElementById('btnNovaOpp');
-      if (bn) bn.href = 'oportunidade.html?proj=' + PROJ.id;
+      if (bn) { bn.href = 'oportunidade.html?proj=' + PROJ.id; bn.style.display='inline-flex'; bn.textContent='+ Nova oportunidade'; document.querySelector('.page-h .btnbar').append(bn); }
       var bc = document.getElementById('btnCustos');
       if (bc) bc.onclick = function(){ fecharMais(); CT.open(PROJ.id, function(){ if(typeof render==='function') render(); }); };
     }
@@ -938,10 +938,10 @@
 <script src="projeto-areas.js?v=13"></script>
 <link rel="stylesheet" href="cotacoes.css?v=3">
 <script src="cotacoes-model.js?v=3"></script>
-<script src="cotacoes-shared.js?v=3"></script>
+<script src="cotacoes-shared.js?v=3"></script><script src="cotacoes-layout.js?v=1"></script>
 <script src="cotacoes-office.js?v=3"></script>
-<script src="cotacoes-wizard.js?v=3"></script>
-<script src="oportunidade-propostas.js?v=4"></script>
-<script src="cotacoes-opportunity.js?v=3"></script>
+<script src="cotacoes-wizard.js?v=layout1"></script>
+<script src="oportunidade-propostas.js?v=layout1"></script>
+<script src="cotacoes-opportunity.js?v=layout1"></script>
 </body>
 </html>

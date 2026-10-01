@@ -38,7 +38,8 @@
   var sun = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var moon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 
-  var icons=['▦','◇','▤','▧','▱','♙','▣','↗','◎','♙','⚙'];
+  var iconPaths=['<path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/>','<path d="M5 3h14v18H5zM8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18h2M14 18h2"/>','<path d="M4 5h6l2 2h8v14H4zM8 3h12v4M8 11h8M8 15h5"/>','<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h6M9 16h6"/>','<path d="m3 4 2 1 2 12h12l2-9H6M8 21h1M17 21h1"/>','<circle cx="9" cy="7" r="3"/><path d="M3 20v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/>','<path d="m3 7 9-4 9 4v13H3zM8 20v-7h8v7M7 8h1M12 8h1M17 8h1"/>','<path d="M4 17h5l9-11M12 6h6v6M4 7h4M4 11h4M4 21h16"/>','<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>','<circle cx="9" cy="7" r="3"/><path d="M3 20v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/>','<circle cx="12" cy="12" r="3"/><path d="m9 3-1 3-3 1v3l-2 2 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-2V7l-3-1-1-3z"/>'];
+  var icons=iconPaths.map(function(path){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>'});
   var nav = pages.map(function (p,i) {
     return '<a class="' + (p.id === current ? 'on' : '') + '" href="' + p.href + '" aria-label="'+p.t+'"'+(p.id===current?' aria-current="page"':'')+'><span class="nav-icon" aria-hidden="true">'+icons[i]+'</span><span class="nav-label">' + p.t + '</span></a>';
   }).join('');
@@ -47,12 +48,13 @@
   top.className = 'top camber-sidebar';top.id='camberSidebar';app.classList.add('has-sidebar');
   var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=3';document.head.appendChild(sideCss);
   var layoutCss=document.createElement('link');layoutCss.rel='stylesheet';layoutCss.href='layout-telas.css?v=1';document.head.appendChild(layoutCss);
+  var studioCss=document.createElement('link');studioCss.rel='stylesheet';studioCss.href='camber-layout.css?v=1';document.head.appendChild(studioCss);
   document.querySelectorAll('#app .body table').forEach(function(table){if(table.parentElement.classList.contains('table-viewport'))return;var frame=document.createElement('div');frame.className='table-viewport';frame.tabIndex=0;frame.setAttribute('role','region');frame.setAttribute('aria-label','Tabela com rolagem horizontal');table.before(frame);frame.appendChild(table);});
   top.innerHTML =
     '<div class="brandwrap">' +
       '<a class="brand" href="painel.html" style="text-decoration:none;color:inherit">' +
         '<div class="mark">C</div>' +
-        '<div><div class="bn">Gestão Camber</div><div class="bs">Oportunidades</div></div>' +
+        '<div><div class="bn">CAMBER</div><div class="bs">Oportunidades</div></div>' +
       '</a>' +
       '<div class="brandmenu"><button type="button" class="brandmenu-item" id="camberSairBtn">↪&nbsp;Sair do app</button></div>' +
     '</div>' +

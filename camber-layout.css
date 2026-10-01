@@ -1,0 +1,78 @@
+/* Camber: interface baseada na referência aprovada, sem alterar dados ou fluxos. */
+@media screen {
+  #app[data-theme="light"] {
+    --bg:#f5f3ef; --surface:#fffefd; --surface-2:#f8f6f2;
+    --ink:#20272b; --ink-2:#555b5d; --ink-3:#777c7b;
+    --hair:#e7e4dd; --hair-2:#dcd9d2; --accent:#263034;
+    --accent-2:#111b1f; --accent-soft:#e9edea;
+    --win:#526e4b; --win-soft:#eaf3df; --shadow-sm:none;
+    --shadow-md:0 6px 20px #2630340c; --r:9px;
+  }
+  #app.has-sidebar { padding-left:188px; }
+  #app .camber-sidebar {
+    width:188px; padding:24px 12px 16px; gap:25px;
+    color:#f3f4f3; background:linear-gradient(150deg,#222b30,#192126);
+    border:0; overflow-y:auto; overflow-x:hidden;
+  }
+  #app .camber-sidebar .brand { width:auto; padding:0 10px; }
+  #app .camber-sidebar .brand .mark,#app .camber-sidebar .brand .bs { display:none; }
+  #app .camber-sidebar .brand .bn { display:block; font:500 20px/1.5 Arial,sans-serif; letter-spacing:4px; color:white; }
+  #app .camber-sidebar .nav { gap:5px; flex:1; }
+  #app .camber-sidebar .nav a { justify-content:flex-start; min-height:41px; gap:12px; padding:10px; color:#e5e9e9; border-radius:6px; font-size:13px; }
+  #app .camber-sidebar .nav a:hover { background:#ffffff0d; transform:none; }
+  #app .camber-sidebar .nav a.on { color:white; background:#ffffff13; box-shadow:inset 0 0 0 1px #ffffff04; }
+  #app .camber-sidebar .nav-icon { width:19px; height:19px; display:flex; align-items:center; justify-content:center; }
+  #app .camber-sidebar .nav-icon svg { width:18px; height:18px; }
+  #app .camber-sidebar .nav-label { position:static; opacity:1; visibility:visible; transform:none!important; padding:0; border:0; border-radius:0; background:none; color:inherit; box-shadow:none; font-size:13px; white-space:normal; pointer-events:auto; }
+  #app .camber-sidebar .nav a[aria-label="Configuração"] { margin-top:auto; }
+  #app .camber-sidebar .sp { display:none; }
+  #app .camber-sidebar .iconbtn { background:#ffffff08; border-color:#ffffff20; color:#e5e9e9; margin-left:8px; }
+  #app .camber-sidebar .brandmenu { position:fixed; top:63px; left:14px; }
+  #app.has-sidebar>.body { padding:22px 25px 30px; }
+  #app.has-sidebar .page-h h1 { font-size:23px; font-weight:650; letter-spacing:-.5px; }
+  #app .crumb { font-size:12px; line-height:1.5; margin-bottom:6px; color:var(--ink-3); }
+  #app .btn,#app button:not(.opp-move):not(.iconbtn):not(.kadd) { border-radius:6px; }
+  #app .phead { padding:18px 20px; box-shadow:none; }
+  #app .phead .meta-row { display:grid; grid-template-columns:1.8fr 1fr 1fr 1.2fr 1fr 1fr; gap:18px; }
+  #app .phead .meta-row>div { min-width:0; }
+  #app .phead .mlab { font-size:9px; letter-spacing:1px; }
+  #app .phead .mval { font-size:12px; line-height:1.5; overflow-wrap:anywhere; }
+  #app .phead hr { margin:18px 0; }
+  #app .phead .statline .sv { font-size:20px; }
+  #app .phead .statline .sl { font-size:11px; line-height:1.5; }
+  #app .kanban { gap:13px; }
+  #app #vFunil .kcol { min-width:0; background:#faf8f4; border:1px solid var(--hair); border-radius:9px; padding:12px; }
+  #app #vFunil .kh { margin-bottom:15px; }
+  #app #vFunil .kh .kt { font-size:12px; }
+  #app #vFunil .kh .dot { display:none; }
+  #app #vFunil .kc { border:1px solid var(--hair); background:#fff; border-radius:4px; padding:2px 5px; color:#323a3d; }
+  #app #vFunil .opp { padding:30px 12px 12px; border-radius:8px; box-shadow:0 1px 3px #27303507; }
+  #app #vFunil .opp .ot { font-size:14px; margin-bottom:5px; }
+  #app #vFunil .opp .of { font-size:11px; line-height:1.5; }
+  #app #vFunil .opp .ov { font-size:15px; }
+  #app #vFunil .opp.has-quote-response { background:#edf5df!important; border-color:#b6d398!important; }
+  #app .cq-opp-summary { padding:7px 0 0; background:transparent; border-radius:0; }
+  #app .cq-opp-summary>a { display:block; font-size:10px; color:#536e4c; text-decoration:none; }
+  #app .cq-opp-summary small { font-size:11px; color:#697365; line-height:1.5; }
+  #app .cq-initials span { width:27px; height:27px; background:#d9d8d2; color:#333c3d; border:1px solid #fff; }
+  #app .cq-initials span:nth-child(2) { background:#dfcfc8; } #app .cq-initials span:nth-child(3) { background:#c6d6ca; }
+  #supplierPanel h1 { font-size:27px; margin:6px 0; }
+  #supplierPanel h2 { font-size:17px; }
+  #supplierPanel .sp-header { margin:18px 0; }
+  #supplierPanel .sp-header>div:last-child { display:flex; gap:6px; flex-wrap:wrap; }
+  #supplierPanel .sp-header button { font-size:12px; padding:8px 10px; }
+  #supplierPanel .sp-planned { font-size:12px; color:var(--ink-3); }
+  #supplierPanel .sp-card,#supplierPanel .sp-panel,#supplierPanel .sp-stat { padding:18px; border-radius:9px; border-width:1px; }
+  #supplierPanel .sp-card.favorite { border-color:#8ba17d; }
+  #supplierPanel button.primary { background:#263034; border-color:#263034; }
+  #supplierPanel .sp-stat strong { font-size:23px; }
+  #supplierPanel .sp-price { font-size:24px; margin:16px 0 5px; }
+  #supplierPanel .cq-tabs button { background:none; border:0; border-bottom:2px solid transparent; border-radius:0!important; padding:13px 10px; font-size:12px; }
+  #supplierPanel .cq-tabs button.active { border-bottom-color:#263034; font-weight:700; }
+  #supplierPanel .sp-tablewrap th,#supplierPanel .sp-tablewrap td { border:1px solid var(--hair); font-size:12px; padding:11px; }
+  #supplierPanel .sp-tablewrap th { background:var(--surface-2); color:var(--ink); font-weight:600; }
+  @media(min-width:1450px) { #app #vFunil.kanban { grid-template-columns:repeat(5,minmax(0,1fr)); } }
+  @media(max-width:1200px) { #app .phead .meta-row { grid-template-columns:repeat(3,minmax(0,1fr)); } #app .statline { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; } #app .statline>div:nth-child(4) { border:0; padding-left:0; } }
+  @media(max-width:1000px) and (min-width:701px) { #app.has-sidebar{padding-left:166px} #app .camber-sidebar{width:166px;padding-left:8px;padding-right:8px} #app .camber-sidebar .brand .bn{font-size:18px} #app.has-sidebar>.body{padding:18px} }
+  @media(max-width:700px) { #app.has-sidebar{padding-left:0;padding-top:58px} #app .camber-sidebar{width:248px;padding-top:72px} #app .camber-sidebar .search,#app .camber-sidebar>.btn.primary{display:none} #app .camber-sidebar .nav{min-height:490px} #app .camber-sidebar .brandmenu{top:110px} #app .sidebar-toggle{background:#222b30;color:#fff;border-color:#222b30} #app.has-sidebar>.body{padding:15px} #app .phead .meta-row{grid-template-columns:repeat(2,minmax(0,1fr))} #app .phead .statline .sv{font-size:17px} }
+}
