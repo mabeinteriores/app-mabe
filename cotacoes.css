@@ -4,3 +4,4 @@
 @media(min-width:651px) and (max-width:1400px){.cq-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}.cq-office .cq-kpi{color:var(--ink,#262920)}.cq-office .cq-kpi small{color:var(--ink-2,#6b655b)}.cq-office>a,.cq-office .page-h a{color:#536a4a}.cq-kpi strong{font-size:clamp(19px,1.65vw,25px)}
 .cq-office button.cq-kpi:disabled{opacity:1}
 .cq-supplier-picker{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}.cq-supplier-picker aside{padding:12px;background:#eef1e8;border-radius:10px;position:sticky;top:0}.cq-supplier-picker aside h3{margin:0 0 8px}.cq-supplier-picker aside span{overflow-wrap:anywhere}@media(max-width:600px){.cq-supplier-picker{grid-template-columns:1fr}.cq-supplier-picker aside{position:static}}
+.cq-office .cq-kpi.active,.cq-office .cq-kpi.active small{color:#fff}
