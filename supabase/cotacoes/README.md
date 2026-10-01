@@ -30,6 +30,7 @@ Aplicar os scripts na ordem, preferencialmente numa transação única:
 2. `module-v2.sql`: cotações, participantes ligados à cotação, rascunhos com revisão, versões imutáveis, eventos e preparação da escolha por item.
 3. `central.sql`: numeração, projeção única de contadores, estados, estimativa, rodadas, seleção e pedidos de compra vinculados à versão escolhida.
 4. `central-page.sql`: leitura paginada, filtros, ordenação, facetas e indicadores, sempre sobre a projeção existente. Não cria tabelas ou índices.
+5. `kanban-participants.sql`: atualiza a projeção de participantes com resposta/pendência por fornecedor. Aplicar depois de `central.sql`; mantém a função exclusiva do servidor. Participantes retirados, recusados ou cancelados deixam a contagem atual, com histórico preservado.
 
 O CLI não estava instalado; os scripts SQL incrementais foram aplicados diretamente e são a fonte versionada desta entrega. Não foi criada uma sequência fictícia de migrations do CLI.
 
@@ -85,6 +86,18 @@ Para repetir testes HTTP, crie uma fixture descartável no banco e forneça seu 
 Escolha de combinação por item, aprovações/pagamentos de compras, logística completa e painéis históricos têm estrutura preparada; sua interface completa não faz parte desta etapa, conforme as exceções do escopo. Notificações automáticas seguem desativadas por orientação do usuário.
 
 ## Atualização visual de 01/10/2026
+
+### Criar cotação a partir do Kanban
+
+Em **Projeto → Oportunidades comerciais → Prospecção → +**, a sequência passa a ser **Oportunidade → Fornecedores → Pedido → Revisão**. O projeto fica fixo e o cliente é herdado dele. A seleção apresenta somente fornecedores ativos com o serviço cadastrado. Trocar o serviço limpa a seleção anterior; atualizar o cadastro retira fornecedores que deixaram de ser elegíveis.
+
+**Solicitar cotação** cria a oportunidade em Prospecção e uma única cotação com todos os participantes escolhidos, retornando ao Kanban com acesso aos links individuais. Pedido, itens, prazo e anexos continuam disponíveis. Não envia e-mail. A criação usa os mesmos identificadores ao repetir uma tentativa após falha, evitando duplicações. A criação de uma nova cotação para oportunidade existente mantém seu fluxo anterior.
+
+Os cartões mostram nomes, situação individual, número de respostas, pendências e barra de progresso por cotação. Até três nomes ficam visíveis inicialmente; os demais podem ser expandidos. Respostas de rodadas anteriores não contam como resposta da revisão atual. Os totais vêm da mesma projeção da central.
+
+Validação desta etapa: `tests/cotacoes-kanban.cjs`, regressões de modelo/clientes, testes visuais com três fornecedores e falha após salvar (uma cotação após duas tentativas), troca de serviço, fluxo anterior preservado, ausência de erros no console. `test-kanban-flow.sql` e `test-central.sql` passaram no banco em transações com rollback, cobrindo vínculo cliente/projeto, Prospecção, 3/2/1 participantes/respostas/pendências, repetição, retirada, histórico, negociação, seleção, compra e permissões. Testes PostgreSQL locais verificaram contagem durante nova rodada.
+
+O último pedido menciona uma nova imagem de referência que ainda não foi recebida. Esta etapa reorganiza o processo e os cartões sobre o layout existente; a correspondência visual à nova imagem permanece pendente.
 
 ### Impressão da comparação
 

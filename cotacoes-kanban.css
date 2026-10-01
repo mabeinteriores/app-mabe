@@ -1,0 +1,12 @@
+.cq-kanban-quote{background:color-mix(in srgb,var(--surface,#fffefd) 85%,transparent);border:1px solid var(--hair,#dedfd7);padding:10px;border-radius:8px;min-width:0}
+.cq-kanban-quote>a{display:block;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.cq-response-count{display:flex;gap:4px;flex-wrap:wrap;justify-content:space-between;margin-top:9px;font-size:10px;line-height:1.4}
+.cq-response-count>span{color:var(--ink-3,#72786c)}
+.cq-kanban-quote progress{display:block;width:100%;height:5px;margin:7px 0 10px;border:0;border-radius:6px;overflow:hidden;accent-color:#547348}
+.cq-kanban-quote progress::-webkit-progress-bar{background:#e6e8df}.cq-kanban-quote progress::-webkit-progress-value{background:#547348}
+.cq-participants{list-style:none;padding:0;margin:0}.cq-participants li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:6px;align-items:center;margin-top:8px;text-align:left}
+.cq-participant-avatar{display:grid;place-items:center;grid-row:span 2;width:22px;height:22px;border-radius:50%;background:#dddeda;color:#354033;font-size:8px;font-weight:700}
+.cq-participant-name{font-size:10px;line-height:1.35;overflow-wrap:anywhere;font-weight:500}.cq-participant-state{font-size:9px;color:var(--ink-3,#72786c)}.cq-participant-state.received{color:#41663c;font-weight:600}
+.cq-kanban-quote summary{margin-top:8px;font-size:10px;cursor:pointer;color:#4d6247}
+.cq-flow-success{padding:14px 16px;border:1px solid #b6c9a7;border-radius:9px;background:#edf4e6;color:#334f2d;font-size:13px;line-height:1.6}.cq-flow-success a{display:inline-block;margin-left:10px;color:inherit;font-weight:600}
+.cq-dialog .cq-supplier-picker{display:grid}
