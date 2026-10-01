@@ -19,5 +19,13 @@ const counts=q=>`${q.invited} convidados · ${q.received} propostas recebidas ·
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
 function eligible(f,service){return f.ativo!==false&&norm(f.status)!=='inativo'&&(Array.isArray(f.categorias)&&f.categorias.length?f.categorias:[f.categoria]).some(c=>norm(c)===norm(service));}
 function delta(first,last){return {amount:last-first,percent:first>0?(last-first)/first*100:null};}
-const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
+function currentResponse(r){return r.active!==false&&!!r.response&&Number(r.response.version||1)===Number(r.revision||1)&&!['DISQUALIFIED','DECLINED','DRAFT','EXPIRED'].includes(r.status);}
+function savings(value,reference){
+ if(value===null||value===undefined||value===''||reference===null||reference===undefined||reference==='')return null;
+ value=Number(value);reference=Number(reference);
+ if(!Number.isFinite(value)||!Number.isFinite(reference)||value<0||reference<value)return null;
+ const amount=Math.round((reference-value)*100)/100;
+ return {amount,percent:reference>0?amount/reference*100:null};
+}
+const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta,currentResponse,savings};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
 })(typeof window==='object'?window:globalThis);
