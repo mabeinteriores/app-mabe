@@ -6,6 +6,8 @@
     { id: 'painel',       t: 'Painel',       href: 'painel.html' },
     { id: 'precificacao', t: 'Precificação', href: 'precificacao.html' },
     { id: 'projetos',     t: 'Projetos',     href: 'projetos.html' },
+    { id: 'cotacoes',     t: 'Cotações',     href: 'cotacoes.html' },
+    { id: 'compras',      t: 'Compras',      href: 'compras.html' },
     { id: 'clientes',     t: 'Clientes',     href: 'clientes.html' },
     { id: 'fornecedores', t: 'Fornecedores', href: 'fornecedores.html' },
     { id: 'indicacoes',   t: 'Indicações',   href: 'indicacoes.html' },
@@ -36,14 +38,14 @@
   var sun = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
   var moon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 
-  var icons=['▦','◇','▤','♙','▣','↗','◎','♙','⚙'];
+  var icons=['▦','◇','▤','▧','▱','♙','▣','↗','◎','♙','⚙'];
   var nav = pages.map(function (p,i) {
     return '<a class="' + (p.id === current ? 'on' : '') + '" href="' + p.href + '" aria-label="'+p.t+'"'+(p.id===current?' aria-current="page"':'')+'><span class="nav-icon" aria-hidden="true">'+icons[i]+'</span><span class="nav-label">' + p.t + '</span></a>';
   }).join('');
 
   var top = document.createElement('div');
   top.className = 'top camber-sidebar';top.id='camberSidebar';app.classList.add('has-sidebar');
-  var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=2';document.head.appendChild(sideCss);
+  var sideCss=document.createElement('link');sideCss.rel='stylesheet';sideCss.href='menu-lateral.css?v=3';document.head.appendChild(sideCss);
   var layoutCss=document.createElement('link');layoutCss.rel='stylesheet';layoutCss.href='layout-telas.css?v=1';document.head.appendChild(layoutCss);
   document.querySelectorAll('#app .body table').forEach(function(table){if(table.parentElement.classList.contains('table-viewport'))return;var frame=document.createElement('div');frame.className='table-viewport';frame.tabIndex=0;frame.setAttribute('role','region');frame.setAttribute('aria-label','Tabela com rolagem horizontal');table.before(frame);frame.appendChild(table);});
   top.innerHTML =
@@ -62,6 +64,7 @@
     '<div class="av">MA</div>';
 
   app.insertBefore(top, app.firstChild);
+  var quotesBadge=document.createElement('script');quotesBadge.src='cotacoes-badge.js?v=3';document.head.appendChild(quotesBadge);
   var toggle=document.createElement('button');toggle.type='button';toggle.className='sidebar-toggle';toggle.textContent='☰ Menu';toggle.setAttribute('aria-controls','camberSidebar');toggle.setAttribute('aria-expanded','false');app.appendChild(toggle);
   function closeMenu(){top.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');}
   toggle.onclick=function(){var open=top.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));};

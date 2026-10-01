@@ -278,6 +278,7 @@
   var FILE_TAB = {
     'painel.html': 'painel', 'lead.html': 'lead', 'precificacao.html': 'precificacao',
     'projetos.html': 'projetos', 'projeto.html': 'projetos', 'oportunidade.html': 'projetos',
+    'cotacoes.html': 'projetos', 'compras.html': 'projetos',
     'clientes.html': 'clientes', 'cliente.html': 'clientes',
     'fornecedores.html': 'fornecedores', 'fornecedor.html': 'fornecedores',
     'indicacoes.html': 'indicacoes', 'configuracao.html': 'config', 'usuarios.html': 'usuarios'
@@ -621,6 +622,17 @@
       try { sb.auth.signOut({ scope: 'local' }).then(done, done); } catch (e) { done(); }
     },
     client: function () { return sb; },
+    atualizarOportunidades: async function (id) {
+      if(LOCAL_ONLY)return;
+      if(!sb||!ready)throw new Error('Aguarde a conexão com o servidor.');
+      if(!await flush())throw syncError||new Error('Há alterações pendentes.');
+      var key='mabe-opps-v3-'+String(id);
+      var res=await sb.from('kv_store').select('value').eq('workspace',WORKSPACE).eq('key',key).maybeSingle();
+      if(res.error)throw res.error;
+      if(pending[key]!==undefined||activeBatch[key]!==undefined)throw new Error('Há outra gravação em andamento.');
+      if(!Array.isArray(res.data?.value))throw new Error('Oportunidades não encontradas.');
+      _set(key,JSON.stringify(res.data.value));
+    },
     atualizarProjetos: async function () {
       if(LOCAL_ONLY)return;
       if(!sb||!ready)throw new Error('Aguarde a conexão com o servidor.');

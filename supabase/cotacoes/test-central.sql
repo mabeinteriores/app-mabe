@@ -1,0 +1,48 @@
+begin;
+do $$
+declare a uuid;qi uuid=gen_random_uuid();qi2 uuid=gen_random_uuid();r1 public.camber_quote_requests%rowtype;r2 public.camber_quote_requests%rowtype;r3 public.camber_quote_requests%rowtype;
+ spec jsonb;resp jsonb;res jsonb;s jsonb;po jsonb;k jsonb;failed bool;
+begin
+ select id into a from public.profiles where papel='admin' and ativo and aprovado limit 1;
+ if a is null then raise exception 'Administrator required';end if;
+ update public.kv_store set value=value||'[{"id":"cq-full-qa","nome":"ALBORNOZ JORDAO ADVOGADOS ASSOCIADOS","cliente":"QA"}]'::jsonb where workspace='mabe' and key='mabe-projects-v3';
+ update public.kv_store set value=value||'[{"id":"cq-qa-a","nome":"Atual Design","categorias":["Marcenaria"],"ativo":true},{"id":"cq-qa-b","nome":"Finger","categorias":["Marcenaria"],"ativo":true},{"id":"cq-qa-c","nome":"SCA","categorias":["Marcenaria"],"ativo":true},{"id":"cq-qa-invalid","nome":"Incompatível","categorias":["Pisos"],"ativo":true}]'::jsonb where workspace='mabe' and key='mabe-fornecedores-v1';
+ spec='{"mode":"custom","title":"Marcenaria","description":"QA transitória","items":[{"id":"item1","room":"Cozinha","title":"Armário","quantity":2,"unit":"un"}]}';
+ res=public.camber_quotes_api('create_opportunity',jsonb_build_object('quotationId',qi,'projectId','cq-full-qa','opportunityId','987654321','service','Marcenaria','responsible','Rafael','estimatedValue',180000,'specification',spec,'expiresAt',now()+interval '14 days','supplierIds','["cq-qa-a","cq-qa-b","cq-qa-c"]'::jsonb),a);
+ select * into r1 from public.camber_quote_requests where quotation_id=qi and supplier_id='cq-qa-a';
+ select * into r2 from public.camber_quote_requests where quotation_id=qi and supplier_id='cq-qa-b';
+ select * into r3 from public.camber_quote_requests where quotation_id=qi and supplier_id='cq-qa-c';
+ if r1.id is null or r2.id is null or r3.id is null then raise exception 'Participants missing';end if;
+ res=public.camber_quotes_api('lookup',jsonb_build_object('token',r1.token));
+ if res ? 'token' or res ? 'created_by' or res ? 'supplier_id' then raise exception 'Leak';end if;
+ perform public.camber_quotes_api('draft',jsonb_build_object('token',r1.token,'revision',1,'draft_revision',0,'draft','{"values":["500"]}'::jsonb));
+ failed=false;begin perform public.camber_quotes_api('draft',jsonb_build_object('token',r1.token,'revision',1,'draft_revision',0,'draft','{}'::jsonb));exception when raise_exception then failed=true;end;if not failed then raise exception 'Lost draft protection failed';end if;
+ resp='{"version":1,"items":[{"id":"item1","title":"Armário","quantity":2,"unit":"un","unitPrice":500,"value":1000}],"subtotal":1000,"discountPercent":0,"discount":0,"freight":100,"assembly":100,"total":1200,"days":30,"payment":"50/50","scope":"MDF","delivery":"2026-11-15","start":"2026-11-16","end":"2026-11-18"}';
+ perform public.camber_quotes_api('submit',jsonb_build_object('token',r1.token,'response',resp));
+ perform public.camber_quotes_api('submit',jsonb_build_object('token',r1.token,'response',resp||'{"total":9999}'));
+ perform public.camber_quotes_api('submit',jsonb_build_object('token',r2.token,'response',resp||'{"total":1100}'));
+ select x into s from jsonb_array_elements(public.camber_quotes_api('dashboard','{}',a)) x where x->>'id'=qi::text;
+ if s->>'invited'<>'3' or s->>'received'<>'2' or s->>'awaiting'<>'1' or s->>'status'<>'PARTIAL' then raise exception '3/2/1 counts failed: %',s;end if;
+ res=public.camber_quotes_api('detail',jsonb_build_object('quotationId',qi),a);
+ if res#>>'{quotation,invited}'<>s->>'invited' or res#>>'{quotation,received}'<>s->>'received' or res#>>'{quotation,awaiting}'<>s->>'awaiting' then raise exception 'Central/detail mismatch';end if;
+ if jsonb_array_length(res->'versions')<>2 then raise exception 'Idempotency failed';end if;
+ failed=false;begin perform public.camber_quotes_api('add_participants',jsonb_build_object('quotationId',qi,'projectId','cq-full-qa','opportunityId','987654321','supplierIds','["cq-qa-invalid"]'::jsonb),a);exception when raise_exception then failed=true;end;if not failed then raise exception 'Service eligibility failed';end if;
+ -- A second quotation must not invalidate the first supplier link.
+ perform public.camber_quotes_api('new_quotation',jsonb_build_object('quotationId',qi2,'projectId','cq-full-qa','opportunityId','987654321','specification',spec,'expiresAt',now()+interval '14 days','supplierIds','["cq-qa-a"]'::jsonb),a);
+ perform public.camber_quotes_api('lookup',jsonb_build_object('token',r1.token));
+ perform public.camber_quotes_api('negotiate',jsonb_build_object('quotationId',qi,'requestIds',jsonb_build_array(r1.id),'note','Rever preço'),a);
+ res=public.camber_quotes_api('lookup',jsonb_build_object('token',r1.token));if res->>'revision'<>'2' or res->>'negotiation_note'<>'Rever preço' then raise exception 'Revision missing';end if;
+ perform public.camber_quotes_api('submit',jsonb_build_object('token',r1.token,'response',resp||'{"version":2,"total":1000}'));
+ if (select count(*) from public.camber_quote_versions where request_id=r1.id)<>2 then raise exception 'Version history lost';end if;
+ perform public.camber_quotes_api('select_supplier',jsonb_build_object('quotationId',qi,'requestId',r1.id),a);
+ po=public.camber_quotes_api('purchase',jsonb_build_object('quotationId',qi),a);
+ res=public.camber_quotes_api('purchase',jsonb_build_object('quotationId',qi),a);
+ if po->>'id'<>res->>'id' then raise exception 'Duplicated purchase';end if;
+ if (select response->>'total' from public.camber_quote_versions where id=(po->>'proposal_version_id')::uuid)<>'1000' then raise exception 'Wrong purchase version';end if;
+ if (select count(*) from public.camber_quote_requests where quotation_id=qi and status='NOT_SELECTED')<>2 then raise exception 'Selection statuses';end if;
+ failed=false;begin perform public.camber_quotes_api('revise',jsonb_build_object('token',r1.token));exception when raise_exception then failed=true;end;if not failed then raise exception 'Closed quotation mutable';end if;
+ begin perform public.camber_quotes_api('dashboard','{}');raise exception 'Unauthorized';exception when insufficient_privilege then null;end;
+ if has_function_privilege('anon','public.camber_quotes_api(text,jsonb,uuid)','execute') or has_table_privilege('authenticated','public.camber_purchase_orders','select') then raise exception 'RLS bypass';end if;
+end $$;
+rollback;
+select 'Passed: 3 invited / 2 responses / 1 awaiting, central/detail parity, draft CAS, versions, negotiation, selection, purchase idempotency, access control. Fixtures rolled back.' result;

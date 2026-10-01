@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+const token=process.env.CAMBER_QA_TOKEN;if(!token)throw Error('Use somente um token de fixture descartável em CAMBER_QA_TOKEN.');
+const url='https://vlvadvlfsbgwcldaxhah.supabase.co/functions/v1/camber-quotes';
+const headers={apikey:'sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-','Content-Type':'application/json'};
+async function call(action,payload={}){const r=await fetch(url,{method:'POST',headers,body:JSON.stringify({action,payload})});return {status:r.status,data:await r.json()}}
+let r=await call('lookup',{token});assert.equal(r.status,200);assert.equal(r.data.project_name,'Obra TESTE isolada');assert.equal(r.data.response.total,5900);
+for(const a of ['dashboard','catalog','detail','purchases','create'])assert.equal((await call(a,{})).status,401);
+assert.equal((await call('lookup',{token:'00000000-0000-0000-0000-000000000000'})).status,400);
+const original=r.data.response;
+const retries=await Promise.all(Array.from({length:10},()=>call('submit',{token,response:{...original,version:1,total:999999}})));
+assert(retries.every(r=>r.status===200&&r.data.response.total===5900));
+assert.equal((await call('revise',{token})).status,200);
+r=await call('lookup',{token});assert.equal(r.data.revision,2);
+const drafts=await Promise.all(Array.from({length:10},(_,i)=>call('draft',{token,revision:2,draft_revision:0,draft:{values:[String(2500+i)]}})));
+assert.equal(drafts.filter(r=>r.status===200).length,1);assert.equal(drafts.filter(r=>r.status===400).length,9);
+const fileId=crypto.randomUUID();const form=new FormData();form.append('payload',JSON.stringify({action:'supplier_upload',payload:{token,fileId}}));form.append('file',new Blob(['%PDF-1.4\n% Camber QA disposable attachment\n%%EOF'],{type:'application/pdf'}),'teste-camber.pdf');
+const upload=await fetch(url,{method:'POST',headers:{apikey:headers.apikey},body:form});assert.equal(upload.status,200,await upload.clone().text());
+r=await call('lookup',{token});assert.equal(r.data.files.length,1);assert.equal((await fetch(r.data.files[0].url)).status,200);
+const response={version:2,values:[2800],itemDays:[25],freight:100,assembly:400,discountPercent:10,days:25,delivery:'2026-11-01',start:'2026-11-02',end:'2026-11-03',validity:'2026-10-20',payment:'50/50',basis:'Aprovação',scope:'MDF',warranty:'12 meses',agree:true};
+r=await call('submit',{token,response});assert.equal(r.status,200);assert.equal(r.data.response.total,5540);
+r=await call('lookup',{token});assert.equal(r.data.status,'SUBMITTED');assert.equal(r.data.response.version,2);
+console.log('HTTP PASS: cálculo real, 10 reenvios idempotentes, 10 rascunhos concorrentes (1 aceito/9 conflitos), revisão, PDF privado, link assinado e autorização.');
