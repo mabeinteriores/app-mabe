@@ -589,17 +589,6 @@
     var o = opps.find(function(x){ return x.id===id; });
     if (!o || o.et === stage) return;
     if(stage==='win'||o.et==='win'){alert('Escolha o fornecedor ou reabra a comparação no painel da oportunidade.');openOpportunity(id);return;}
-    var temForn = o.forn && o.forn !== 'a definir' && o.forn.trim() !== '';
-    var temValor = (Number(o.val)||0) > 0;
-    var temRT = (Number(o.rt)||0) > 0;
-    if (stage !== 'prospec' && !temForn){
-      alert('Para tirar a oportunidade da Prospecção, escolha o fornecedor.');
-      openEdit(id); return;
-    }
-    if ((stage === 'negoc' || stage === 'prop' || stage === 'win') && (!temValor || !temRT)){
-      alert('Para mover para ' + (SLAB[stage]||stage) + ', informe o valor do serviço e a comissão (RT).');
-      openEdit(id); return;
-    }
     var prevEt = o.et;
     o.et = stage;
     if (stage === 'win'){ o.prob = 100; }
