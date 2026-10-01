@@ -14,8 +14,15 @@ assert.equal(M.counts(rows[0]),'3 convidados · 2 propostas recebidas · 1 aguar
 assert.equal(M.forOpportunity(rows,'p','o')[0],rows[0]);
 assert.equal(M.kpis(rows,new Date('2026-10-10T12:00:00Z')).due,1);
 assert.equal(M.kpis(rows,new Date('2026-10-11T03:00:00Z')).late,1);
+const done={...rows[0],received:3,awaiting:0,status:'READY',reviewed_at:'2026-10-09T10:00:00Z',last_response:'2026-10-09T09:00:00Z'};
+assert.equal(M.kpis([done],new Date('2026-10-11T03:00:00Z')).late,0);
+assert.equal(M.kpis([done],new Date('2026-10-10T12:00:00Z')).due,0);
+assert.equal(M.notice(done,new Date('2026-10-11T03:00:00Z')).tone,'ready');
+assert.equal(M.notice({...rows[0],state:'CLOSED'},new Date('2026-10-11T03:00:00Z')),null);
+assert.equal(M.notice(rows[0],new Date('2026-10-10T12:00:00Z')).tone,'due');
+assert.equal(M.notice(rows[0],new Date('2026-10-11T03:00:00Z')).tone,'late');
 assert.equal(M.eligible({ativo:true,categorias:['Vidraçaria']},'vidracaria'),true);
 assert.equal(M.eligible({ativo:true,categorias:['Pisos']},'Marcenaria'),false);
 assert.equal(M.eligible({ativo:false,categorias:['Marcenaria']},'Marcenaria'),false);
 assert.deepEqual(M.delta(1000,900),{amount:-100,percent:-10});
-console.log('29 validações aprovadas: valores, datas, consentimento, contadores, fuso, elegibilidade e negociação.');
+console.log('35 validações aprovadas: valores, datas, consentimento, contadores, alertas, fuso, elegibilidade e negociação.');

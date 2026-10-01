@@ -29,6 +29,7 @@ Aplicar os scripts na ordem, preferencialmente numa transação única:
 1. `schema.sql`: solicitações individuais, arquivos privados e função base.
 2. `module-v2.sql`: cotações, participantes ligados à cotação, rascunhos com revisão, versões imutáveis, eventos e preparação da escolha por item.
 3. `central.sql`: numeração, projeção única de contadores, estados, estimativa, rodadas, seleção e pedidos de compra vinculados à versão escolhida.
+4. `central-page.sql`: leitura paginada, filtros, ordenação, facetas e indicadores, sempre sobre a projeção existente. Não cria tabelas ou índices.
 
 O CLI não estava instalado; os scripts SQL incrementais foram aplicados diretamente e são a fonte versionada desta entrega. Não foi criada uma sequência fictícia de migrations do CLI.
 

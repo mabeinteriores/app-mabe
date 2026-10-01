@@ -26,10 +26,33 @@ begin
  res=public.camber_quotes_api('detail',jsonb_build_object('quotationId',qi),a);
  if res#>>'{quotation,invited}'<>s->>'invited' or res#>>'{quotation,received}'<>s->>'received' or res#>>'{quotation,awaiting}'<>s->>'awaiting' then raise exception 'Central/detail mismatch';end if;
  if jsonb_array_length(res->'versions')<>2 then raise exception 'Idempotency failed';end if;
+ -- The paged central reads exactly the existing opportunity/detail records.
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',1,'filters',jsonb_build_object('projectId','cq-full-qa','search','qa')),a);
+ if res->>'total'<>'1' or res#>>'{rows,0,invited}'<>'3' or res#>>'{rows,0,received}'<>'2' or res#>>'{rows,0,awaiting}'<>'1' or res#>>'{rows,0,estimated_value}'<>'180000.00' then raise exception 'Paged 3/2/1 mismatch: %',res;end if;
+ if res#>'{rows,0}' ? 'specification' or res#>'{rows,0}' ? 'token' then raise exception 'Heavy/private fields in list';end if;
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',1,'filters',jsonb_build_object('projectId','cq-full-qa','search','nao existe')),a);
+ if res->>'total'<>'0' then raise exception 'Search ignored';end if;
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',1,'filters',jsonb_build_object('projectId','cq-full-qa','search','marcenária','supplier','Finger')),a);
+ if res->>'total'<>'1' then raise exception 'Accent-insensitive supplier search';end if;
+ update public.camber_quotations set expires_at=now()-interval '1 hour' where id=qi;
+ select x into s from jsonb_array_elements(public.camber_quotation_summary()) x where x->>'id'=qi::text;
+ if s->>'status'<>'EXPIRED' then raise exception 'Pending expired status';end if;
+ update public.camber_quote_requests set response=resp,status='SUBMITTED',responded_at=now() where id=r3.id;
+ update public.camber_quotations set reviewed_at=now()+interval '1 second' where id=qi;
+ select x into s from jsonb_array_elements(public.camber_quotation_summary()) x where x->>'id'=qi::text;
+ if s->>'status'<>'READY' or (s->>'attention')::boolean then raise exception 'Complete reviewed quote incorrectly late: %',s;end if;
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',1,'quick','late','filters',jsonb_build_object('projectId','cq-full-qa')),a);
+ if res->>'total'<>'0' then raise exception 'Complete quote in late filter';end if;
+ update public.camber_quote_requests set response=null,status='INVITED',responded_at=null where id=r3.id;
+ update public.camber_quotations set expires_at=now()+interval '14 days',reviewed_at=null where id=qi;
  failed=false;begin perform public.camber_quotes_api('add_participants',jsonb_build_object('quotationId',qi,'projectId','cq-full-qa','opportunityId','987654321','supplierIds','["cq-qa-invalid"]'::jsonb),a);exception when raise_exception then failed=true;end;if not failed then raise exception 'Service eligibility failed';end if;
  -- A second quotation must not invalidate the first supplier link.
  perform public.camber_quotes_api('new_quotation',jsonb_build_object('quotationId',qi2,'projectId','cq-full-qa','opportunityId','987654321','specification',spec,'expiresAt',now()+interval '14 days','supplierIds','["cq-qa-a"]'::jsonb),a);
  perform public.camber_quotes_api('lookup',jsonb_build_object('token',r1.token));
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',1,'pageSize',1,'sort','value','direction','desc','filters',jsonb_build_object('projectId','cq-full-qa')),a);
+ if res->>'total'<>'2' or jsonb_array_length(res->'rows')<>1 or res#>>'{rows,0,id}'<>qi::text then raise exception 'Pagination/value sort failed';end if;
+ res=public.camber_quotes_api('dashboard',jsonb_build_object('page',2,'pageSize',1,'sort','value','direction','desc','filters',jsonb_build_object('projectId','cq-full-qa')),a);
+ if res#>>'{rows,0,id}'<>qi2::text then raise exception 'Pagination duplicated quote';end if;
  perform public.camber_quotes_api('negotiate',jsonb_build_object('quotationId',qi,'requestIds',jsonb_build_array(r1.id),'note','Rever preço'),a);
  res=public.camber_quotes_api('lookup',jsonb_build_object('token',r1.token));if res->>'revision'<>'2' or res->>'negotiation_note'<>'Rever preço' then raise exception 'Revision missing';end if;
  perform public.camber_quotes_api('submit',jsonb_build_object('token',r1.token,'response',resp||'{"version":2,"total":1000}'));
@@ -42,6 +65,9 @@ begin
  if (select count(*) from public.camber_quote_requests where quotation_id=qi and status='NOT_SELECTED')<>2 then raise exception 'Selection statuses';end if;
  failed=false;begin perform public.camber_quotes_api('revise',jsonb_build_object('token',r1.token));exception when raise_exception then failed=true;end;if not failed then raise exception 'Closed quotation mutable';end if;
  begin perform public.camber_quotes_api('dashboard','{}');raise exception 'Unauthorized';exception when insufficient_privilege then null;end;
+ begin perform public.camber_quotes_api('dashboard','{"page":1}');raise exception 'Unauthorized paged access';exception when insufficient_privilege then null;end;
+ begin perform public.camber_quotes_api('dashboard','{"summaryOnly":true}');raise exception 'Unauthorized badge access';exception when insufficient_privilege then null;end;
+ if has_function_privilege('anon','public.camber_quotation_page(jsonb)','execute') or has_function_privilege('authenticated','public.camber_quotation_page(jsonb)','execute') then raise exception 'Public central access';end if;
  if has_function_privilege('anon','public.camber_quotes_api(text,jsonb,uuid)','execute') or has_table_privilege('authenticated','public.camber_purchase_orders','select') then raise exception 'RLS bypass';end if;
 end $$;
 rollback;

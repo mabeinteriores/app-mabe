@@ -32,11 +32,12 @@ create or replace function public.camber_quotation_summary() returns jsonb langu
  coalesce(op->>'serv','Oportunidade indisponível') service,coalesce(op->>'resp',pf.nome,'') responsible,
  stats.invited,stats.received,stats.awaiting,stats.unviewed,stats.lowest,stats.suppliers,stats.last_response,
  case when q.workflow='CANCELED' then 'CANCELED' when q.state='CLOSED' then 'CLOSED'
- when q.workflow in ('DRAFT','AWAITING_SEND','NEGOTIATION') then q.workflow
- when q.expires_at<=now() then 'EXPIRED'
+ when q.workflow in ('DRAFT','AWAITING_SEND') then q.workflow
+ when q.expires_at<=now() and stats.awaiting>0 then 'EXPIRED'
+ when q.workflow='NEGOTIATION' then q.workflow
  when stats.invited>0 and stats.awaiting=0 and stats.received>0 then 'READY'
  when stats.received>0 then 'PARTIAL' when stats.invited>0 then 'AWAITING_SUPPLIERS' else 'IN_QUOTATION' end status,
- (q.state='OPEN' and q.workflow<>'CANCELED' and (stats.awaiting>0 or stats.received>0 and (q.reviewed_at is null or stats.last_response>q.reviewed_at) or q.expires_at<now()+interval '1 day')) attention
+ (q.state='OPEN' and q.workflow<>'CANCELED' and (stats.awaiting>0 or stats.received>0 and (q.reviewed_at is null or stats.last_response>q.reviewed_at))) attention
  from public.camber_quotations q left join public.profiles pf on pf.id=q.created_by
  left join lateral (select x pr from public.kv_store s,jsonb_array_elements(case when jsonb_typeof(s.value)='array' then s.value else '[]'::jsonb end) x where s.workspace='mabe' and s.key='mabe-projects-v3' and x->>'id'=q.project_id) pj on true
  left join lateral (select x op from public.kv_store s,jsonb_array_elements(case when jsonb_typeof(s.value)='array' then s.value else '[]'::jsonb end) x where s.workspace='mabe' and s.key='mabe-opps-v3-'||q.project_id and x->>'id'=q.opportunity_id) oo on true
@@ -58,7 +59,10 @@ begin
  if action not in ('lookup','submit','draft','revise','decline','supplier_file') then
   if actor is null or not exists(select 1 from public.profiles where id=actor and ativo and aprovado and (papel='admin' or 'projetos'=any(abas_permitidas))) then raise exception 'Acesso não autorizado.' using errcode='42501';end if;
  end if;
- if action='dashboard' then return public.camber_quotation_summary();end if;
+ if action='dashboard' then
+  if payload ? 'page' or payload @> '{"summaryOnly":true}' then return public.camber_quotation_page(payload);end if;
+  return public.camber_quotation_summary();
+ end if;
  if action='catalog' then return jsonb_build_object(
   'projects',coalesce((select value from public.kv_store where workspace='mabe' and key='mabe-projects-v3'),'[]'),
   'suppliers',coalesce((select value from public.kv_store where workspace='mabe' and key='mabe-fornecedores-v1'),'[]'),
