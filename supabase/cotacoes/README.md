@@ -52,6 +52,18 @@ Frontend: `cotacoes.html`, `compras.html`, `cotacoes-central.js`, `cotacoes-wiza
 
 Integração: `cloud.js` (permissões e atualização explícita), `shell.js` (menu), `projeto.html`, `oportunidade-propostas.js`; demais páginas receberam somente atualização da versão dos scripts comuns.
 
+## Exclusão de oportunidades
+
+- **Excluir** aparece no cartão, na tabela e no detalhe da oportunidade. A confirmação identifica serviço e projeto e informa os vínculos encontrados.
+- `opportunity-delete.sql` adiciona a função `camber_opportunity_delete`, `SECURITY INVOKER`, executável somente por `service_role`. O Edge valida a sessão; a função exige perfil aprovado e ativo com permissão Projetos ou administrador.
+- A prévia fornece uma versão da oportunidade e das cotações. A exclusão confirma essa versão sob o mesmo lock de projeto das demais operações de cotação; alterações concorrentes exigem nova confirmação.
+- A transação remove somente a oportunidade escolhida, recalcula o resumo do projeto, cancela as cotações e encerra os links associados. Preserva respostas, arquivos e eventos. O gatilho existente `kv_store_snapshot` mantém a versão anterior dos dados.
+- Fornecedor escolhido ou pedido de compra impede a exclusão. Nenhum e-mail é enviado. Repetir uma solicitação já concluída não duplica eventos.
+- No navegador, a lista só é atualizada após a confirmação do servidor. Se a exclusão funcionar e a atualização falhar, a interface oferece atualizar a lista sem repetir a exclusão.
+- `test-opportunity-delete.sql` valida exclusão pontual, resumo, conflito de versão, vínculos, proteção de seleção/compra, acesso e repetição dentro de uma transação com rollback. A validação visual usa uma obra fictícia local; nenhuma oportunidade comercial é excluída nos testes.
+
+A verificação de segurança não apontou a nova função. Alertas anteriores de funções legadas e Auth permanecem fora deste ajuste; as tabelas de cotações acessadas apenas pelo servidor mantêm a configuração documentada acima. Referência do verificador: https://supabase.com/docs/guides/database/database-linter.
+
 Backend: esta pasta (`schema.sql`, `module-v2.sql`, `central.sql`, `index.ts`, `validation.mjs`). Testes: `tests/cotacoes.mjs`, `test-central.sql`, `tests/cotacoes-http.mjs`.
 
 ## Testes realizados

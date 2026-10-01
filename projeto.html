@@ -393,6 +393,7 @@
         else trail = '<span class="miniRT">' + rtTxt(o) + '</span>';
         var pc = probColor(o.prob);
         return '<div class="opp" draggable="true" data-id="' + o.id + '" onclick="openOpportunity(' + o.id + ')" style="padding-top:26px;border-left:3px solid ' + pc.bd + ';background:color-mix(in srgb, ' + pc.hue + ' ' + pc.mix + '%, var(--surface))">' +
+          '<button type="button" class="opportunity-delete-card" data-delete-opportunity="'+esc(o.id)+'" aria-label="Excluir oportunidade '+esc(o.serv)+'" title="Excluir oportunidade">Excluir</button>'+
           '<button class="opp-move" title="Mover para outra etapa" onclick="event.stopPropagation();abrirMover(event,' + o.id + ')">⇄</button>' +
           '<span class="opp-prob" title="Probabilidade de fechamento" style="position:absolute;top:7px;left:8px;font-size:10.5px;font-weight:700;line-height:1;padding:3px 6px;border-radius:11px;border:1px solid ' + pc.bd + ';background:' + pc.bg + ';color:' + pc.fg + '">' + (parseInt(o.prob,10)||0) + '%</span>' +
           '<div class="ot">' + esc(o.serv) + '</div><div class="of">' + esc(o.forn) + '</div><div class="of">' + CamberProposals.normalize(o).proposals.length + ' fornecedores · Ver propostas →</div>' +
@@ -407,7 +408,7 @@
     // tabela
     document.getElementById('tabBody').innerHTML = opps.map(function(o){
       return '<tr class="click" onclick="openOpportunity(' + o.id + ')"' + (o.et==='lost'?' style="opacity:.72"':'') + '>' +
-        '<td class="tcell-strong">' + esc(o.serv) + '</td><td>' + esc(o.forn) + '</td><td>' + esc(normResp(o.resp)) + '</td>' +
+        '<td class="tcell-strong">' + esc(o.serv) + ' <button type="button" class="opportunity-delete-button" data-delete-opportunity="'+esc(o.id)+'" aria-label="Excluir oportunidade '+esc(o.serv)+'">Excluir</button></td><td>' + esc(o.forn) + '</td><td>' + esc(normResp(o.resp)) + '</td>' +
         '<td><span class="chip ' + o.et + '"><span class="d"></span>' + SLAB[o.et].replace(' / Ganho','').replace('Em ','') + '</span></td>' +
         '<td class="r num">' + brl(o.val) + '</td>' +
         '<td class="r num">' + (o.rt? rtLabel(o) :'—') + '</td>' +
@@ -543,7 +544,8 @@
   function delOpp(){
     if (editing == null) return;
     var o = opps.find(function(x){ return x.id===editing; });
-    if (confirm('Excluir a oportunidade "' + o.serv + '"?')){ opps = opps.filter(function(x){ return x.id!==editing; }); render(); closeEdit(); }
+    if(window.CamberQuotes?.removeOpportunity){closeEdit();CamberQuotes.removeOpportunity({projectId:PROJ.id,opportunityId:o.id});}
+    else alert('Aguarde o carregamento da página e tente novamente.');
   }
 
   function viewOpp(v){
@@ -943,5 +945,7 @@
 <script src="cotacoes-wizard.js?v=services1"></script>
 <script src="oportunidade-propostas.js?v=layout1"></script>
 <script src="cotacoes-opportunity.js?v=layout1"></script>
+<link rel="stylesheet" href="oportunidade-exclusao.css?v=1">
+<script src="oportunidade-exclusao.js?v=1"></script>
 </body>
 </html>
