@@ -5,3 +5,5 @@
 .cq-office button.cq-kpi:disabled{opacity:1}
 .cq-supplier-picker{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}.cq-supplier-picker aside{padding:12px;background:#eef1e8;border-radius:10px;position:sticky;top:0}.cq-supplier-picker aside h3{margin:0 0 8px}.cq-supplier-picker aside span{overflow-wrap:anywhere}@media(max-width:600px){.cq-supplier-picker{grid-template-columns:1fr}.cq-supplier-picker aside{position:static}}
 .cq-office .cq-kpi.active,.cq-office .cq-kpi.active small{color:#fff}
+
+.cq-dialog [aria-invalid="true"]{border-color:#b33434;outline:1px solid #b33434}.cq-dialog .cq-field-error{display:block;color:#b33434;margin-top:5px;line-height:1.4}.cq-dialog [data-context-help] a{color:inherit;text-decoration:underline}
