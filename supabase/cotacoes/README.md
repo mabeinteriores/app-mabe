@@ -86,6 +86,12 @@ Escolha de combinação por item, aprovações/pagamentos de compras, logística
 
 ## Atualização visual de 01/10/2026
 
+### Impressão da comparação
+
+O botão **Imprimir comparação** no detalhe da cotação abre três modelos: tabela lado a lado, resumo comparativo e detalhado por fornecedor. Permite escolher participantes, A4 horizontal/vertical e comissão interna (desmarcada inicialmente, disponível apenas quando o servidor fornece os dados financeiros autorizados). **Gerar PDF** abre a impressão do navegador; escolha **Salvar como PDF** como destino.
+
+O relatório usa uma cópia dos dados carregados, não envia e-mails nem altera a cotação. Tokens, links privados e scripts não entram no documento. Propostas antigas, inativas, canceladas e desclassificadas não participam dos destaques de preço/prazo. Comparações extensas dividem os fornecedores em grupos e mantêm condições longas em seção própria. Validação: `tests/cotacoes-impressao.cjs`, integração visual e PDFs de teste com 1, 2 e 5 páginas, incluindo sete fornecedores.
+
 Layout adaptado à referência enviada: menu escuro com nomes, cards compactos, criação em quatro etapas com fornecedores selecionados à direita, comparativo com resumo lateral e portal com tabela de itens no computador e blocos no celular. Arquivos de apresentação: camber-layout.css, cotacoes-layout.css e cotacoes-layout.js. Mantém os mesmos contratos de gravação e autenticação.
 
 Verificações desta atualização: navegação das abas dentro da oportunidade, comparação com participante aguardando, seleção e remoção de fornecedores, avanço do formulário e total de R$ 5.900,00, largura móvel sem rolagem horizontal da página, regressões existentes e sintaxe das páginas.
