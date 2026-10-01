@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),M=require('../oportunidade-propostas-model.js');
+const a={id:'a',supplierId:1,name:'A',value:180000,rt:10,rtTipo:'pct'},b={id:'b',supplierId:2,name:'B',value:203000,rt:10,rtTipo:'pct'};
+const base={id:7,et:'prop',proposals:[a,b],favoriteProposalId:'a',forn:'A',val:180000,rt:10,proposalHistory:[{text:'Antes'}]};
+let o=M.apply(base,'remove',{id:'a'});assert.equal(o.proposals.length,1);assert.equal(o.favoriteProposalId,'b');assert.equal(o.val,203000);assert.equal(o.forn,'B');assert.equal(M.commission(M.reference(o)),20300);assert.deepEqual(o.removedProposals,[a]);assert.deepEqual(o.proposalHistory,base.proposalHistory);assert.equal(base.proposals.length,2);
+o=M.apply(base,'remove',{id:'b'});assert.equal(o.favoriteProposalId,'a');assert.equal(o.val,180000);
+o=M.apply(o,'remove',{id:'a'});assert.equal(o.proposals.length,0);assert.equal(o.favoriteProposalId,null);assert.equal(o.forn,'a definir');assert.equal(o.val,0);assert.equal(o.rt,0);assert.equal(o.rtTipo,'pct');
+assert.throws(()=>M.apply(base,'remove',{id:'missing'}),/não encontrada/);
+assert.throws(()=>M.apply({...base,selectedProposalId:'a'},'remove',{id:'b'}),/Reabra/);
+assert.throws(()=>M.apply({...base,et:'win'},'remove',{id:'b'}),/Reabra/);
+o=M.apply({id:7,et:'negoc',forn:'Legado',val:100,rt:10},'remove',{id:'legacy-7'});assert.equal(o.val,0);assert.equal(o.proposals.length,0);assert.equal(o.removedProposals[0].name,'Legado');
+console.log('PASS: remoção da favorita, concorrente, último fornecedor, legado, bloqueio de contrato e preservação do histórico.');

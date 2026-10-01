@@ -68,6 +68,8 @@ Backend: esta pasta (`schema.sql`, `module-v2.sql`, `central.sql`, `index.ts`, `
 
 ## Testes realizados
 
+- Remoção individual de fornecedor: `remove-supplier.sql` adiciona a função `camber_remove_supplier`, chamada pela ação autenticada `remove_supplier`. A confirmação remove somente a participação, preserva o cadastro e o histórico, desativa todas as rodadas do fornecedor e recalcula a referência e os totais. Seleção ou compra bloqueiam a remoção. O servidor valida permissão e versão da oportunidade, com repetição idempotente. Testes de modelo e PostgreSQL local cobrem favorito, último fornecedor, legado, concorrência, permissões e rollback.
+
 - Validações de preços unitários, quantidade, desconto, datas, confirmação, fuso horário, fornecedores elegíveis e diferença percentual.
 - Teste transacional real com rollback: ALBORNOZ JORDAO ADVOGADOS ASSOCIADOS / Marcenaria / Atual Design, Finger, SCA → **3 convidados, 2 propostas recebidas, 1 aguardando**. Central e detalhe retornam a mesma projeção usada pelos cards.
 - Negociação, versões imutáveis, escolha, compra idempotente, rascunhos concorrentes, permissão e serviço incompatível.
