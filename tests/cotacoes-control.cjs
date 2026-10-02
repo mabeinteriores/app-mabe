@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict'),M=require('../cotacoes-model.js'),C=require('../cotacoes-clients-model.js');
+const quote={id:'a',state:'OPEN',workflow:'IN_QUOTATION',status:'PARTIAL',received:1,awaiting:1,invited:2,project_id:'p',expires_at:'2026-10-10T23:59:59-03:00',created_at:'2026-10-01',suppliers:[],estimated_value:100};
+assert.deepEqual(M.controlActions(quote),['PAUSED','CANCELED']);
+for(const status of ['PAUSED','CANCELED','ARCHIVED','TRASH'])assert.equal(M.open({...quote,status}),false);
+assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'PAUSED'}),['RESUME','CANCELED']);
+assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'ARCHIVED'}),['RESTORE']);
+assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'CLOSED',selected_request_id:'chosen'}),['ARCHIVED']);
+assert(!M.controlActions({...quote,workflow:'DRAFT'}).includes('TRASH'));
+assert(M.controlActions({...quote,workflow:'DRAFT',received:0}).includes('TRASH'));
+const statuses=['PAUSED','CANCELED','ARCHIVED','TRASH','CLOSED','DRAFT'];
+const rows=statuses.map(status=>({...quote,id:status,state:'CLOSED',workflow:status,status}));
+const snapshot=C.build([{id:'p',clienteId:'c',nome:'Projeto'}],[{id:'c',nome:'Cliente'}],rows);
+for(const [quick,status] of [['paused','PAUSED'],['canceled','CANCELED'],['archived','ARCHIVED'],['trash','TRASH'],['closed','CLOSED'],['open','DRAFT']])assert.deepEqual(C.quotesPage(snapshot,'client:c',{quick}).rows.map(q=>q.id),[status]);
+assert.equal(C.quotesPage(snapshot,'client:c',{quick:'all'}).total,4);
+assert.equal(M.kpis(rows).value,0);
+console.log('PASS: lifecycle actions, selected supplier safeguards, recoverable trash, exclusive filters and active totals');

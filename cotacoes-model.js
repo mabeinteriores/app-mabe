@@ -2,8 +2,19 @@
 'use strict';
 const labels={DRAFT:'Rascunho',AWAITING_SEND:'Aguardando compartilhamento',IN_QUOTATION:'Em cotação',AWAITING_SUPPLIERS:'Aguardando fornecedores',PARTIAL:'Parcialmente respondida',READY:'Pronta para comparar',NEGOTIATION:'Em negociação',CLOSED:'Encerrada',EXPIRED:'Vencida',CANCELED:'Cancelada',INVITED:'Convidado',VIEWED:'Visualizou',IN_PROGRESS:'Preenchendo',SUBMITTED:'Proposta recebida',DECLINED:'Não participará',DISQUALIFIED:'Desclassificado',SELECTED:'Selecionado',NOT_SELECTED:'Não selecionado'};
 const day=d=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(d));
-const open=q=>q.state==='OPEN'&&q.status!=='CANCELED';
-const quick=(q,key,now=new Date())=>key==='all'||key==='awaiting'&&open(q)&&q.awaiting>0||key==='ready'&&q.status==='READY'||key==='due'&&open(q)&&q.awaiting>0&&day(q.expires_at)===day(now)||key==='late'&&open(q)&&q.awaiting>0&&Date.parse(q.expires_at)<=+now||key==='closed'&&q.state==='CLOSED'||key==='unviewed'&&open(q)&&q.unviewed>0;
+Object.assign(labels,{PAUSED:'Pausada',ARCHIVED:'Arquivada',TRASH:'Na lixeira'});
+const open=q=>q.state==='OPEN'&&!['PAUSED','CANCELED','ARCHIVED','TRASH'].includes(q.status);
+const quick=(q,key,now=new Date())=>key==='all'&&!['ARCHIVED','TRASH'].includes(q.status)||key==='paused'&&q.status==='PAUSED'||key==='canceled'&&q.status==='CANCELED'||key==='archived'&&q.status==='ARCHIVED'||key==='trash'&&q.status==='TRASH'||key==='awaiting'&&open(q)&&q.awaiting>0||key==='ready'&&q.status==='READY'||key==='due'&&open(q)&&q.awaiting>0&&day(q.expires_at)===day(now)||key==='late'&&open(q)&&q.awaiting>0&&Date.parse(q.expires_at)<=+now||key==='closed'&&q.status==='CLOSED'||key==='unviewed'&&open(q)&&q.unviewed>0;
+function controlActions(q){
+ const s=q.workflow||q.status;
+ if(s==='ARCHIVED'||s==='TRASH')return ['RESTORE'];
+ if(q.selected_request_id)return ['ARCHIVED'];
+ if(s==='PAUSED')return ['RESUME','CANCELED'];
+ if(s==='CANCELED')return ['RESUME','ARCHIVED'];
+ if(s==='DRAFT')return [...(q.state==='CLOSED'?['RESUME']:[]),'CANCELED',...(Number(q.received||0)===0?['TRASH']:[])];
+ if(q.state==='CLOSED')return ['RESUME','ARCHIVED'];
+ return ['PAUSED','CANCELED'];
+}
 function notice(q,now=new Date()){
  if(!open(q))return null;
  if(quick(q,'late',now))return {tone:'late',text:'Prazo vencido'};
@@ -27,5 +38,5 @@ function savings(value,reference){
  const amount=Math.round((reference-value)*100)/100;
  return {amount,percent:reference>0?amount/reference*100:null};
 }
-const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta,currentResponse,savings};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
+const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta,currentResponse,savings,controlActions};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
 })(typeof window==='object'?window:globalThis);

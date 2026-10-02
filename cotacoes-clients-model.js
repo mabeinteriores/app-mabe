@@ -30,7 +30,7 @@ function quotesPage(snapshot,clientKey,p={},now=new Date()){
  const base=snapshot.quotes.filter(q=>q.client_key===clientKey),f=p.filters||{},facets={};
  for(const key of ['project_name','client_name','service','responsible','status'])facets[key]=[...new Set(base.map(q=>q[key]).filter(Boolean))].sort();
  facets.supplier=[...new Set(base.flatMap(q=>(q.suppliers||[]).map(s=>s.name)))].sort();
- const all=base.filter(q=>(p.quick==='open'?M.open(q):M.quick(q,p.quick||'all',now))&&Object.entries(f).every(([key,v])=>{
+ const all=base.filter(q=>(p.quick==='open'?(M.open(q)||q.status==='DRAFT'):M.quick(q,p.quick||'all',now))&&Object.entries(f).every(([key,v])=>{
   if(!v||key==='clientKey')return true;
   if(key==='search')return M.norm([q.code,q.project_name,q.client_name,q.service,...(q.suppliers||[]).map(s=>s.name)].join(' ')).includes(M.norm(v));
   if(key==='supplier')return (q.suppliers||[]).some(s=>s.name===v);
