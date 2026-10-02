@@ -120,3 +120,13 @@ O relatório usa uma cópia dos dados carregados, não envia e-mails nem altera 
 Layout adaptado à referência enviada: menu escuro com nomes, cards compactos, criação em quatro etapas com fornecedores selecionados à direita, comparativo com resumo lateral e portal com tabela de itens no computador e blocos no celular. Arquivos de apresentação: camber-layout.css, cotacoes-layout.css e cotacoes-layout.js. Mantém os mesmos contratos de gravação e autenticação.
 
 Verificações desta atualização: navegação das abas dentro da oportunidade, comparação com participante aguardando, seleção e remoção de fornecedores, avanço do formulário e total de R$ 5.900,00, largura móvel sem rolagem horizontal da página, regressões existentes e sintaxe das páginas.
+
+### Condições comerciais do fornecedor (02/10/2026)
+
+Na etapa **Condições comerciais**, apenas a validade da proposta é obrigatória. Valores dos itens e confirmação final continuam nas respectivas etapas. Valores opcionais vazios (frete, montagem e desconto) viram zero; prazos e datas vazios permanecem sem informação. Datas preenchidas ainda são validadas, inclusive sua ordem.
+
+Pagamento usa listas: à vista; entrada + parcelas mensais; entrada + saldo na entrega; cartão. Entrada de 10% a 90%, em intervalos de 10%; parcelas de 1 a 12, 18 ou 24. O seletor não presume ausência de juros. O resumo do pagamento é calculado pelo servidor a partir de `paymentTerms`; o campo `payment` continua disponível para comparação, histórico e versões antigas. Rascunhos anteriores mantêm sua condição em leitura, com opção de substituí-la por uma das listas.
+
+O arquivo compartilhado `payment.mjs` deve acompanhar **index.ts e validation.mjs** na implantação de `camber-quotes`. Publicar também esse módulo estático, `responder-proposta.js`, a página e os estilos. Não há alteração de permissões ou de tabelas.
+
+Validação: `node tests/cotacoes-payment.mjs`, `node tests/cotacoes.mjs`, formulário local com dados fictícios (validade obrigatória, envio mínimo, entrada + 6 parcelas, cartão em 12x, reabertura do rascunho e condição antiga) e `test-payment.sql` no papel `service_role`, com rollback integral (rascunho estruturado, envio sem os campos opcionais, revisão e projeção na oportunidade).

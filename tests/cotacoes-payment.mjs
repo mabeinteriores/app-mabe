@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {responseFor} from '../supabase/cotacoes/validation.mjs';
+import {normalizePayment,paymentLabel,installments,deposits} from '../supabase/cotacoes/payment.mjs';
+const spec={items:[{id:'1',title:'Armário',room:'Cozinha',quantity:2,unit:'un'}]};
+const minimal={version:1,values:[1500],validity:'2026-12-31',agree:true};
+const result=responseFor(spec,minimal);
+assert.equal(result.total,3000);
+for(const key of ['days','delivery','start','end'])assert.equal(result[key],null);
+for(const key of ['payment','scope','basis','warranty','exclusions'])assert.equal(result[key],'');
+for(const key of ['discountPercent','assembly','freight'])assert.equal(result[key],0);
+assert.equal(responseFor(spec,{...minimal,freight:'',assembly:null,discountPercent:'',days:'',delivery:'',start:'',end:''}).total,3000);
+for(const validity of ['',null,undefined,'2026-02-30','31/12/2026'])assert.throws(()=>responseFor(spec,{...minimal,validity}));
+for(const patch of [{days:-1},{days:2.5},{freight:-1},{assembly:'x'},{discountPercent:101},{start:'2026-12-05',end:'2026-12-04'},{delivery:'2026-12-05',end:'2026-12-04'},{delivery:'2026-12-05',start:'2026-12-04'},{delivery:'invalid'},{values:['']},{agree:false}])assert.throws(()=>responseFor(spec,{...minimal,...patch}));
+assert.equal(responseFor(spec,{...minimal,delivery:'2026-12-05'}).start,null);
+assert.equal(responseFor(spec,{...minimal,start:'2026-12-05'}).delivery,null);
+assert.equal(responseFor(spec,{...minimal,end:'2026-12-05'}).start,null);
+for(const depositPercent of deposits)for(const count of installments){
+ const terms={type:'deposit_installments',depositPercent,installments:count};
+ const r=responseFor(spec,{...minimal,payment:'Texto forjado',paymentTerms:terms});
+ assert.deepEqual(r.paymentTerms,terms);
+ assert.equal(r.payment,paymentLabel(terms));
+ assert.ok(r.payment.includes(`${100-depositPercent}%`));
+}
+assert.equal(paymentLabel({type:'deposit_installments',depositPercent:30,installments:1}),'30% de entrada + saldo de 70% em 1 parcela mensal');
+assert.equal(paymentLabel({type:'deposit_installments',depositPercent:30,installments:6}),'30% de entrada + saldo de 70% em 6 parcelas mensais');
+assert.equal(paymentLabel({type:'deposit_delivery',depositPercent:50}),'50% de entrada + 50% na entrega');
+for(const n of installments)assert.equal(paymentLabel({type:'card',installments:n}),`${n}x no cartão de crédito`);
+assert.equal(paymentLabel({type:'unspecified'}),'');
+assert.match(paymentLabel({type:'cash'}),/^À vista/);
+for(const terms of [{type:'other'},null,{},[],{type:'card',installments:0},{type:'card',installments:1.5},{type:'card',installments:25},{type:'deposit_delivery',depositPercent:100},{type:'deposit_installments',depositPercent:30,installments:null}])assert.throws(()=>normalizePayment(terms));
+assert.equal(responseFor(spec,{...minimal,payment:'Condição anterior de 2025',paymentTerms:null}).payment,'Condição anterior de 2025');
+assert.equal(responseFor(spec,{...minimal,payment:'Ignorar',paymentTerms:{type:'unspecified'}}).payment,'');
+assert.deepEqual(normalizePayment({type:'cash',depositPercent:90,installments:24}),{type:'cash'});
+console.log('PASS: condições comerciais opcionais, validade obrigatória, entrada/parcelas/cartão, dados anteriores, datas parciais e descrição calculada no servidor.');

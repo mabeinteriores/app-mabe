@@ -5,7 +5,7 @@ const data={version:1,values:[3000],freight:100,assembly:400,discountPercent:10,
 assert.equal(responseFor(spec,data).total,5900);
 assert.equal(responseFor(spec,{...data,total:999999}).total,5900);
 assert.equal(responseFor(spec,data).items[0].value,6000);
-for(const patch of [{version:0},{version:1.5},{version:undefined},{values:[]},{values:[-1]},{values:[NaN]},{discountPercent:101},{days:0},{days:1.5},{itemDays:[0.5]},{end:'2026-10-01'},{start:'2026-10-01'},{delivery:'2026-02-30'},{agree:false},{agree:'false'},{payment:''}])assert.throws(()=>responseFor(spec,{...data,...patch}));
+for(const patch of [{version:0},{version:1.5},{version:undefined},{values:[]},{values:[-1]},{values:[NaN]},{discountPercent:101},{days:0},{days:1.5},{itemDays:[0.5]},{end:'2026-10-01'},{start:'2026-10-01'},{delivery:'2026-02-30'},{agree:false},{agree:'false'},{validity:''}])assert.throws(()=>responseFor(spec,{...data,...patch}));
 assert.throws(()=>specification({...spec,items:[{...spec.items[0],quantity:0}]}));
 assert.throws(()=>specification({...spec,items:[spec.items[0],spec.items[0]]}));
 const {default:M}=await import('../cotacoes-model.js');
