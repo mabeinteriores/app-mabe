@@ -586,10 +586,25 @@
     moveOpp(dragId, col.dataset.stage);
     clearOver(); dragId = null;
   });
-  function moveOpp(id, stage){
+  var movingOpp = false;
+  async function moveOpp(id, stage){
+    if(movingOpp)return;
     var o = opps.find(function(x){ return x.id===id; });
     if (!o || o.et === stage) return;
     if(stage==='win'||o.et==='win'){alert('Escolha o fornecedor ou reabra a comparação no painel da oportunidade.');openOpportunity(id);return;}
+    if(stage==='prop'&&['prospec','negoc'].includes(o.et)){
+      if(!window.CamberQuotes?.proposalTransition){alert('Atualize a página para carregar a confirmação da cotação.');return;}
+      movingOpp=true;
+      try{
+        var handled=await CamberQuotes.proposalTransition({projectId:PROJ.id,opportunity:o,refresh:async function(){
+          await CamberCloud.atualizarOportunidades(PROJ.id);
+          opps=CamberDB.loadOpps(PROJ.id);render();await CamberCloud.flush();
+        }});
+        if(handled)return;
+        // Canceling the quotation option only moves the original card.
+        if(!opps.includes(o)||!['prospec','negoc'].includes(o.et))return;
+      }catch(error){alert(error.message);return;}finally{movingOpp=false;}
+    }
     var prevEt = o.et;
     o.et = stage;
     if (stage === 'win'){ o.prob = 100; }
@@ -935,10 +950,11 @@
 <script src="cotacoes-office.js?v=uuid1"></script>
 <script src="cotacoes-templates.js?v=templates1"></script><script src="remuneracao-ui.js?v=remuneracao1"></script>
 <script src="cotacoes-wizard.js?v=attachments1"></script>
+<script src="oportunidade-cotacao.js?v=proposal1"></script>
 <script src="oportunidade-propostas.js?v=economia1"></script>
 <link rel="stylesheet" href="cotacoes-kanban.css?v=flow1">
 <script src="cotacoes-kanban.js?v=flow1"></script>
-<script src="cotacoes-opportunity.js?v=attachments1"></script>
+<script src="cotacoes-opportunity.js?v=proposal1"></script>
 <link rel="stylesheet" href="oportunidade-exclusao.css?v=1">
 <script src="oportunidade-exclusao.js?v=1"></script>
 </body>

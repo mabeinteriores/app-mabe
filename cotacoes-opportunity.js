@@ -44,5 +44,6 @@ view(panel);
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-cq-participants]')){e.stopPropagation();return;}if(e.target.closest('#supplierPanel [data-action="compare"]')){e.preventDefault();e.stopImmediatePropagation();panelCompare();return;}const b=e.target.closest('#supplierPanel [data-action="add"]');if(!b)return;const q=currentQuotes().find(M.open);if(q){e.preventDefault();e.stopImmediatePropagation();location.href='cotacoes.html?id='+q.id+'&tab=suppliers&add=1'}},true);
 function panelCompare(){comparisonDialog();}
+Q.refreshOpportunityQuotes=async function(){quotes=await Q.api('dashboard');paint();};
 try{await Q.ready();quotes=await Q.api('dashboard');paint();const target=document.querySelector('#app .wrap');let scheduled=false;new MutationObserver(()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;paint()})}).observe(target,{childList:true,subtree:true});setInterval(async()=>{if(document.hidden||document.querySelector('dialog[open]'))return;try{quotes=await Q.api('dashboard');paint()}catch{}},60000)}catch(e){console.info('Cotações:',e.message)}
 })();

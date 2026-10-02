@@ -14,6 +14,18 @@ Implementação integrada ao aplicativo existente (HTML/JS, GitHub Pages, Supaba
 
 ## Central e integrações
 
+### Conversão pelo Kanban
+
+Ao arrastar uma oportunidade de Prospecção ou Montando Orçamento para Proposta, a pergunta **Deseja transformar em cotação?** oferece Sim e Não. Não apenas move o cartão. Sim cria uma cotação para o fornecedor indicado, vinculada ao mesmo projeto e, pela central existente, ao mesmo cliente. Com vários fornecedores, a favorita vem selecionada e pode ser trocada; sem fornecedor, somente a movimentação sem cotação está disponível. Fechar a pergunta cancela a movimentação.
+
+`proposal-quotation.sql` acrescenta uma RPC `SECURITY INVOKER`, executável apenas pelo servidor. A ação autenticada `proposal_quotation` valida cargo, etapa original, versão do fornecedor, cadastro ativo e compatibilidade de serviço. O lock do projeto e a transação tornam criação/movimentação atômicas; repetição e cotação aberta do mesmo fornecedor são reaproveitadas. Histórico e probabilidade são preservados. Cadastros legados só são vinculados quando o nome identifica um único fornecedor.
+
+Uma cotação nova aproveita título/escopo da oportunidade, inclui um item global do serviço com quantidade 1 e prazo inicial de 14 dias (Brasília), ficando **Aguardando compartilhamento**. Não envia e-mail nem escolhe vencedor. Se a atualização da tela falhar após a gravação, o botão tenta somente atualizar, sem repetir a criação.
+
+Verificação: `tests/oportunidade-cotacao.cjs` cobre 25 combinações de etapa, Sim/Não, favorito/legado e movimentos simultâneos na interface. `test-proposal-quotation.sql` cobre criação e reutilização reais em transação com rollback, escolha de fornecedor alternativo, validações e permissões. Teste visual isolado cobre arraste das duas origens, escolha do destinatário e recuperação de falhas antes/depois da gravação.
+
+Instalação incremental: aplicar `proposal-quotation.sql` depois dos scripts existentes, publicar a nova versão de `camber-quotes` e os arquivos de interface. Não altera as rotinas de criação manual de cotações.
+
 - Indicadores, alertas clicáveis, busca e filtros por projeto, cliente, oportunidade/categoria, responsável, fornecedor, estado e datas.
 - Ações em lote para links/lembretes manuais, prazo, encerramento e CSV. Apenas ações compatíveis são oferecidas. Se uma operação em lote falhar, as anteriores já concluídas permanecem salvas; atualizar a lista antes de repetir.
 - Situações automáticas: aguardando, parcialmente respondida, pronta para comparar e vencida. Situações manuais: rascunho, aguardando compartilhamento, em cotação, encerrada e cancelada. Negociação é ativada por solicitação de revisão.
