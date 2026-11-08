@@ -7,16 +7,24 @@ Q.removeOpportunity=async function({projectId,opportunityId}){
  d.innerHTML='<h2>Excluir oportunidade</h2><div data-summary><p>Conferindo a oportunidade…</p></div><p class="cq-error" role="alert"></p><div class="cq-actions"><button data-cancel>Cancelar</button><button class="opportunity-delete-confirm" data-confirm disabled>Excluir oportunidade</button></div>';
  document.body.append(d);let busy=false,version='',deleted=false;
  const confirm=d.querySelector('[data-confirm]'),cancel=d.querySelector('[data-cancel]'),error=d.querySelector('[role="alert"]');
+ const target={projectId:String(projectId),opportunityId:String(opportunityId),linkedPolicy:'keep_orders'};
  d.onclose=()=>d.remove();d.addEventListener('cancel',e=>{if(busy||deleted)e.preventDefault()});cancel.onclick=()=>{if(!busy&&!deleted)d.close()};d.showModal();cancel.focus();
  try{
-  const info=await Q.api('opportunity_delete_preview',{projectId:String(projectId),opportunityId:String(opportunityId)});version=info.version;
-  d.querySelector('[data-summary]').innerHTML='<p><strong>'+Q.esc(info.service)+'</strong><br>'+Q.esc(info.projectName)+'</p>'+(info.blocked?'<p>Esta oportunidade tem fornecedor escolhido ou pedido de compra e não pode ser excluída.</p>':'<p>A oportunidade será removida da obra e os totais serão atualizados.</p>'+(info.quotations||info.requests?'<p>'+(info.quotations===1?'A cotação vinculada será cancelada. ':info.quotations>1?'As '+info.quotations+' cotações vinculadas serão canceladas. ':'')+'Os links dos fornecedores serão encerrados. As propostas e os anexos permanecerão no histórico das cotações.</p>':'')+'<p>Deseja excluir esta oportunidade?</p>');
+  const info=await Q.api('opportunity_delete_preview',target);version=info.version;
+  const orders=info.orders||[];
+  d.querySelector('[data-summary]').innerHTML='<p><strong>'+Q.esc(info.service)+'</strong><br>'+Q.esc(info.projectName)+'</p>'+(info.blocked?
+   '<p>Atualize a página para conferir o fornecedor escolhido e os pedidos vinculados antes de excluir.</p>':
+   '<p>Esta oportunidade sairá do Kanban e dos totais da obra.</p>'+
+   (info.selected?'<p>Já existe um fornecedor escolhido. Você não precisa desfazer a escolha para excluir a oportunidade.</p>':'')+
+   (info.quotations||info.requests?'<p>'+(info.quotations===1?'A cotação vinculada será cancelada. ':info.quotations>1?'As '+Number(info.quotations)+' cotações vinculadas serão canceladas. ':'')+'Os links dos fornecedores serão encerrados. Propostas e anexos continuarão disponíveis no histórico.</p>':'')+
+   (orders.length?'<p><strong>'+orders.map(p=>Q.esc(p.code)).join(', ')+'</strong> · '+(orders.length===1?'O pedido de compra continuará':'Os pedidos de compra continuarão')+' em <strong>Compras</strong>, sem alteração ou cancelamento.</p>':'')+
+   '<p>Deseja excluir esta oportunidade?</p>');
   confirm.hidden=!!info.blocked;confirm.disabled=!!info.blocked;
  }catch(e){error.textContent=e.message;confirm.hidden=true;}
  confirm.onclick=async()=>{
   if(busy||!version)return;busy=true;confirm.disabled=true;cancel.disabled=true;error.textContent='';confirm.textContent=deleted?'Atualizando…':'Excluindo…';
   try{
-   if(!deleted){await Q.api('opportunity_delete',{projectId:String(projectId),opportunityId:String(opportunityId),version});deleted=true;}
+   if(!deleted){await Q.api('opportunity_delete',{...target,version});deleted=true;}
    await CamberCloud.atualizarOportunidades(projectId);await CamberCloud.atualizarProjetos();
    location.href='projeto.html?id='+encodeURIComponent(projectId)+'&area=oportunidades&excluida=1';
   }catch(e){error.textContent=(deleted?'A oportunidade foi excluída. Falta atualizar esta tela. ':'')+e.message;confirm.textContent=deleted?'Atualizar lista':'Tentar novamente';confirm.disabled=false;cancel.disabled=deleted;busy=false;}

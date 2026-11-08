@@ -4,6 +4,7 @@ alter table public.camber_quotations add column if not exists control_previous t
 alter table public.camber_quotations add column if not exists control_reason text;
 alter table public.camber_quotations add column if not exists control_version integer not null default 0;
 alter table public.camber_quotations add column if not exists control_mutation uuid;
+alter table public.camber_quotations add column if not exists deleted_opportunity_service text;
 
 CREATE OR REPLACE FUNCTION public.camber_quotes_api(action text, payload jsonb, actor uuid DEFAULT NULL::uuid)
  RETURNS jsonb
@@ -57,6 +58,14 @@ begin
    'events',coalesce((select jsonb_agg(jsonb_build_object('event',e.event,'at',e.created_at,'supplier',rr.supplier_name,'actor',pf.nome) order by e.created_at desc) from public.camber_quote_events e left join public.camber_quote_requests rr on rr.id=e.request_id left join public.profiles pf on pf.id=e.actor where e.quotation_id=q.id),'[]'),
    'purchase',(select id from public.camber_purchase_orders where quotation_id=q.id),
    'clientPrices',coalesce((select jsonb_agg(jsonb_build_object('proposalId',pp->>'id','value',public.camber_remuneration_values(pp)->'client')) from public.kv_store ss,jsonb_array_elements(case when jsonb_typeof(ss.value)='array' then ss.value else '[]'::jsonb end) oo,jsonb_array_elements(coalesce(oo->'proposals','[]')) pp where ss.workspace='mabe' and ss.key='mabe-opps-v3-'||q.project_id and oo->>'id'=q.opportunity_id),'[]'),'financial',case when exists(select 1 from public.profiles where id=actor and papel='admin') then coalesce((select jsonb_agg(jsonb_build_object('proposalId',pp->>'id','rt',pp->'rt','rtTipo',pp->'rtTipo','value',pp->'value','quoteResponse',pp->'quoteResponse','remuneration',pp->'remuneration')) from public.kv_store ss,jsonb_array_elements(case when jsonb_typeof(ss.value)='array' then ss.value else '[]'::jsonb end) oo,jsonb_array_elements(coalesce(oo->'proposals','[]')) pp where ss.workspace='mabe' and ss.key='mabe-opps-v3-'||q.project_id and oo->>'id'=q.opportunity_id),'[]') else null end);
+  end if;
+  if q.deleted_opportunity_service is not null then
+   if action='reviewed' then return '{"ok":true}';end if;
+   if action='purchase' then
+    select * into po from public.camber_purchase_orders where quotation_id=q.id;
+    if po.id is not null then return to_jsonb(po);end if;
+   end if;
+   raise exception 'A oportunidade foi excluída. Esta cotação está disponível apenas para consulta.';
   end if;
   if action='reviewed' then update public.camber_quotations set reviewed_at=now() where id=q.id;return '{"ok":true}';end if;
   if action='workflow' then
@@ -168,7 +177,7 @@ AS $function$
  select coalesce(jsonb_agg(to_jsonb(z) order by z.created_at desc),'[]') from (
  select q.*, 'COT-'||extract(year from q.created_at at time zone 'America/Sao_Paulo')||'-'||lpad(q.number::text,5,'0') code,
  coalesce(pr->>'nome','Projeto indisponível') project_name,coalesce(pr->>'cliente',pr->>'nome','') client_name,
- coalesce(op->>'serv','Oportunidade indisponível') service,coalesce(op->>'resp',pf.nome,'') responsible,
+ coalesce(q.deleted_opportunity_service,op->>'serv','Oportunidade indisponível') service,coalesce(op->>'resp',pf.nome,'') responsible,
  stats.invited,stats.received,stats.awaiting,stats.unviewed,stats.lowest,stats.suppliers,stats.last_response,
  case when q.workflow in ('PAUSED','CANCELED','ARCHIVED','TRASH','DRAFT') then q.workflow when q.state='CLOSED' then 'CLOSED'
  when q.workflow in ('DRAFT','AWAITING_SEND') then q.workflow
@@ -204,6 +213,9 @@ begin
  if pid is null then raise exception 'Pedido não encontrado.';end if;
  perform pg_advisory_xact_lock(hashtextextended('camber-quotes-'||pid,0));
  if r.id is not null then select * into r from public.camber_quote_requests where id=r.id for update;end if;
+ if action in ('disqualify','revoke') and exists(select 1 from public.camber_quotations where id=r.quotation_id and deleted_opportunity_service is not null) then
+  raise exception 'A oportunidade foi excluída. O histórico do fornecedor está disponível apenas para consulta.';
+ end if;
  if payload ? 'token' then
   if r.id is not null and r.active and r.status not in ('DECLINED','DISQUALIFIED','NOT_SELECTED') then
    select * into q from public.camber_quotations where id=r.quotation_id;

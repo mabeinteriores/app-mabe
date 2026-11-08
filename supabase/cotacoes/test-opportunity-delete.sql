@@ -1,6 +1,8 @@
 begin;
+set local role service_role;
 do $$
 declare a uuid;pid text='delete-qa-'||gen_random_uuid();qi uuid=gen_random_uuid();ri uuid=gen_random_uuid();vi uuid=gen_random_uuid();data jsonb;preview jsonb;failed boolean;before_projects jsonb;after_projects jsonb;events_count int;
+ target jsonb;po_before jsonb;fi uuid=gen_random_uuid();selection_only uuid=gen_random_uuid();ri2 uuid=gen_random_uuid();
 begin
  select id into a from public.profiles where papel='admin' and ativo and aprovado limit 1;
  if a is null then raise exception 'Administrator required';end if;
@@ -30,19 +32,46 @@ begin
  values(ri,pid,'4','proposal','qa-supplier','Fornecedor QA','QA exclusão isolada','Com cotação','{}',a,now()+interval '1 day',qi,'{"version":1,"total":50}');
  preview=public.camber_opportunity_delete('preview',jsonb_build_object('projectId',pid,'opportunityId','4'),a);
  if preview->>'quotations'<>'1' or preview->>'requests'<>'1' then raise exception 'Linked counts missing';end if;
- -- A selected supplier and a purchase must both block deletion.
+ -- A selected opportunity can be deleted even when it has no quotation.
+ update public.kv_store set value=value||'[{"id":5,"serv":"Manual","val":100,"et":"win","selectedProposalId":"p"}]' where workspace='mabe' and key='mabe-opps-v3-'||pid;
+ target=jsonb_build_object('projectId',pid,'opportunityId','5','linkedPolicy','keep_orders');
+ preview=public.camber_opportunity_delete('preview',target,a);
+ if preview->>'selected' is distinct from 'true' or preview->>'blocked' is distinct from 'false' then raise exception 'Manual selection blocked';end if;
+ perform public.camber_opportunity_delete('delete',target||jsonb_build_object('version',preview->>'version'),a);
+ -- Two selected quotations, only one with an issued order.
+ target=jsonb_build_object('projectId',pid,'opportunityId','4','linkedPolicy','keep_orders');
  update public.camber_quotations set selected_request_id=ri where id=qi;
- if (public.camber_opportunity_delete('preview',jsonb_build_object('projectId',pid,'opportunityId','4'),a)->>'blocked')<>'true' then raise exception 'Selected supplier not protected';end if;
- failed=false;begin perform public.camber_opportunity_delete('delete',jsonb_build_object('projectId',pid,'opportunityId','4','version',preview->>'version'),a);exception when raise_exception then failed=true;end;
- if not failed then raise exception 'Selected supplier deleted';end if;
- update public.camber_quotations set selected_request_id=null where id=qi;
+ insert into public.camber_quotations(id,project_id,opportunity_id,specification,expires_at,created_by) values(selection_only,pid,'4','{}',now()+interval '1 day',a);
+ insert into public.camber_quote_requests(id,project_id,opportunity_id,proposal_id,supplier_id,supplier_name,project_name,service,specification,created_by,expires_at,quotation_id,response,status)
+ values(ri2,pid,'4','selected-2','qa-2','QA B','QA','Com cotação','{}',a,now()+interval '1 day',selection_only,'{"version":1,"total":40}','SELECTED');
+ update public.camber_quotations set selected_request_id=ri2 where id=selection_only;
+ insert into public.camber_quote_versions(request_id,version,response) values(ri2,1,'{"version":1,"total":40}');
+ insert into public.camber_quote_files(id,request_id,name,path,size) values(fi,ri,'Teste.pdf',fi::text,12);
+ preview=public.camber_opportunity_delete('preview',target,a);
+ if preview->>'selected' is distinct from 'true' or preview->>'blocked' is distinct from 'false' then raise exception 'Quotation selection blocked';end if;
  insert into public.camber_quote_versions(id,request_id,version,response) values(vi,ri,1,'{"total":50}');
  insert into public.camber_purchase_orders(quotation_id,proposal_version_id,created_by) values(qi,vi,a);
- if (public.camber_opportunity_delete('preview',jsonb_build_object('projectId',pid,'opportunityId','4'),a)->>'blocked')<>'true' then raise exception 'Purchase not protected';end if;
- -- This fixture purchase is transaction-only and is rolled back with the entire test.
- delete from public.camber_purchase_orders where quotation_id=qi;
- preview=public.camber_opportunity_delete('preview',jsonb_build_object('projectId',pid,'opportunityId','4'),a);
- perform public.camber_opportunity_delete('delete',jsonb_build_object('projectId',pid,'opportunityId','4','version',preview->>'version'),a);
+ select to_jsonb(p) into po_before from public.camber_purchase_orders p where quotation_id=qi;
+ failed=false;begin perform public.camber_opportunity_delete('delete',target||jsonb_build_object('version',preview->>'version'),a);exception when raise_exception then failed=true;end;
+ if not failed then raise exception 'Stale confirmation allowed after an order was issued';end if;
+ preview=public.camber_opportunity_delete('preview',target,a);
+ if jsonb_array_length(preview->'orders') is distinct from 1 or preview#>>'{orders,0,id}' is distinct from po_before->>'id' then raise exception 'Order missing from confirmation';end if;
+ failed=false;begin perform public.camber_opportunity_delete('delete',(target-'linkedPolicy')||jsonb_build_object('version',preview->>'version'),a);exception when raise_exception then failed=true;end;
+ if not failed then raise exception 'Old UI can delete without explaining orders';end if;
+ perform public.camber_opportunity_delete('delete',target||jsonb_build_object('version',preview->>'version'),a);
+ if exists(select 1 from public.kv_store s,jsonb_array_elements(s.value) x where s.workspace='mabe' and s.key='mabe-opps-v3-'||pid and x->>'id' in ('4','5')) then raise exception 'Target still present';end if;
+ data=public.camber_quotes_api('purchase',jsonb_build_object('quotationId',qi),a);
+ if data is distinct from po_before then raise exception 'Existing order changed';end if;
+ data=public.camber_quotes_api('detail',jsonb_build_object('quotationId',qi),a);
+ if data#>>'{quotation,deleted_opportunity_service}' is distinct from 'Com cotação' or data#>>'{quotation,service}' is distinct from 'Com cotação' then raise exception 'Historical detail missing';end if;
+ data=public.camber_quotes_api('file_read',jsonb_build_object('id',ri),a);
+ if data#>>'{files,0,id}' is distinct from fi::text then raise exception 'Historical attachment missing';end if;
+ failed=false;begin perform public.camber_quotes_api('purchase',jsonb_build_object('quotationId',selection_only),a);exception when raise_exception then failed=true;end;
+ if not failed or exists(select 1 from public.camber_purchase_orders where quotation_id=selection_only) then raise exception 'New purchase allowed after deletion';end if;
+ failed=false;begin perform public.camber_quotes_api('workflow',jsonb_build_object('quotationId',qi,'state','ARCHIVED','expectedVersion',1),a);exception when raise_exception then failed=true;end;
+ if not failed then raise exception 'Historical quotation could change';end if;
+ failed=false;begin perform public.camber_quotes_api('disqualify',jsonb_build_object('id',ri2),a);exception when raise_exception then failed=true;end;
+ if not failed or (select status from public.camber_quote_requests where id=ri2) is distinct from 'SELECTED' then raise exception 'Historical supplier choice could change';end if;
  if not exists(select 1 from public.camber_quotations where id=qi and state='CLOSED' and workflow='CANCELED') then raise exception 'Quotation not canceled';end if;
  if not exists(select 1 from public.camber_quote_requests where id=ri and active=false and response->>'total'='50') then raise exception 'Request history lost or link still active';end if;
  if not exists(select 1 from public.camber_quote_versions where id=vi) then raise exception 'Version lost';end if;

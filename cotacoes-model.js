@@ -6,6 +6,7 @@ Object.assign(labels,{PAUSED:'Pausada',ARCHIVED:'Arquivada',TRASH:'Na lixeira'})
 const open=q=>q.state==='OPEN'&&!['PAUSED','CANCELED','ARCHIVED','TRASH'].includes(q.status);
 const quick=(q,key,now=new Date())=>key==='all'&&!['ARCHIVED','TRASH'].includes(q.status)||key==='paused'&&q.status==='PAUSED'||key==='canceled'&&q.status==='CANCELED'||key==='archived'&&q.status==='ARCHIVED'||key==='trash'&&q.status==='TRASH'||key==='awaiting'&&open(q)&&q.awaiting>0||key==='ready'&&q.status==='READY'||key==='due'&&open(q)&&q.awaiting>0&&day(q.expires_at)===day(now)||key==='late'&&open(q)&&q.awaiting>0&&Date.parse(q.expires_at)<=+now||key==='closed'&&q.status==='CLOSED'||key==='unviewed'&&open(q)&&q.unviewed>0;
 function controlActions(q){
+ if(q?.deleted_opportunity_service!=null)return [];
  const s=q.workflow||q.status;
  if(s==='ARCHIVED'||s==='TRASH')return ['RESTORE'];
  if(q.selected_request_id)return ['ARCHIVED'];

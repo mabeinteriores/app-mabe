@@ -5,6 +5,7 @@ for(const status of ['PAUSED','CANCELED','ARCHIVED','TRASH'])assert.equal(M.open
 assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'PAUSED'}),['RESUME','CANCELED']);
 assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'ARCHIVED'}),['RESTORE']);
 assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'CLOSED',selected_request_id:'chosen'}),['ARCHIVED']);
+assert.deepEqual(M.controlActions({...quote,state:'CLOSED',workflow:'CANCELED',selected_request_id:'chosen',deleted_opportunity_service:'Marcenaria'}),[]);
 assert(!M.controlActions({...quote,workflow:'DRAFT'}).includes('TRASH'));
 assert(M.controlActions({...quote,workflow:'DRAFT',received:0}).includes('TRASH'));
 const statuses=['PAUSED','CANCELED','ARCHIVED','TRASH','CLOSED','DRAFT'];
