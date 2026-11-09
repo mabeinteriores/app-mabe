@@ -1,3 +1,8 @@
+.purchase-decisions{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.purchase-decisions button[data-decision]{padding:5px 10px;border:1px solid;border-radius:6px;font:inherit;cursor:pointer}
+.purchase-decisions [data-decision="approve"]{color:#28533b;background:#edf5eb;border-color:#acc9b2}
+.purchase-decisions [data-decision="reject"]{color:#8f3834;background:#fff3ef;border-color:#dbb5ad}
+.purchase-decisions button:disabled{opacity:.55;cursor:default}
 @media(max-width:720px){
  [data-orders] .cq-table table{display:block;min-width:0}
  [data-orders] thead{display:none}

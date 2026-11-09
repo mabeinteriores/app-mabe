@@ -13,12 +13,12 @@ returns jsonb language plpgsql security invoker set search_path=public,pg_temp a
 declare
  po public.camber_purchase_orders%rowtype;
  op text=payload->>'operation'; mutation uuid=(payload->>'mutationId')::uuid;
- amount numeric; delivery date; confirmed date; terms jsonb; note text; project_key text;
+ amount numeric; delivery date; confirmed date; terms jsonb; note text; project_key text; next_state text;
 begin
  if actor is null or not exists(select 1 from public.profiles where id=actor and ativo and aprovado and (papel='admin' or 'projetos'=any(abas_permitidas))) then
   raise exception 'Acesso não autorizado.' using errcode='42501';
  end if;
- if op is null or op not in ('edit','trash','restore') or mutation is null then raise exception 'Operação de compra inválida.';end if;
+ if op is null or op not in ('edit','trash','restore','approve','reject') or mutation is null then raise exception 'Operação de compra inválida.';end if;
  select q.project_id into project_key from public.camber_purchase_orders p join public.camber_quotations q on q.id=p.quotation_id where p.id=(payload->>'id')::uuid;
  if not found then raise exception 'Pedido de compra não encontrado.';end if;
  perform pg_advisory_xact_lock(hashtextextended('camber-quotes-'||project_key,0));
@@ -30,6 +30,8 @@ begin
  if (op='restore') is distinct from (po.deleted_at is not null) then
   raise exception 'A situação deste pedido mudou. Atualize a lista.';
  end if;
+ next_state=case op when 'approve' then 'APPROVED' when 'reject' then 'REJECTED' when 'edit' then payload->>'orderState' else po.state end;
+ if op in ('approve','reject') and next_state=po.state then return jsonb_build_object('ok',true,'version',po.edit_version);end if;
  if op='edit' then
   if not (payload ?& array['total','paymentTerms','expectedDelivery','notes','content','confirmedDelivery','orderState','paymentState','deliveryState','installationState']) then raise exception 'Confira os campos do pedido.';end if;
   if jsonb_typeof(payload#>'{content,items}') is distinct from 'array' then raise exception 'Confira os itens do pedido.';end if;
@@ -50,9 +52,9 @@ begin
   order_total=case when op='edit' then amount else order_total end,
   order_payment_terms=case when op='edit' then terms else order_payment_terms end,
   order_content=case when op='edit' then payload->'content' else order_content end,
-  state=case when op='edit' then payload->>'orderState' else state end,
-  approved_by=case when op='edit' and po.state<>payload->>'orderState' then case when payload->>'orderState'='APPROVED' then actor end else approved_by end,
-  approved_at=case when op='edit' and po.state<>payload->>'orderState' then case when payload->>'orderState'='APPROVED' then now() end else approved_at end,
+  state=next_state,
+  approved_by=case when po.state<>next_state then case when next_state='APPROVED' then actor end else approved_by end,
+  approved_at=case when po.state<>next_state then case when next_state='APPROVED' then now() end else approved_at end,
   confirmed_delivery=case when op='edit' then confirmed else confirmed_delivery end,
   payment_state=case when op='edit' then payload->>'paymentState' else payment_state end,
   delivery_state=case when op='edit' then payload->>'deliveryState' else delivery_state end,
@@ -63,8 +65,8 @@ begin
   deleted_at=case when op='trash' then now() when op='restore' then null else deleted_at end,
   edit_version=edit_version+1,last_mutation=mutation where id=po.id;
  insert into public.camber_quote_events(quotation_id,event,actor)
- values(po.quotation_id,'Pedido PC-'||lpad(po.number::text,5,'0')||case op when 'edit' then ' editado' when 'trash' then ' movido para a Lixeira' else ' restaurado' end||
- case when op='edit' and po.state<>payload->>'orderState' then case payload->>'orderState' when 'APPROVED' then ' · Aprovado' when 'REJECTED' then ' · Rejeitado' else ' · Aguardando aprovação' end else '' end,actor);
+ values(po.quotation_id,'Pedido PC-'||lpad(po.number::text,5,'0')||case op when 'edit' then ' editado' when 'trash' then ' movido para a Lixeira' when 'approve' then ' aprovado' when 'reject' then ' reprovado' else ' restaurado' end||
+ case when op='edit' and po.state<>next_state then case next_state when 'APPROVED' then ' · Aprovado' when 'REJECTED' then ' · Reprovado' else ' · Aguardando aprovação' end else '' end,actor);
  return jsonb_build_object('ok',true,'version',po.edit_version+1);
 end $$;
 revoke all on function public.camber_purchase_change(jsonb,uuid) from public,anon,authenticated;

@@ -3,13 +3,21 @@
 const Q=CamberQuotes,E=Q.esc;
 const total=p=>p.order_total??p.order_content?.total??p.response.total;
 const tracking={
- orderState:['Situação do pedido',{PENDING_APPROVAL:'Aguardando aprovação',APPROVED:'Aprovado',REJECTED:'Rejeitado'},'state'],
+ orderState:['Situação do pedido',{PENDING_APPROVAL:'Aguardando aprovação',APPROVED:'Aprovado',REJECTED:'Reprovado'},'state'],
  paymentState:['Pagamento',{PENDING:'Pendente',PARTIAL:'Parcialmente pago',PAID:'Pago'},'payment_state'],
  deliveryState:['Entrega',{PENDING:'Pendente',SCHEDULED:'Agendada',IN_TRANSIT:'Em transporte',DELIVERED:'Entregue'},'delivery_state'],
  installationState:['Montagem',{PENDING:'Pendente',SCHEDULED:'Agendada',IN_PROGRESS:'Em andamento',COMPLETED:'Concluída',NOT_REQUIRED:'Não se aplica'},'installation_state']
 };
 const dateOnly=value=>value?value.split('-').reverse().join('/'):'Não informada';
 const status=p=>p.deleted_at?'Na lixeira':tracking.orderState[1][p.state]||p.state;
+const decisions={approve:['APPROVED','Aprovar'],reject:['REJECTED','Reprovar']};
+function decisionButtons(p){
+ if(p.deleted_at)return '';
+ return '<div class="purchase-decisions" role="group" aria-label="Decisão do pedido '+E(p.code)+'">'+Object.entries(decisions).map(([op,[state,label]])=>
+  '<button type="button" data-decision="'+op+'" data-id="'+E(p.id)+'" '+(p.state===state?'disabled':'')+'>'+label+'</button>'
+ ).join('')+'</div>';
+}
+const decisionField=p=>'<span>'+E(status(p))+'</span>'+decisionButtons(p);
 const actions=p=>p.deleted_at?[['restore','Restaurar']]:[['edit','Editar'],['trash','Excluir']];
 const buttons=p=>actions(p).map(([op,label])=>'<button type="button" data-order-action="'+op+'" data-id="'+E(p.id)+'">'+label+'</button>').join('');
 Q.mountPurchases=async function(root,initialId,docs){
@@ -25,7 +33,7 @@ Q.mountPurchases=async function(root,initialId,docs){
   });
   const visible=orders.filter(p=>Boolean(p.deleted_at)===trash);
   root.querySelector('[data-orders]').innerHTML=visible.length?'<div class="cq-table"><table><thead><tr>'+['Pedido','Projeto / oportunidade','Fornecedor','Valor','Entrega prevista','Situação','Ações'].map(s=>'<th>'+s+'</th>').join('')+'</tr></thead><tbody>'+visible.map(p=>
-   '<tr><td data-label="Pedido">'+E(p.code)+'</td><td data-label="Projeto / oportunidade">'+E(p.project_name)+'<small>'+E(p.service)+'</small></td><td data-label="Fornecedor">'+E(p.supplier_name)+'</td><td data-label="Valor">'+Q.money(total(p))+'</td><td data-label="Entrega prevista">'+E(dateOnly(p.expected_delivery))+'</td><td data-label="Situação">'+E(status(p))+'</td><td><div class="cq-actions"><button data-open="'+E(p.id)+'">Abrir pedido</button>'+buttons(p)+'</div></td></tr>'
+   '<tr><td data-label="Pedido">'+E(p.code)+'</td><td data-label="Projeto / oportunidade">'+E(p.project_name)+'<small>'+E(p.service)+'</small></td><td data-label="Fornecedor">'+E(p.supplier_name)+'</td><td data-label="Valor">'+Q.money(total(p))+'</td><td data-label="Entrega prevista">'+E(dateOnly(p.expected_delivery))+'</td><td data-label="Situação">'+decisionField(p)+'</td><td><div class="cq-actions"><button data-open="'+E(p.id)+'">Abrir pedido</button>'+buttons(p)+'</div></td></tr>'
   ).join('')+'</tbody></table></div>':'<p>'+(trash?'A Lixeira de compras está vazia.':'Nenhum pedido de compra.')+'</p>';
  }
  async function load(){
@@ -34,9 +42,31 @@ Q.mountPurchases=async function(root,initialId,docs){
   if(current!==sequence)return;
   orders=data;render();
  }
+ async function decide(p,button,dialog){
+  const group=button.closest('.purchase-decisions');
+  const message=dialog?dialog.querySelector('[role="status"]'):feedback;
+  if(button.disabled||p.deleted_at)return;
+  group.querySelectorAll('button').forEach(b=>b.disabled=true);
+  message.textContent='Salvando decisão…';
+  const op=button.dataset.decision,state=decisions[op][0];
+  try{
+   const mutationId=button.dataset.mutation||(button.dataset.mutation=Q.uuid());
+   const result=await Q.api('purchase_change',{id:p.id,operation:op,expectedVersion:p.edit_version??0,mutationId});
+   p.state=state;p.edit_version=result.version;
+   const current=orders.find(o=>o.id===p.id);
+   if(current&&p.edit_version>=(current.edit_version??0))Object.assign(current,{state,edit_version:p.edit_version});
+   render();
+   if(dialog)dialog.querySelector('[data-detail-decision]').innerHTML=decisionField(p);
+   message.textContent='Pedido '+p.code+' '+status(p).toLowerCase()+'.';
+   try{await load();}catch{message.textContent+=' Clique em Atualizar para recarregar a lista.';}
+  }catch(err){
+   message.textContent=err.message;
+   group.querySelectorAll('button').forEach(b=>b.disabled=p.state===decisions[b.dataset.decision][0]);
+  }
+ }
  function detail(p){
   const pay=p.order_payment_terms?P.paymentLabel(p.order_payment_terms):p.response.payment;
-  const d=Q.dialog('<div class="cq-row"><h2>'+E(p.code)+'</h2><button data-close class="cq-x" aria-label="Fechar">×</button></div><p>'+E(p.project_name)+' · '+E(p.service)+'<br><b>'+E(p.supplier_name)+'</b></p><p>'+E(status(p))+'</p><p><b>Valor do pedido</b> '+Q.money(total(p))+'</p><p><b>Pagamento</b> '+E(pay||'Não informado')+'</p><p><b>Entrega prevista</b> '+E(dateOnly(p.expected_delivery))+'</p>'+(p.order_notes?'<p style="white-space:pre-wrap"><b>Observações do pedido</b><br>'+E(p.order_notes)+'</p>':'')+'<details><summary>Proposta original do fornecedor</summary>'+Q.responseHTML(p.response)+'</details><div class="cq-actions"><a href="cotacoes.html?id='+encodeURIComponent(p.quotation_id)+'">Cotação de origem</a><button data-docs>Documentos</button><button data-print>Imprimir / salvar PDF</button>'+buttons(p)+'</div><p class="cq-error" role="alert"></p>');
+  const d=Q.dialog('<div class="cq-row"><h2>'+E(p.code)+'</h2><button data-close class="cq-x" aria-label="Fechar">×</button></div><p>'+E(p.project_name)+' · '+E(p.service)+'<br><b>'+E(p.supplier_name)+'</b></p><div data-detail-decision>'+decisionField(p)+'</div><p role="status"></p><p><b>Valor do pedido</b> '+Q.money(total(p))+'</p><p><b>Pagamento</b> '+E(pay||'Não informado')+'</p><p><b>Entrega prevista</b> '+E(dateOnly(p.expected_delivery))+'</p>'+(p.order_notes?'<p style="white-space:pre-wrap"><b>Observações do pedido</b><br>'+E(p.order_notes)+'</p>':'')+'<details><summary>Proposta original do fornecedor</summary>'+Q.responseHTML(p.response)+'</details><div class="cq-actions"><a href="cotacoes.html?id='+encodeURIComponent(p.quotation_id)+'">Cotação de origem</a><button data-docs>Documentos</button><button data-print>Imprimir / salvar PDF</button>'+buttons(p)+'</div><p class="cq-error" role="alert"></p>');
   const c=p.order_content||p.response;
   const lines=(c.items||[]).map(i=>'<tr>'+[i.room,i.title,i.quantity+' '+i.unit,Q.money(i.unitPrice),Q.money(i.value),i.days?i.days+' dias':'—'].map(v=>'<td>'+E(v||'—')+'</td>').join('')+'</tr>').join('');
   const info=[['Subtotal',Q.money(c.subtotal)],['Desconto',Q.money(c.discount)],['Frete',Q.money(c.freight)],['Montagem',Q.money(c.assembly)],['Total calculado',Q.money(c.total)],
@@ -47,6 +77,9 @@ Q.mountPurchases=async function(root,initialId,docs){
   d.querySelector('details').insertAdjacentHTML('beforebegin','<h3>Itens do pedido</h3><div class="cq-table"><table><thead><tr><th>Cômodo</th><th>Descrição</th><th>Quantidade</th><th>Unitário</th><th>Total</th><th>Prazo</th></tr></thead><tbody>'+lines+'</tbody></table></div>'+info.filter(([,v])=>v).map(([l,v])=>'<p><b>'+E(l)+'</b> '+E(v)+'</p>').join(''));
   d.querySelector('[data-docs]').onclick=()=>docs(p.request_id).catch(e=>d.querySelector('.cq-error').textContent=e.message);
   d.querySelector('[data-print]').onclick=()=>window.print();
+  d.querySelector('[data-detail-decision]').onclick=e=>{
+   const b=e.target.closest('[data-decision]');if(b)decide(p,b,d);
+  };
   d.querySelectorAll('[data-order-action]').forEach(b=>b.onclick=()=>{d.close();manage(p,b.dataset.orderAction)});
  }
  function itemRow(item={}){
@@ -68,7 +101,8 @@ Q.mountPurchases=async function(root,initialId,docs){
   const states=Object.entries(tracking).map(([field,[label,labels,key]])=>{
    const current=p[key]||'PENDING',choices={...labels};
    if(!Object.hasOwn(choices,current))choices[current]=current;
-   return '<label>'+label+'<select name="'+field+'">'+Object.entries(choices).map(([v,l])=>'<option value="'+E(v)+'" '+(v===current?'selected':'')+'>'+E(l)+'</option>').join('')+'</select></label>';
+   const select='<label>'+label+'<select name="'+field+'">'+Object.entries(choices).map(([v,l])=>'<option value="'+E(v)+'" '+(v===current?'selected':'')+'>'+E(l)+'</option>').join('')+'</select></label>';
+   return field==='orderState'?'<div>'+select+decisionButtons(p)+'</div>':select;
   }).join('');
   return '<h3>Itens do pedido</h3><div data-lines>'+items.map(itemRow).join('')+'</div><button type="button" data-add-line>+ Adicionar item</button><div class="cq-two">'+
    cost('discountPercent','Desconto (%)',hasItems?c.discountPercent:0,100)+cost('freight','Frete (R$)',hasItems?c.freight:0)+cost('assembly','Montagem (R$)',hasItems?c.assembly:0)+'</div><p>Total calculado <b data-calculated></b></p>'+
@@ -85,10 +119,14 @@ Q.mountPurchases=async function(root,initialId,docs){
   const form=d.querySelector('form'),f=form.elements;
   const content=()=>purchaseContent({items:lineValues(form),discountPercent:f.discountPercent.value||0,freight:f.freight.value||0,assembly:f.assembly.value||0,start:f.start.value,end:f.end.value,days:f.days.value,basis:f.basis.value,validity:f.validity.value,scope:f.scope.value,warranty:f.warranty.value,exclusions:f.exclusions.value},f.delivery.value);
   if(op==='edit'){
+   f.orderState.onchange=()=>form.querySelectorAll('[data-decision]').forEach(b=>b.disabled=decisions[b.dataset.decision][0]===f.orderState.value);
    const updateTotal=()=>{try{d.querySelector('[data-calculated]').textContent=Q.money(content().total)}catch{d.querySelector('[data-calculated]').textContent='Confira os itens e as datas.'}};
    form.oninput=updateTotal;
    form.addEventListener('click',e=>{
-    if(e.target.closest('[data-add-line]')){
+    const decision=e.target.closest('[data-decision]');
+    if(decision){
+     f.orderState.value=decisions[decision.dataset.decision][0];f.orderState.onchange();
+    }else if(e.target.closest('[data-add-line]')){
      if(form.querySelectorAll('[data-line]').length>=100){d.querySelector('.cq-error').textContent='Limite de 100 itens.';return}
      d.querySelector('[data-lines]').insertAdjacentHTML('beforeend',itemRow());updateTotal();
     }else if(e.target.closest('[data-remove-line]')){e.target.closest('[data-line]').remove();updateTotal();}
@@ -124,7 +162,7 @@ Q.mountPurchases=async function(root,initialId,docs){
     try{await load();feedback.textContent=op==='trash'?'Pedido movido para a Lixeira.':op==='restore'?'Pedido restaurado.':'Alterações salvas.';}
     catch(refreshError){feedback.textContent='Alteração salva. Clique em Atualizar para recarregar a lista. '+refreshError.message;}
    }catch(err){error.textContent=err.message;}
-   finally{busy=false;form.querySelectorAll('button,input,select,textarea').forEach(b=>b.disabled=false);}
+   finally{busy=false;form.querySelectorAll('button,input,select,textarea').forEach(b=>b.disabled=false);if(op==='edit')f.orderState.onchange();}
   };
  }
  root.addEventListener('click',async e=>{
@@ -134,7 +172,7 @@ Q.mountPurchases=async function(root,initialId,docs){
    if(b.hasAttribute('data-refresh')){await load();return}
    if(b.dataset.scope){trash=b.dataset.scope==='trash';render();return}
    const p=orders.find(p=>p.id===(b.dataset.open||b.dataset.id));
-   if(p){if(b.dataset.open)detail(p);else if(b.dataset.orderAction)manage(p,b.dataset.orderAction);}
+   if(p){if(b.dataset.decision)await decide(p,b);else if(b.dataset.open)detail(p);else if(b.dataset.orderAction)manage(p,b.dataset.orderAction);}
   }catch(err){feedback.textContent=err.message;}
  });
  await load();

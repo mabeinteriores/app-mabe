@@ -15,9 +15,12 @@ Q.api=async(action,p)=>{
  if(action==='purchases')return [structuredClone(order)];
  if(action!=='purchase_change'||p.id!==order.id||p.expectedVersion!==order.edit_version)throw Error('Conflito de versão');
  if(p.operation==='edit')Object.assign(order,{order_total:p.total,order_content:p.content,order_payment_terms:p.paymentTerms,order_notes:p.notes,expected_delivery:p.expectedDelivery,confirmed_delivery:p.confirmedDelivery,state:p.orderState,payment_state:p.paymentState,delivery_state:p.deliveryState,installation_state:p.installationState});
- else order.deleted_at=p.operation==='trash'?'2026-11-08':null;
+ else if(p.operation==='approve'||p.operation==='reject'){
+  if(Object.hasOwn(p,'content')||order.deleted_at)throw Error('Decisão inválida');
+  order.state=p.operation==='approve'?'APPROVED':'REJECTED';
+ }else order.deleted_at=p.operation==='trash'?'2026-11-08':null;
  order.edit_version++;
- sessionStorage.setItem('order',JSON.stringify(order));return {ok:true};
+ sessionStorage.setItem('order',JSON.stringify(order));return {ok:true,version:order.edit_version};
 };
 </script><script src="compras-pedidos.js"></script><script src="cotacoes-central.js"></script>`;
 (async()=>{
@@ -35,8 +38,19 @@ Q.api=async(action,p)=>{
    await page.goto(site+'/compras.html');
    await page.locator('[data-orders] tr').first().waitFor({state:'attached'});
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   const row=page.locator('[data-orders] tbody tr');
+   await row.getByRole('button',{name:'Reprovar',exact:true}).click();
+   await page.getByText('Pedido PC-TESTE reprovado.').waitFor();
+   assert.equal(await row.getByRole('button',{name:'Reprovar'}).isDisabled(),true);
+   await page.reload();assert.match(await row.innerText(),/Reprovado/);
+   await row.getByRole('button',{name:'Aprovar',exact:true}).click();
+   await page.getByText('Pedido PC-TESTE aprovado.').waitFor();
+   assert.equal(await row.getByRole('button',{name:'Aprovar'}).isDisabled(),true);
    await page.getByRole('button',{name:'Editar',exact:true}).click();
    const d=page.getByRole('dialog');
+   await d.getByRole('button',{name:'Reprovar',exact:true}).click();
+   assert.equal(await d.locator('[name="orderState"]').inputValue(),'REJECTED');
+   assert.equal(await page.evaluate(()=>order.state),'APPROVED');
    await d.locator('[data-item="quantity"]').fill('2');
    await d.locator('[data-item="unitPrice"]').fill('2400');
    await d.getByRole('button',{name:'+ Adicionar item'}).click();
@@ -57,6 +71,9 @@ Q.api=async(action,p)=>{
    assert.match(await page.locator('[data-orders]').innerText(),/4\.550,00/);
    await page.reload();
    await page.getByRole('button',{name:'Abrir pedido'}).click();
+   assert.equal(await d.getByRole('button',{name:'Reprovar'}).isDisabled(),true);
+   await d.getByRole('button',{name:'Aprovar',exact:true}).click();
+   await d.getByText('Pedido PC-TESTE aprovado.').waitFor();
    assert.match(await d.innerText(),/4x no cartão/);
    assert.match(await d.innerText(),/Avisar na chegada/);
    assert.match(await d.innerText(),/Parcialmente pago/);
@@ -70,13 +87,14 @@ Q.api=async(action,p)=>{
    await page.getByText('Nenhum pedido de compra.').waitFor();
    await page.getByRole('button',{name:'Lixeira',exact:true}).click();
    assert.match(await page.locator('[data-orders]').innerText(),/PC-TESTE/);
+   assert.equal(await page.locator('[data-orders] [data-decision]').count(),0);
    await page.goto(site+'/compras.html?id=p');
    await d.getByRole('button',{name:'Restaurar',exact:true}).click();
    await d.getByRole('button',{name:'Restaurar pedido',exact:true}).click();
    await page.getByText('A Lixeira de compras está vazia.').waitFor();
    await page.getByRole('button',{name:'Pedidos',exact:true}).click();
    assert.match(await page.locator('[data-orders]').innerText(),/PC-TESTE/);
-   assert.equal(await page.evaluate(()=>order.edit_version),3);
+   assert.equal(await page.evaluate(()=>order.edit_version),6);
    assert.deepEqual(errors,[]);await page.close();
   }
   console.log('PASS: edição de itens, cálculo, pagamento, acompanhamento, reabertura, exclusão e restauração no computador e celular.');
