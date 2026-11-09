@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const URL_ = Deno.env.get("SUPABASE_URL")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
-const ABAS_VALIDAS = ["painel","precificacao","projetos","clientes","fornecedores","indicacoes","lead","config"];
+// Mantido em sincronia com a navegacao (shell.js) e com os chips da tela Usuarios.
+const ABAS_VALIDAS = ["painel","precificacao","projetos","cotacoes","fornecedores","compras","clientes","indicacoes","lead","config"];
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -35,7 +36,21 @@ Deno.serve(async (req) => {
       .select("id,nome,email,papel,aprovado,abas_permitidas,solicitado_em,created_at")
       .order("aprovado", { ascending: true })
       .order("created_at", { ascending: false });
-    return json({ users: data || [], me: ures.user.id, abas: ABAS_VALIDAS });
+    let users: any[] = data || [];
+    // Enriquecer com o ultimo acesso (auth). Se falhar, mantem a lista intacta.
+    try {
+      const porId: Record<string, string | null> = {};
+      let page = 1;
+      while (page <= 10) {
+        const { data: au, error: ae } = await svc.auth.admin.listUsers({ page, perPage: 200 });
+        if (ae || !au || !au.users || !au.users.length) break;
+        for (const u of au.users) porId[u.id] = (u as any).last_sign_in_at || null;
+        if (au.users.length < 200) break;
+        page++;
+      }
+      users = users.map((u) => ({ ...u, ultimo_acesso: porId[u.id] ?? null }));
+    } catch (_e) { /* segue sem ultimo_acesso */ }
+    return json({ users, me: ures.user.id, abas: ABAS_VALIDAS });
   }
 
   if (!targetId) return json({ error: "user_id ausente." });

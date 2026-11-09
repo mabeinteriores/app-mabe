@@ -13,41 +13,45 @@
 <link rel="stylesheet" href="app.css?v=20260912215700">
 <style>
   .u-wrap{max-width:920px;margin:0 auto;padding:28px 24px}
-  .u-head h1{font-size:26px;margin:0 0 4px}
-  .u-head .sub{color:#9a8d7d;font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
-  .u-head p{color:#8a7d6d;font-size:14px;margin:0 0 22px}
-  .u-card{background:#fff;border:1px solid #e8e0d4;border-radius:14px;overflow:hidden}
-  .u-item{border-top:1px solid #f1ebe0}
+  .u-head h1{font-size:26px;margin:0 0 4px;color:var(--ink)}
+  .u-head .sub{color:var(--ink-3);font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+  .u-head p{color:var(--ink-2);font-size:14px;margin:0 0 22px}
+  .u-toolbar{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--hair);border-radius:11px;padding:9px 13px;margin-bottom:14px}
+  .u-toolbar .u-search-ic{color:var(--ink-3);font-size:15px;line-height:1}
+  .u-toolbar input{flex:1;border:none;background:transparent;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink)}
+  .u-card{background:var(--surface);border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .u-item{border-top:1px solid var(--hair)}
   .u-item:first-child{border-top:none}
-  .u-row{display:flex;align-items:center;gap:14px;padding:15px 20px}
+  .u-row{display:flex;align-items:center;gap:14px;padding:15px 20px;flex-wrap:wrap}
   .u-perms{padding:0 20px 16px 72px}
-  .u-perms-lbl{display:block;font-size:11.5px;color:#9a8d7d;margin-bottom:8px}
+  .u-perms-lbl{display:block;font-size:11.5px;color:var(--ink-3);margin-bottom:8px}
   .u-chips{display:flex;flex-wrap:wrap;gap:7px}
-  .u-chip{border:1px solid #e0d8cb;background:#faf6f0;color:#8a7d6d;border-radius:18px;padding:5px 12px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit}
-  .u-chip.on{background:#eef6ec;border-color:#bfdcb6;color:#2e7d32}
+  .u-chip{border:1px solid var(--hair-2);background:var(--surface-2);color:var(--ink-2);border-radius:18px;padding:5px 12px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit}
+  .u-chip.on{background:var(--win-soft);border-color:var(--win);color:var(--win)}
   .u-chip:disabled{opacity:.6;cursor:default}
   .u-perms-foot{display:flex;align-items:center;gap:12px;margin-top:11px}
-  .u-save{background:#C0653A;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+  .u-save{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
   .u-save:disabled{opacity:.6;cursor:default}
   .u-saved{font-size:12.5px;font-weight:600}
-  .u-av{width:38px;height:38px;border-radius:10px;background:#ead9c6;color:#9a6a44;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-  .u-info{flex:1;min-width:0}
-  .u-nome{font-weight:600;font-size:14px}
-  .u-mail{font-size:12.5px;color:#8a7d6d}
+  .u-av{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent-2);font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .u-info{flex:1;min-width:160px}
+  .u-nome{font-weight:600;font-size:14px;color:var(--ink)}
+  .u-mail{font-size:12.5px;color:var(--ink-2)}
+  .u-meta{font-size:11.5px;color:var(--ink-3);margin-top:3px}
   .u-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap}
-  .u-pend{background:#fff2e3;color:#b3651f}
-  .u-ok{background:#e7f4e8;color:#2e7d32}
-  .u-adm{background:#efe7f7;color:#7a4ca0}
+  .u-pend{background:var(--surface-2);color:var(--st-prop)}
+  .u-ok{background:var(--win-soft);color:var(--win)}
+  .u-adm{background:var(--surface-2);color:#9a6dc4}
   .u-btn{border:none;border-radius:8px;padding:8px 15px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
   .u-btn:disabled{opacity:.6;cursor:default}
-  .u-approve{background:#C0653A;color:#fff}
-  .u-revoke{background:transparent;color:#b3651f;border:1px solid #e8d2b8}
-  .u-promote{background:transparent;color:#7a4ca0;border:1px solid #ddc9ec}
-  .u-demote{background:transparent;color:#7a4ca0;border:1px solid #ddc9ec}
-  .u-del{background:#b3402a;color:#fff}
-  .u-acoes{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-  .u-muted{color:#9a8d7d;font-size:13.5px;padding:34px;text-align:center}
-  .u-pendnote{background:#fff7ee;border:1px solid #f0dcc2;color:#9a6a44;font-size:13px;padding:12px 16px;border-radius:10px;margin-bottom:16px}
+  .u-approve{background:var(--accent);color:#fff}
+  .u-revoke{background:transparent;color:var(--st-prop);border:1px solid var(--hair-2)}
+  .u-promote{background:transparent;color:#9a6dc4;border:1px solid var(--hair-2)}
+  .u-demote{background:transparent;color:#9a6dc4;border:1px solid var(--hair-2)}
+  .u-del{background:var(--lost);color:#fff}
+  .u-acoes{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .u-muted{color:var(--ink-3);font-size:13.5px;padding:34px;text-align:center}
+  .u-pendnote{background:var(--accent-soft);border:1px solid var(--hair);color:var(--accent-2);font-size:13px;padding:12px 16px;border-radius:10px;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -58,6 +62,10 @@
         <div class="sub">Acesso &amp; permissões</div>
         <h1>Usuários</h1>
         <p>Autorize quem pode acessar o sistema. Novos cadastros ficam <b>pendentes</b> até você liberar.</p>
+      </div>
+      <div class="u-toolbar" id="uToolbar" hidden>
+        <span class="u-search-ic">⌕</span>
+        <input id="uSearch" type="search" placeholder="Buscar por nome ou e-mail…" autocomplete="off" aria-label="Buscar usuário">
       </div>
       <div id="uPendNote"></div>
       <div class="u-card" id="uList"><div class="u-muted">Carregando…</div></div>
@@ -89,6 +97,23 @@
   function call(action, user_id){ return invokeAdmin({ action: action, user_id: user_id }); }
   function inicial(s){ return ((s||'?').trim().charAt(0) || '?').toUpperCase(); }
   function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':String(s); return d.innerHTML; }
+  function fmtData(iso){
+    if(!iso) return null;
+    var d = new Date(iso); if(isNaN(d)) return null;
+    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  var toolbarEl = document.getElementById('uToolbar');
+  var searchEl  = document.getElementById('uSearch');
+  var STATE = { users: [], me: null };
+  function applyFilter(){
+    var q = (searchEl && searchEl.value || '').trim().toLowerCase();
+    var list = !q ? STATE.users : STATE.users.filter(function(u){
+      return (((u.nome||'') + ' ' + (u.email||'')).toLowerCase()).indexOf(q) >= 0;
+    });
+    render(list, STATE.me, q);
+  }
+  if(searchEl){ searchEl.addEventListener('input', applyFilter); }
 
   // Mantido em sincronia com a navegação (shell.js). "Usuários" fica de fora:
   // é área exclusiva de admin, não se concede a usuário comum.
@@ -103,17 +128,28 @@
     return invokeAdmin({ action:'set_abas', user_id:user_id, abas:abas });
   }
 
-  function render(users, meId){
-    var pend = users.filter(function(u){ return !u.aprovado; }).length;
+  function metaLinha(u){
+    var cad = fmtData(u.created_at || u.solicitado_em);
+    var acc = fmtData(u.ultimo_acesso);
+    var partes = [];
+    if(cad) partes.push('Cadastrado em ' + cad);
+    if(u.aprovado) partes.push('Último acesso: ' + (acc || 'ainda não acessou'));
+    return partes.length ? '<div class="u-meta">'+partes.join(' · ')+'</div>' : '';
+  }
+
+  function render(list, meId, q){
+    // o contador de pendentes reflete SEMPRE o total, não o resultado filtrado
+    var pend = STATE.users.filter(function(u){ return !u.aprovado; }).length;
     noteEl.innerHTML = pend ? '<div class="u-pendnote">⏳ '+pend+' cadastro(s) aguardando sua autorização.</div>' : '';
-    if(!users.length){ listEl.innerHTML = '<div class="u-muted">Nenhum usuário cadastrado ainda.</div>'; return; }
-    listEl.innerHTML = users.map(function(u){
+    if(!STATE.users.length){ listEl.innerHTML = '<div class="u-muted">Nenhum usuário cadastrado ainda.</div>'; return; }
+    if(!list.length){ listEl.innerHTML = '<div class="u-muted">Nenhum usuário encontrado para “'+esc(q||'')+'”.</div>'; return; }
+    listEl.innerHTML = list.map(function(u){
       var badge = u.aprovado
         ? (u.papel==='admin' ? '<span class="u-badge u-adm">Admin</span>' : '<span class="u-badge u-ok">Ativo</span>')
         : '<span class="u-badge u-pend">Pendente</span>';
       var acoes, permsRow = '';
       if(u.id === meId){
-        acoes = '<span style="color:#9a8d7d;font-size:12px;white-space:nowrap">você</span>';
+        acoes = '<span style="color:var(--ink-3);font-size:12px;white-space:nowrap">você</span>';
       } else {
         var btns = [];
         if(u.papel === 'admin'){
@@ -127,7 +163,7 @@
         btns.push('<button class="u-btn u-del" data-act="delete" data-id="'+u.id+'">Excluir</button>');
         acoes = btns.join('');
         if(u.papel === 'admin'){
-          permsRow = '<div class="u-perms"><span class="u-perms-lbl" style="color:#7a4ca0">Administrador — acesso total a todas as abas.</span></div>';
+          permsRow = '<div class="u-perms"><span class="u-perms-lbl" style="color:#9a6dc4">Administrador — acesso total a todas as abas.</span></div>';
         } else {
           var abas = u.abas_permitidas || [];
           var chips = TABS.map(function(tb){
@@ -141,24 +177,34 @@
         }
       }
       return '<div class="u-item"><div class="u-row"><div class="u-av">'+inicial(u.nome||u.email)+'</div>'+
-        '<div class="u-info"><div class="u-nome">'+esc(u.nome||'(sem nome)')+'</div><div class="u-mail">'+esc(u.email||'')+'</div></div>'+
+        '<div class="u-info"><div class="u-nome">'+esc(u.nome||'(sem nome)')+'</div><div class="u-mail">'+esc(u.email||'')+'</div>'+metaLinha(u)+'</div>'+
         badge + '<div class="u-acoes">'+acoes+'</div></div>' + permsRow + '</div>';
     }).join('');
 
-    // ações: autorizar / bloquear / excluir
+    // ações: autorizar / bloquear / tornar-admin / remover-admin / excluir
     listEl.querySelectorAll('button[data-act]').forEach(function(b){
       b.onclick = function(){
         var act=b.getAttribute('data-act'), id=b.getAttribute('data-id');
+        function exec(){
+          b.disabled=true; b.textContent='…';
+          call(act, id).then(function(r){
+            var err = r.error ? r.error.message : (r.data && r.data.error);
+            if(err){ alert('Erro: '+err); }
+            load();
+          });
+        }
+        // Excluir usuário é a ação mais grave: exige a senha do admin (igual Fornecedor/Cliente)
+        if(act==='delete'){
+          var alvo = STATE.users.filter(function(x){ return String(x.id)===String(id); })[0];
+          var nome = (alvo && (alvo.nome || alvo.email)) || 'este usuário';
+          if(window.pedirSenhaExcluir){ window.pedirSenhaExcluir(nome, exec); return; }
+          if(!confirm('EXCLUIR este usuário definitivamente?\n\nA conta será apagada e não dá para desfazer.')) return;
+          exec(); return;
+        }
         if(act==='revoke' && !confirm('Bloquear o acesso deste usuário?\n\nEle não conseguirá mais entrar até você liberar de novo. A conta NÃO é apagada.')) return;
-        if(act==='delete' && !confirm('EXCLUIR este usuário definitivamente?\n\nA conta será apagada e não dá para desfazer.')) return;
         if(act==='make_admin' && !confirm('Tornar este usuário ADMINISTRADOR?\n\nEle poderá ver tudo e gerenciar usuários (autorizar, bloquear, excluir).')) return;
         if(act==='remove_admin' && !confirm('Remover o status de administrador deste usuário?\n\nEle volta a ser usuário comum, com as abas limitadas que você definir.')) return;
-        b.disabled=true; b.textContent='…';
-        call(act, id).then(function(r){
-          var err = r.error ? r.error.message : (r.data && r.data.error);
-          if(err){ alert('Erro: '+err); }
-          load();
-        });
+        exec();
       };
     });
 
@@ -167,7 +213,7 @@
       c.onclick = function(){
         c.classList.toggle('on');
         var fb = document.getElementById('saved-'+c.getAttribute('data-uid'));
-        if(fb){ fb.style.color='#9a8d7d'; fb.textContent='alterações não salvas'; }
+        if(fb){ fb.style.color='var(--ink-3)'; fb.textContent='alterações não salvas'; }
       };
     });
     listEl.querySelectorAll('.u-save').forEach(function(b){
@@ -180,9 +226,9 @@
         setAbas(uid, abas).then(function(r){
           b.disabled = false; b.textContent = 'Salvar acessos';
           var err = r.error ? r.error.message : (r.data && r.data.error);
-          if(err){ if(fb){ fb.style.color='#b3402a'; fb.textContent='Erro: '+err; } return; }
-          var u = users.filter(function(x){ return x.id===uid; })[0]; if(u) u.abas_permitidas = abas;
-          if(fb){ fb.style.color='#2e7d32'; fb.textContent='✓ Salvo'; }
+          if(err){ if(fb){ fb.style.color='var(--lost)'; fb.textContent='Erro: '+err; } return; }
+          var u = STATE.users.filter(function(x){ return x.id===uid; })[0]; if(u) u.abas_permitidas = abas;
+          if(fb){ fb.style.color='var(--win)'; fb.textContent='✓ Salvo'; }
         });
       };
     });
@@ -217,7 +263,10 @@
       if(r.error)throw Error('Não foi possível carregar os usuários. Verifique a conexão e a sessão.');
       if(r.data && r.data.error)throw Error(r.data.error);
       if(!Array.isArray(r.data?.users))throw Error('O serviço não retornou a lista de usuários.');
-      render(r.data.users,r.data.me);
+      STATE.users = r.data.users;
+      STATE.me = r.data.me;
+      if(toolbarEl) toolbarEl.hidden = STATE.users.length < 2; // busca só aparece quando há 2+ usuários
+      applyFilter();
     }catch(error){problem(error.message,load);}
   }
   if(document.getElementById('camberHide')){
