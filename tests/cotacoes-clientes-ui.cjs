@@ -4,23 +4,28 @@ const path=require('node:path');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..');
 const screen=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="cotacoes-list.css"><main></main>
+<link rel="stylesheet" href="cotacoes-list.css"><div id="app" data-page="cotacoes"><main id="cq-main"></main></div>
 <script src="cotacoes-model.js"></script><script src="cotacoes-clients-model.js"></script>
 <script src="cotacoes-shared.js"></script><script src="cotacoes-clients.js"></script><script src="cotacoes-list.js"></script>
+<script src="cotacoes-wizard.js"></script><script src="cotacoes-control.js"></script>
 <script>
 const Q=CamberQuotes;
-Q.avatar=()=>'';Q.controlButtons=()=>'';
+Q.avatar=()=>'';Q.ready=async()=>{};
 const projects=[{id:'p1',cliente:'Ana'},{id:'p2',cliente:'Bia'},{id:'p3',cliente:'Carol'}];
 const quotes=['CLOSED','CANCELED','ARCHIVED','CLOSED','READY'].map((status,i)=>({
  project_id:i===3?'p2':'p1',id:String(i),code:'COT-'+i,status,state:status==='READY'?'OPEN':'CLOSED',
  suppliers:[],project_name:'Projeto '+i,created_at:'2026-11-01',expires_at:'2026-12-01',service:'Marcenaria',invited:1,received:1,awaiting:0
 }));
-const snapshot=CamberQuoteClients.build(projects,[],quotes);
-Q.loadClientSnapshot=async()=>snapshot;
-const client=snapshot.clients.find(c=>c.client_key===new URLSearchParams(location.search).get('client'));
-const main=document.querySelector('main');
-(client?new Q.CentralList(main,()=>{},()=>{},client,snapshot):new Q.ClientDirectory(main)).load();
-</script>`;
+Q.loadClientSnapshot=async()=>CamberQuoteClients.build(projects,[],quotes);
+Q.api=async(action,p)=>{
+ const q=quotes.find(q=>q.id===p.quotationId);
+ if(action!=='workflow'||!q||p.expectedVersion!==(q.control_version||0))throw Error('Operação inválida no teste');
+ if(p.state==='TRASH'){q.previous=q.status;q.workflow=q.status='TRASH';}
+ else if(p.state==='RESTORE')q.workflow=q.status=q.previous;
+ else throw Error('Ação inesperada');
+ q.control_version=p.expectedVersion+1;return {ok:true};
+};
+</script><script src="cotacoes-central.js"></script>`;
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  try{
@@ -50,8 +55,28 @@ const main=document.querySelector('main');
    assert.equal(await visibleRow.count(),1);
    assert.match(await visibleRow.innerText(),/COT-0/);
    assert.equal(new URL(page.url()).searchParams.get('client'),'name:ana');
+   const menu=visibleRow.getByRole('button',{name:'Ações de COT-0'});
+   await menu.click();
+   await visibleRow.getByRole('button',{name:'Excluir cotação'}).click();
+   let dialog=page.getByRole('dialog');
+   assert.match(await dialog.innerText(),/COT-0/);
+   await dialog.getByRole('button',{name:'Voltar'}).click();
+   assert.equal(await visibleRow.count(),1);
+   await menu.click();
+   await visibleRow.getByRole('button',{name:'Excluir cotação'}).click();
+   await page.getByRole('dialog').getByRole('button',{name:'Excluir cotação'}).click();
+   await page.locator('[data-table] .cq-empty').waitFor();
+   await page.locator('[data-quick="trash"]').click();
+   await visibleRow.first().waitFor();
+   await menu.click();
+   await visibleRow.getByRole('button',{name:'Restaurar cotação'}).click();
+   await page.getByRole('dialog').getByRole('button',{name:'Restaurar cotação'}).click();
+   await page.locator('[data-table] .cq-empty').waitFor();
+   await page.locator('[data-quick="closed"]').click();
+   await visibleRow.first().waitFor();
+   assert.match(await visibleRow.innerText(),/COT-0/);
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS: cartão Fechado no computador e celular, contagem zero, navegação e filtro somente do cliente.');
+  console.log('PASS: cartão Fechado, menu Ações, confirmação, cancelamento, exclusão e restauração da cotação no computador e celular.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

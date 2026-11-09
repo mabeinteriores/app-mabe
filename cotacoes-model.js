@@ -6,15 +6,16 @@ Object.assign(labels,{PAUSED:'Pausada',ARCHIVED:'Arquivada',TRASH:'Na lixeira'})
 const open=q=>q.state==='OPEN'&&!['PAUSED','CANCELED','ARCHIVED','TRASH'].includes(q.status);
 const quick=(q,key,now=new Date())=>key==='all'&&!['ARCHIVED','TRASH'].includes(q.status)||key==='paused'&&q.status==='PAUSED'||key==='canceled'&&q.status==='CANCELED'||key==='archived'&&q.status==='ARCHIVED'||key==='trash'&&q.status==='TRASH'||key==='awaiting'&&open(q)&&q.awaiting>0||key==='ready'&&q.status==='READY'||key==='due'&&open(q)&&q.awaiting>0&&day(q.expires_at)===day(now)||key==='late'&&open(q)&&q.awaiting>0&&Date.parse(q.expires_at)<=+now||key==='closed'&&q.status==='CLOSED'||key==='unviewed'&&open(q)&&q.unviewed>0;
 function controlActions(q){
- if(q?.deleted_opportunity_service!=null)return [];
  const s=q.workflow||q.status;
- if(s==='ARCHIVED'||s==='TRASH')return ['RESTORE'];
- if(q.selected_request_id)return ['ARCHIVED'];
- if(s==='PAUSED')return ['RESUME','CANCELED'];
- if(s==='CANCELED')return ['RESUME','ARCHIVED'];
- if(s==='DRAFT')return [...(q.state==='CLOSED'?['RESUME']:[]),'CANCELED',...(Number(q.received||0)===0?['TRASH']:[])];
- if(q.state==='CLOSED')return ['RESUME','ARCHIVED'];
- return ['PAUSED','CANCELED'];
+ if(s==='TRASH')return ['RESTORE'];
+ if(q.deleted_opportunity_service!=null)return ['TRASH'];
+ if(s==='ARCHIVED')return ['RESTORE','TRASH'];
+ if(q.selected_request_id)return ['ARCHIVED','TRASH'];
+ if(s==='PAUSED')return ['RESUME','CANCELED','TRASH'];
+ if(s==='CANCELED')return ['RESUME','ARCHIVED','TRASH'];
+ if(s==='DRAFT')return [...(q.state==='CLOSED'?['RESUME']:[]),'CANCELED','TRASH'];
+ if(q.state==='CLOSED')return ['RESUME','ARCHIVED','TRASH'];
+ return ['PAUSED','CANCELED','TRASH'];
 }
 function notice(q,now=new Date()){
  if(!open(q))return null;

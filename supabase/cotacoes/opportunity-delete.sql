@@ -36,7 +36,7 @@ begin
  if needs_ack then raise exception 'Atualize a página e confira os vínculos antes de excluir.';end if;
  if coalesce(payload->>'version','')<>version then raise exception 'A oportunidade ou suas cotações mudaram. Feche esta janela e confira novamente antes de excluir.';end if;
  -- Keep supplier responses, files and events for historical consultation.
- update public.camber_quotations set state='CLOSED',workflow='CANCELED',deleted_opportunity_service=coalesce(opportunity->>'serv','Oportunidade'),
+ update public.camber_quotations set state='CLOSED',workflow=case when workflow='TRASH' then 'TRASH' else 'CANCELED' end,deleted_opportunity_service=coalesce(opportunity->>'serv','Oportunidade'),
   control_reason='Oportunidade excluída',control_version=control_version+1,control_mutation=null where project_id=pid and opportunity_id=oid;
  update public.camber_quote_requests set active=false where project_id=pid and opportunity_id=oid and active;
  insert into public.camber_quote_events(quotation_id,event,actor)

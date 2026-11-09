@@ -54,11 +54,15 @@ begin
  select to_jsonb(p) into po_before from public.camber_purchase_orders p where quotation_id=qi;
  failed=false;begin perform public.camber_opportunity_delete('delete',target||jsonb_build_object('version',preview->>'version'),a);exception when raise_exception then failed=true;end;
  if not failed then raise exception 'Stale confirmation allowed after an order was issued';end if;
+ perform public.camber_quotes_api('workflow',jsonb_build_object('quotationId',selection_only,'state','TRASH','expectedVersion',0),a);
  preview=public.camber_opportunity_delete('preview',target,a);
  if jsonb_array_length(preview->'orders') is distinct from 1 or preview#>>'{orders,0,id}' is distinct from po_before->>'id' then raise exception 'Order missing from confirmation';end if;
  failed=false;begin perform public.camber_opportunity_delete('delete',(target-'linkedPolicy')||jsonb_build_object('version',preview->>'version'),a);exception when raise_exception then failed=true;end;
  if not failed then raise exception 'Old UI can delete without explaining orders';end if;
  perform public.camber_opportunity_delete('delete',target||jsonb_build_object('version',preview->>'version'),a);
+ if not exists(select 1 from public.camber_quotations where id=selection_only and workflow='TRASH') then raise exception 'Deleting the opportunity removed a quote from Trash';end if;
+ perform public.camber_quotes_api('workflow',jsonb_build_object('quotationId',selection_only,'state','RESTORE','expectedVersion',2),a);
+ if not exists(select 1 from public.camber_quotations where id=selection_only and workflow='CANCELED' and state='CLOSED') then raise exception 'Restore reopened a deleted opportunity';end if;
  if exists(select 1 from public.kv_store s,jsonb_array_elements(s.value) x where s.workspace='mabe' and s.key='mabe-opps-v3-'||pid and x->>'id' in ('4','5')) then raise exception 'Target still present';end if;
  data=public.camber_quotes_api('purchase',jsonb_build_object('quotationId',qi),a);
  if data is distinct from po_before then raise exception 'Existing order changed';end if;

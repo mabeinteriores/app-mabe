@@ -5,6 +5,7 @@ alter table public.camber_quotations add column if not exists control_reason tex
 alter table public.camber_quotations add column if not exists control_version integer not null default 0;
 alter table public.camber_quotations add column if not exists control_mutation uuid;
 alter table public.camber_quotations add column if not exists deleted_opportunity_service text;
+alter table public.camber_quotations add column if not exists trash_previous jsonb;
 
 CREATE OR REPLACE FUNCTION public.camber_quotes_api(action text, payload jsonb, actor uuid DEFAULT NULL::uuid)
  RETURNS jsonb
@@ -59,7 +60,16 @@ begin
    'purchase',(select id from public.camber_purchase_orders where quotation_id=q.id),
    'clientPrices',coalesce((select jsonb_agg(jsonb_build_object('proposalId',pp->>'id','value',public.camber_remuneration_values(pp)->'client')) from public.kv_store ss,jsonb_array_elements(case when jsonb_typeof(ss.value)='array' then ss.value else '[]'::jsonb end) oo,jsonb_array_elements(coalesce(oo->'proposals','[]')) pp where ss.workspace='mabe' and ss.key='mabe-opps-v3-'||q.project_id and oo->>'id'=q.opportunity_id),'[]'),'financial',case when exists(select 1 from public.profiles where id=actor and papel='admin') then coalesce((select jsonb_agg(jsonb_build_object('proposalId',pp->>'id','rt',pp->'rt','rtTipo',pp->'rtTipo','value',pp->'value','quoteResponse',pp->'quoteResponse','remuneration',pp->'remuneration')) from public.kv_store ss,jsonb_array_elements(case when jsonb_typeof(ss.value)='array' then ss.value else '[]'::jsonb end) oo,jsonb_array_elements(coalesce(oo->'proposals','[]')) pp where ss.workspace='mabe' and ss.key='mabe-opps-v3-'||q.project_id and oo->>'id'=q.opportunity_id),'[]') else null end);
   end if;
-  if q.deleted_opportunity_service is not null then
+  if q.workflow='TRASH' and action not in ('workflow','reviewed') then
+   if action='purchase' then
+    select * into po from public.camber_purchase_orders where quotation_id=q.id;
+    if po.id is not null then return to_jsonb(po);end if;
+   end if;
+   raise exception 'Restaure a cotação na Lixeira antes de alterar.';
+  end if;
+  if q.deleted_opportunity_service is not null and not (action='workflow' and (
+   payload->>'state'='TRASH' or (payload->>'state'='RESTORE' and
+   (q.workflow='TRASH' or q.control_mutation=nullif(payload->>'mutationId','')::uuid) is true))) then
    if action='reviewed' then return '{"ok":true}';end if;
    if action='purchase' then
     select * into po from public.camber_purchase_orders where quotation_id=q.id;
@@ -77,7 +87,7 @@ begin
      raise exception 'Esta cotação mudou. Atualize a tela antes de continuar.';
    end if;
    if q.selected_request_id is not null or exists(select 1 from public.camber_purchase_orders where quotation_id=q.id) then
-     if st<>'ARCHIVED' and not(st='RESTORE' and q.workflow='ARCHIVED') then raise exception 'Cotação com fornecedor escolhido ou compra: somente arquivar ou restaurar.';end if;
+     if st not in ('ARCHIVED','TRASH') and not(st='RESTORE' and q.workflow in ('ARCHIVED','TRASH')) then raise exception 'Cotação com fornecedor escolhido ou compra: somente arquivar, excluir ou restaurar.';end if;
    end if;
    if st in ('PAUSED','CANCELED') and (length(trim(coalesce(payload->>'reason','')))<3 or length(payload->>'reason')>1000) then raise exception 'Informe o motivo (3 a 1.000 caracteres).';end if;
    if st='PAUSED' then
@@ -91,8 +101,7 @@ begin
    elsif st='ARCHIVED' then
      if q.state<>'CLOSED' or q.workflow in ('PAUSED','ARCHIVED','TRASH') then raise exception 'Arquive somente cotações encerradas ou canceladas.';end if;
    elsif st='TRASH' then
-     if q.workflow<>'DRAFT' or exists(select 1 from public.camber_quote_requests rr where rr.quotation_id=q.id and (rr.response is not null or rr.responded_at is not null))
-       or exists(select 1 from public.camber_quote_versions vv join public.camber_quote_requests rr on rr.id=vv.request_id where rr.quotation_id=q.id) then raise exception 'Somente rascunhos sem propostas recebidas podem ir para a lixeira.';end if;
+     if q.workflow='TRASH' then raise exception 'A cotação já está na Lixeira.';end if;
    elsif st='RESTORE' then
      if q.workflow not in ('ARCHIVED','TRASH') then raise exception 'Somente cotações arquivadas ou na lixeira podem ser restauradas.';end if;
    else
@@ -100,9 +109,14 @@ begin
      if st='DRAFT' and exists(select 1 from public.camber_quote_requests where quotation_id=q.id and response is not null) then raise exception 'Cotação com proposta recebida não pode voltar a rascunho.';end if;
    end if;
    update public.camber_quotations set
-     control_previous=case when st in ('ARCHIVED','TRASH') then q.workflow when st='RESTORE' then null else control_previous end,
-     workflow=case when st='RESUME' then 'IN_QUOTATION' when st='RESTORE' then coalesce(q.control_previous,case when q.workflow='TRASH' then 'DRAFT' else 'CLOSED' end) else st end,
-     state=case when st in ('PAUSED','CANCELED','CLOSED','ARCHIVED','TRASH','DRAFT') or st='RESTORE' then 'CLOSED' else 'OPEN' end,
+     trash_previous=case when st='TRASH' then jsonb_build_object('state',q.state,'workflow',q.workflow) when st='RESTORE' then null else q.trash_previous end,
+     control_previous=case when st='ARCHIVED' then q.workflow when st='RESTORE' and (q.workflow='ARCHIVED' or q.trash_previous is null) then null else q.control_previous end,
+     workflow=case when st='RESUME' then 'IN_QUOTATION'
+       when st='RESTORE' and q.deleted_opportunity_service is not null then 'CANCELED'
+       when st='RESTORE' and q.workflow='TRASH' then coalesce(q.trash_previous->>'workflow',q.control_previous,'DRAFT')
+       when st='RESTORE' then coalesce(q.control_previous,'CLOSED') else st end,
+     state=case when st='RESTORE' and q.workflow='TRASH' and q.deleted_opportunity_service is null then coalesce(q.trash_previous->>'state','CLOSED')
+       when st in ('PAUSED','CANCELED','CLOSED','ARCHIVED','TRASH','DRAFT','RESTORE') then 'CLOSED' else 'OPEN' end,
      expires_at=case when st='RESUME' then due else expires_at end,
      control_reason=case when st in ('PAUSED','CANCELED') then trim(payload->>'reason') when st='RESUME' then null else control_reason end,
      control_version=control_version+1,control_mutation=(payload->>'mutationId')::uuid
@@ -111,7 +125,7 @@ begin
    insert into public.camber_quote_events(quotation_id,event,actor) values(q.id,
      case st when 'PAUSED' then 'Cotação pausada' when 'RESUME' then 'Cotação retomada · Novo prazo: '||to_char(due at time zone 'America/Sao_Paulo','DD/MM/YYYY')
      when 'CANCELED' then 'Cotação cancelada' when 'ARCHIVED' then 'Cotação arquivada' when 'TRASH' then 'Cotação movida para a lixeira'
-     when 'RESTORE' then 'Cotação restaurada · Recebimento continua suspenso' when 'CLOSED' then 'Cotação encerrada' else 'Situação alterada: '||st end
+     when 'RESTORE' then 'Cotação restaurada' when 'CLOSED' then 'Cotação encerrada' else 'Situação alterada: '||st end
      ||case when st in ('PAUSED','CANCELED') then ' · Motivo: '||trim(payload->>'reason') else '' end,actor);
    return '{"ok":true}';
   end if;

@@ -6,14 +6,14 @@ Na central, abra o cliente e o menu **⋯** da cotação. Os mesmos controles ap
 - **Retomar / reabrir**: define novo prazo (até 90 dias), preserva o token e as respostas; reativa o recebimento.
 - **Cancelar**: exige motivo, fecha o recebimento e preserva registros.
 - **Arquivar**: disponível para encerradas/canceladas, inclusive quando já existe seleção. Fica em Arquivadas.
-- **Mover para a lixeira**: apenas rascunhos sem respostas ou versões recebidas. Exclusão recuperável, sem apagar arquivos.
-- **Restaurar**: recupera a situação anterior, mantendo o recebimento fechado. Rascunho restaurado pode ser reaberto com novo prazo.
+- **Excluir cotação** move a cotação escolhida para a Lixeira do cliente. Os links de fornecedores ficam suspensos. Propostas, anexos, histórico e pedidos de compra continuam vinculados.
+- **Restaurar cotação** na Lixeira devolve a cotação à situação em que estava. Uma cotação aberta volta a aceitar respostas dentro do prazo original. Quando a oportunidade já foi excluída, a cotação volta ao histórico como cancelada.
 
-Pausadas, Canceladas, Arquivadas e Lixeira têm filtros próprios. Arquivadas e Lixeira não aparecem em Todas. Valores e alertas em aberto não incluem cotações suspensas. A existência de fornecedor escolhido ou compra impede cancelamento, pausa e lixeira.
+Pausadas, Canceladas, Arquivadas e Lixeira têm filtros próprios. Uma cotação com fornecedor escolhido ou pedido de compra também pode ser movida para a Lixeira e restaurada.
 
 ## Instalação
 
-Aplicar `quotation-control.sql` numa transação após os scripts existentes. O arquivo atualiza três funções existentes (`SECURITY INVOKER`) e acrescenta quatro campos de controle à tabela de cotações. Mantém os privilégios atuais, RLS e autenticação; não instala novas funções ou concede permissões. Não modifica registros comerciais na instalação.
+Aplicar `quotation-control.sql` e `opportunity-delete.sql` após os scripts existentes. A coluna `trash_previous` guarda a situação anterior à exclusão para permitir a restauração.
 
 Publicar a proteção de `control_state` no serviço `camber-quotes`, depois os arquivos da interface com versão `control1`. A conversão de oportunidade em cotação é outra alteração, independente deste módulo.
 
