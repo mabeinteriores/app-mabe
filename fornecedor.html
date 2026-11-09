@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <script src="camber-brand.js?v=brand1"></script>
-<script src="cloud.js?v=convites2"></script>
+<script src="cloud.js?v=salvar-fornecedor1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de fornecedor · Gestão Camber</title>
@@ -85,11 +85,11 @@
             <div class="inset"><input class="inp" id="rtdef" style="border-radius:10px 0 0 10px" placeholder="9" inputmode="decimal"><span class="addon">%</span></div>
             <span class="hint">preenchido conforme a categoria · pode ajustar</span></div>
           <div class="field"><label>Forma de pagamento padrão</label>
-            <select class="sel" id="fPgto"><option>30/60/90 (3x)</option><option>À vista</option><option>Entrada + saldo na entrega</option><option>Parcelado em 6x</option></select></div>
+            <select class="sel" id="fPgto"><option value="">Não informada</option><option>30/60/90 (3x)</option><option>À vista</option><option>Entrada + saldo na entrega</option><option>Parcelado em 6x</option></select></div>
           <div class="field"><label>Prazo médio de entrega</label>
-            <div class="inset"><input class="inp" style="border-radius:10px 0 0 10px" placeholder="30" inputmode="numeric"><span class="addon">dias</span></div></div>
+            <div class="inset"><input class="inp" id="fPrazoMedio" style="border-radius:10px 0 0 10px" type="number" min="0" step="1" placeholder="30" inputmode="numeric"><span class="addon">dias</span></div></div>
           <div class="field"><label>Avaliação interna</label>
-            <select class="sel"><option>★★★★★ — preferencial</option><option>★★★★ — muito bom</option><option>★★★ — regular</option><option>★★ — usar com cautela</option><option>★ — evitar</option></select></div>
+            <select class="sel" id="fAvaliacao"><option value="">Não informada</option><option value="5">★★★★★ — preferencial</option><option value="4">★★★★ — muito bom</option><option value="3">★★★ — regular</option><option value="2">★★ — usar com cautela</option><option value="1">★ — evitar</option></select></div>
         </div>
       </section>
 
@@ -110,19 +110,19 @@
       <!-- Observações -->
       <section class="panel">
         <div class="panel-h"><h3>Observações</h3></div>
-        <div class="field" style="margin-bottom:0"><textarea class="ta" rows="3" placeholder="histórico, particularidades, restrições de entrega…"></textarea></div>
+        <div class="field" style="margin-bottom:0"><textarea class="ta" id="fObs" rows="3" placeholder="histórico, particularidades, restrições de entrega…"></textarea></div>
       </section>
 
       <div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:10px;">
         <a class="btn ghost" href="fornecedores.html">Cancelar</a>
-        <button class="btn" >Salvar e adicionar outro</button>
+        <button class="btn" onclick="salvar(true)">Salvar e adicionar outro</button>
         <button class="btn primary" onclick="salvar()">Salvar fornecedor</button>
       </div>
 
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=convites2"></script>
+<script src="projects-data.js?v=salvar-fornecedor1"></script>
 <script src="shell.js?v=brand1"></script>
 <script>
   // Tipos de serviço vêm da Configuração (refletem o que você cadastra lá)
@@ -140,7 +140,7 @@
     }).join('');
   }
   renderCats();
-  if (window.CamberDB && CamberDB.fillSelectFromConfig) CamberDB.fillSelectFromConfig('fPgto','pagamentos');
+  if (window.CamberDB && CamberDB.fillSelectFromConfig) CamberDB.fillSelectFromConfig('fPgto','pagamentos',[],'Não informada');
 
   // PJ/PF alterna rótulos
   document.querySelectorAll('#tipoPessoa .opt').forEach(function(o){
@@ -300,12 +300,14 @@
     return out;
   }
   var editId = new URLSearchParams(location.search).get('id');
+  var fornecedorCarregado=!editId;
 
   // modo edição: carrega o fornecedor salvo
   (function loadForn(){
     if(!editId || !CamberDB.getFornecedor) return;
     var f = CamberDB.getFornecedor(editId);
-    if(!f){ editId=null; return; }
+    if(!f){document.querySelector('.page-h h1').textContent='Fornecedor não carregado';return;}
+    fornecedorCarregado=true;
     document.querySelector('.page-h .crumb').innerHTML = '<a href="fornecedores.html" style="color:var(--ink-3)">Fornecedores</a> › Editar fornecedor';
     document.querySelector('.page-h h1').textContent = 'Editar fornecedor';
     var bx = document.getElementById('btnExcluirForn'); if(bx) bx.style.display = '';
@@ -317,6 +319,9 @@
     fsetV('fCep', f.cep); fsetV('fLograd', f.logradouro); fsetV('fNum', f.numero); fsetV('fCompl', f.complemento);
     fsetV('fBairro', f.bairro); fsetV('fCidade', f.cidade); fsetV('fUF', f.uf);
     fsetV('rtdef', f.rt);
+    if(f.pagamentoPadrao && !Array.from(document.getElementById('fPgto').options).some(function(o){return o.value===f.pagamentoPadrao;}))
+      document.getElementById('fPgto').add(new Option(f.pagamentoPadrao,f.pagamentoPadrao));
+    fsetV('fPgto',f.pagamentoPadrao);fsetV('fPrazoMedio',f.prazoMedioDias);fsetV('fAvaliacao',f.avaliacao);fsetV('fObs',f.obs);
     fsetV('fBanco', f.banco); fsetV('fAg', f.agencia); fsetV('fCc', f.conta); fsetV('fNomeConta', f.nomeConta); fsetV('fPix', f.pix);
     if(f.tipoConta){ var _tc=document.getElementById('fTipoConta'); if(_tc) _tc.value=f.tipoConta; }
     var son = f.status!=='Inativo';
@@ -399,9 +404,10 @@
     go();
   }
 
-  async function salvar(){
+  async function salvar(adicionarOutro){
     if(salvandoFornecedor)return;
     if(!convitePronto){alert('Carregue um convite respondido antes de salvar.');return;}
+    if(!fornecedorCarregado){alert('O fornecedor não foi carregado. Volte à lista e reabra o cadastro antes de editar.');return;}
     var pj = ((document.querySelector('#tipoPessoa .opt.on')||{}).dataset||{}).t === 'pj';
     var nome = fval('fRazao');
     if(!nome){ alert('Informe a ' + (pj?'razão social':'nome') + ' do fornecedor.'); document.getElementById('fRazao').focus(); return; }
@@ -409,6 +415,7 @@
     if(!cats.length){ alert('Selecione ao menos uma categoria / serviço.'); document.getElementById('catServ').scrollIntoView({block:'center'}); return; }
     var statusOn = ((document.querySelector('.choice .opt.on[data-s]')||{}).dataset||{}).s !== 'off';
     var contatos = getContatos(); var c0 = contatos[0] || {};
+    var prazo=fval('fPrazoMedio');if(prazo && (!Number.isSafeInteger(Number(prazo))||Number(prazo)<0)){alert('Informe o prazo de entrega em dias inteiros.');return;}
     var dados = {
       tipoPessoa: pj?'pj':'pf', nome: nome, fantasia: fval('fFant'), doc: fval('doc'), ie: fval('fIE'),
       habilitadoObra:document.getElementById('fHabilitadoObra').checked, categorias: cats, categoria: cats[0], status: statusOn?'Ativo':'Inativo',
@@ -418,31 +425,25 @@
       cep: fval('fCep'), logradouro: fval('fLograd'), numero: fval('fNum'), complemento: fval('fCompl'),
       bairro: fval('fBairro'), cidade: fval('fCidade'), uf: fval('fUF'),
       rt: parseFloat((fval('rtdef')||'').replace(',','.'))||0,
+      pagamentoPadrao:fval('fPgto'),prazoMedioDias:prazo===''?null:Number(prazo),avaliacao:fval('fAvaliacao'),obs:fval('fObs'),
       banco: fval('fBanco'), tipoConta: (document.getElementById('fTipoConta')||{}).value||'',
       agencia: fval('fAg'), conta: fval('fCc'), nomeConta: fval('fNomeConta'), pix: fval('fPix')
     };
-    try {
-    if(editId && CamberDB.updateFornecedor){ CamberDB.updateFornecedor(editId, dados); }
-    else { dados.data = new Date().toISOString().slice(0,10); editId=CamberDB.addFornecedor(dados).id; }
-    } catch (erro) {
-      if (erro.code !== 'DOCUMENTO_DUPLICADO') throw erro;
-      alert(erro.message);
-      document.getElementById('doc').focus();
-      return;
-    }
-    if(conviteToken){
-      salvandoFornecedor=true;
-      try{
-        var sb=window.CamberCloud && CamberCloud.client();
-        if(!sb||!(await CamberCloud.flush()))throw Error('O fornecedor ainda não foi salvo. Tente novamente.');
+    salvandoFornecedor=true;
+    var botoes=document.querySelectorAll('button[onclick^="salvar("]');botoes.forEach(function(b){b.disabled=true;});
+    try{
+      if(editId){if(!CamberDB.updateFornecedor(editId,dados))throw Error('Fornecedor não encontrado. Volte à lista e confira o cadastro.');}
+      else {dados.data=new Date().toISOString().slice(0,10);editId=CamberDB.addFornecedor(dados).id;}
+      if(!window.CamberCloud || !(await CamberCloud.flush()))throw Error('A gravação não foi confirmada. Tente salvar novamente.');
+      if(conviteToken){
+        var sb=CamberCloud.client();if(!sb)throw Error('Não foi possível confirmar o convite. Tente novamente.');
         var done=await sb.from('fornecedor_convites').update({status:'cadastrado'}).eq('token',conviteToken).eq('status','respondido').select('status').maybeSingle();
         if(done.error)throw done.error;
         if(!done.data){var atual=await sb.from('fornecedor_convites').select('status').eq('token',conviteToken).maybeSingle();if(atual.error||atual.data?.status!=='cadastrado')throw Error('O convite mudou. Confira o cadastro antes de continuar.');}
-        location.href='fornecedores.html';
-      }catch(e){alert(e.message||'Não foi possível concluir o convite. Tente novamente.');}finally{salvandoFornecedor=false;}
-      return;
-    }
-    irPara('fornecedores.html');
+      }
+      location.href=adicionarOutro===true?'fornecedor.html':'fornecedores.html';
+    }catch(e){alert(e.message||'Não foi possível salvar o fornecedor. Tente novamente.');if(e.code==='DOCUMENTO_DUPLICADO')document.getElementById('doc').focus();}
+    finally{salvandoFornecedor=false;botoes.forEach(function(b){b.disabled=false;});}
   }
 
   function excluirFornec(){

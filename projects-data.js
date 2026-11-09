@@ -92,12 +92,13 @@
     if (read(PKEY, null) === null){ write(PKEY, []); }
   }
 
+  function chaveDocumento(doc){ return String(doc || '').trim().toUpperCase().replace(/[.\/\s-]/g, ''); }
   function assertDocumentoUnico(arr, doc, id, tipo){
-    var numeros = String(doc || '').trim().toUpperCase().replace(/[.\/\s-]/g, '');
+    var numeros = chaveDocumento(doc);
     if (!numeros) return;
     var duplicado = arr.find(function(item){
       return (id == null || String(item.id) !== String(id)) &&
-        String(item.doc || '').trim().toUpperCase().replace(/[.\/\s-]/g, '') === numeros;
+        chaveDocumento(item.doc) === numeros;
     });
     if (duplicado){
       var erro = new Error('Este CPF/CNPJ já está cadastrado para ' + tipo + ' "' + (duplicado.nome || 'Sem nome') + '" (ID ' + duplicado.id + '). Abra esse cadastro para editar.');
@@ -182,7 +183,12 @@
     updateFornecedor: function(id, patch){
       var arr = this.loadFornecedores();
       var f = arr.find(function(x){ return String(x.id)===String(id); });
-      if (f) { assertDocumentoUnico(arr, Object.prototype.hasOwnProperty.call(patch, 'doc') ? patch.doc : f.doc, id, 'fornecedor'); Object.assign(f, patch); this.saveFornecedores(arr); }
+      if (f) {
+        // Editing another field must not increase or silently resolve an existing duplicate.
+        if (Object.prototype.hasOwnProperty.call(patch,'doc') && chaveDocumento(patch.doc)!==chaveDocumento(f.doc))
+          assertDocumentoUnico(arr, patch.doc, id, 'fornecedor');
+        Object.assign(f, patch); this.saveFornecedores(arr);
+      }
       return f;
     },
     deleteFornecedor: function(id){

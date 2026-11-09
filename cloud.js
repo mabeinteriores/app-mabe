@@ -659,7 +659,7 @@
     responsaveis: function () { return respList; },
     usuariosObra: function () { return respUsers.slice(); },
     // envia AGORA tudo o que está pendente e devolve uma Promise (para esperar antes de navegar)
-    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw syncError || new Error('Não foi possível sincronizar os dados.');}); },
+    flush: function () { try { clearTimeout(pushTimer); } catch (e) {} return flush().then(function(ok){if(!ok)throw syncError || new Error('Não foi possível sincronizar os dados.');return true;}); },
     pendente: function () { return !!inFlight || Object.keys(pending).length > 0; }
   };
 
