@@ -93,11 +93,11 @@
   }
 
   function assertDocumentoUnico(arr, doc, id, tipo){
-    var numeros = String(doc || '').replace(/\D/g, '');
+    var numeros = String(doc || '').trim().toUpperCase().replace(/[.\/\s-]/g, '');
     if (!numeros) return;
     var duplicado = arr.find(function(item){
       return (id == null || String(item.id) !== String(id)) &&
-        String(item.doc || '').replace(/\D/g, '') === numeros;
+        String(item.doc || '').trim().toUpperCase().replace(/[.\/\s-]/g, '') === numeros;
     });
     if (duplicado){
       var erro = new Error('Este CPF/CNPJ já está cadastrado para ' + tipo + ' "' + (duplicado.nome || 'Sem nome') + '" (ID ' + duplicado.id + '). Abra esse cadastro para editar.');

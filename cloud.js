@@ -94,7 +94,7 @@
   }
   function validateMerged(k,value,remote) {
     if(k!=='mabe-clientes-v1'&&k!=='mabe-fornecedores-v1')return;
-    function counts(rows){var result=new Map();(rows||[]).forEach(function(row){var doc=String(row.doc||'').replace(/\D/g,'');if(doc)result.set(doc,(result.get(doc)||0)+1);});return result;}
+    function counts(rows){var result=new Map();(rows||[]).forEach(function(row){var doc=String(row.doc||'').trim().toUpperCase().replace(/[.\/\s-]/g,'');if(doc)result.set(doc,(result.get(doc)||0)+1);});return result;}
     var previous=counts(remote),next=counts(value);
     next.forEach(function(count,doc){if(count>1&&count>(previous.get(doc)||0))conflict(k+' (CPF/CNPJ duplicado)');});
   }

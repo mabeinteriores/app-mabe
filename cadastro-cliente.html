@@ -63,7 +63,7 @@
 
     <div class="sec">Cliente</div>
     <label>CPF ou CNPJ <span class="req">*</span></label>
-    <input id="fDoc" required inputmode="numeric" placeholder="CPF ou CNPJ" autocomplete="off">
+    <input id="fDoc" required autocapitalize="characters" placeholder="CPF ou CNPJ" autocomplete="off">
     <div class="hint" id="docHint">digite o CNPJ e saia do campo — buscamos os dados automaticamente</div>
     <label>Nome completo / Razão social <span class="req">*</span></label>
     <input id="fNome" required autocomplete="organization" placeholder="Nome da empresa">
@@ -103,17 +103,19 @@
 
   <div class="card" id="vOk" hidden><div class="msg">
     <div class="ic">✅</div><h2>Cadastro enviado!</h2>
-    <p>Obrigado. Recebemos seus dados e nossa equipe já foi avisada.<br>Em breve entramos em contato.</p>
+    <p>Obrigado. Recebemos seus dados para conferência pela equipe Camber.<br>Em breve entramos em contato.</p>
   </div></div>
 
 </div>
 
+<script src="convites-validacao.js?v=invite2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="cliente-anexos.js?v=1"></script>
 <script>
 (function(){
   var SB_URL='https://vlvadvlfsbgwcldaxhah.supabase.co';
   var SB_KEY='sb_publishable_le8I7BGWpHrvdWqxjQKwdg_YUEyZJL-';
+  if(!window.supabase||!window.CamberConvites){invalid('Falha de conexão','Não foi possível carregar o cadastro. Confira a internet e atualize esta página.');return;}
   var sb=window.supabase.createClient(SB_URL,SB_KEY);
   var TOKEN=new URLSearchParams(location.search).get('c')||'';
 
@@ -127,8 +129,10 @@
     if(!TOKEN){ invalid('Link inválido','Falta o código do convite no endereço.'); return; }
     try{
       var r=await sb.rpc('get_convite_cliente',{p_token:TOKEN}); var d=r.data||{};
-      if(r.error||d.status==='inexistente'||d.status==='expirado'){ invalid('Link indisponível','Este convite foi excluído, expirou ou não existe. Convites sem resposta valem por 20 dias. Peça um novo link à equipe Camber para começar novamente.'); return; }
+      if(r.error){invalid('Falha de conexão','Não foi possível consultar o convite. Atualize a página para tentar novamente.');return;}
+      if(d.status==='inexistente'||d.status==='expirado'){ invalid('Link indisponível','Este convite foi excluído, expirou ou não existe. Convites sem resposta valem por 20 dias. Peça um novo link à equipe Camber para começar novamente.'); return; }
       if(d.status==='respondido'||d.status==='cadastrado'){ invalid('Cadastro já enviado','Este link já foi utilizado. Se precisar corrigir algo, fale com a equipe Camber.'); return; }
+      if(!d.ok||d.status!=='pendente'){invalid('Link indisponível','Peça um novo link à equipe Camber.');return;}
       show('vForm');
     }catch(e){ invalid('Erro','Não foi possível abrir o cadastro agora. Tente novamente em instantes.'); }
   }
@@ -136,7 +140,7 @@
   // CNPJ -> BrasilAPI
   function buscaCnpj(){
     var el=document.getElementById('fDoc'); var hint=document.getElementById('docHint');
-    var d=(el.value||'').replace(/\D/g,''); if(d.length!==14) return;
+    var d=CamberConvites.docKey(el.value); if(!/^[0-9]{14}$/.test(d)||!CamberConvites.validDoc(d,true)) return;
     el.value=d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5');
     hint.textContent='buscando dados do CNPJ…'; hint.style.color='#8C8475';
     fetch('https://brasilapi.com.br/api/cnpj/v1/'+d).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
@@ -183,18 +187,18 @@
       if(!val(id)){ campo.focus(); return fail('Preencha o campo '+obrigatorios[id]+'.'); }
       if(!campo.disabled && !campo.checkValidity()){ campo.reportValidity(); return fail('Confira o campo '+obrigatorios[id]+'.'); }
     }
-    var documento=val('fDoc').replace(/\D/g,'');
-    if(![11,14].includes(documento.length)){ return fail('Informe um CPF com 11 números ou CNPJ com 14 números.'); }
     var nome=val('fNome');
     if(!nome){ return fail('Informe a razão social.'); }
     if(!val('fContato')){ return fail('Informe o nome do responsável.'); }
     if(!val('fTel')){ return fail('Informe o telefone / WhatsApp.'); }
 
     var dados={
-      nome:nome, tipoPessoa:val('fDoc').replace(/\D/g,'').length===14?'pj':'pf', doc:val('fDoc'),
+      nome:nome, tipoPessoa:CamberConvites.docKey(val('fDoc')).length===14?'pj':'pf', doc:val('fDoc'),
       contato:val('fContato'), tel:val('fTel'), email:val('fEmail'), aniversario:val('fAniv'),
       cep:val('fCep'), logradouro:val('fLograd'), numero:val('fNum'), bairro:val('fBairro'), cidade:val('fCidade'), uf:val('fUF')
     };
+    var problem=CamberConvites.error(dados,false);
+    if(problem){var campo=document.getElementById(CamberConvites.fields[problem]);if(campo)campo.focus();return fail(CamberConvites.messages[problem]);}
     var planta=document.getElementById('fPlanta');
     var arquivo=planta.files[0];
     if(arquivo){try{CamberAnexos.validar(arquivo);}catch(e){return fail(e.message);}}
@@ -206,7 +210,7 @@
         finally{if(plantaState.enviado)planta.disabled=true;}
       }
       var r=await sb.rpc('responder_convite_cliente',{p_token:TOKEN,p_dados:dados}); var d=r.data||{};
-      if(r.error||!d.ok){ if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios. A data de aniversário e a planta baixa são opcionais.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
+      if(r.error||!d.ok){ if(Object.prototype.hasOwnProperty.call(CamberConvites.messages,d.erro)){btn.disabled=false; btn.textContent='Enviar cadastro';return fail(CamberConvites.messages[d.erro]);} if(d.erro==='convite_expirado'||d.erro==='convite_invalido'){ invalid('Link indisponível','O convite expirou ou foi excluído. Peça um novo link à equipe Camber e comece novamente.'); return; } if(d.erro==='campos_obrigatorios'){ btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Preencha todos os campos obrigatórios. A data de aniversário e a planta baixa são opcionais.'); } if(d.erro==='ja_respondido'){ invalid('Cadastro já enviado','Este link já foi utilizado.'); return; } btn.disabled=false; btn.textContent='Enviar cadastro'; return fail('Não foi possível enviar. Tente novamente.'); }
       show('vOk');
     }catch(e){ btn.disabled=false; btn.textContent='Enviar cadastro'; fail('Não foi possível enviar. Confira a conexão e tente novamente.'); } finally{enviando=false;}
   };

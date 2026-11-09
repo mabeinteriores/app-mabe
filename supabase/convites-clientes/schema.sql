@@ -22,6 +22,14 @@ begin
  body:=replace(pg_get_functiondef('public.get_convite_fornecedor(text)'::regprocedure),'fornecedor','cliente');
  execute body;
  body:=replace(pg_get_functiondef('public.responder_convite_fornecedor(text,jsonb)'::regprocedure),'fornecedor','cliente');
+ -- When bootstrapping from a supplier RPC that is already hardened, do not copy its
+ -- supplier-specific document/catalog rules into the client. Apply validacao-convites.sql last.
+ a:=strpos(body,'  declare problem text=public.camber_convite_erro(');
+ if a>0 then
+  b:=strpos(substr(body,a),'  update public.cliente_convites');
+  if b=0 then raise exception 'Unexpected supplier validation block';end if;
+  body:=substr(body,1,a-1)||substr(body,a+b-1);
+ end if;
  body:=replace(body,'''nome'',''fantasia'',''doc'',''contato'',''tel'',''email'',''cep'',''logradouro'',''numero'',''bairro'',''cidade'',''uf'',''banco'',''agencia'',''conta'',''nomeConta'',''pix''','''nome'',''doc'',''contato'',''tel'',''email'',''cep'',''logradouro'',''numero'',''bairro'',''cidade'',''uf''');
  a:=strpos(body,'  if jsonb_typeof(p_dados->''categorias'')');
  b:=strpos(body,'  if coalesce(p_dados->>''nome''');

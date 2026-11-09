@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <script src="camber-brand.js?v=brand1"></script>
-<script src="cloud.js?v=brand1"></script>
+<script src="cloud.js?v=convites2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fornecedores &amp; RT · Gestão Camber</title>
@@ -101,7 +101,7 @@
   </aside>
 </div>
 
-<script src="projects-data.js?v=remuneracao1"></script>
+<script src="projects-data.js?v=convites2"></script>
 <script src="shell.js?v=brand1"></script>
 <script>
   function brl(v){ return v ? 'R$ ' + Math.round(v).toLocaleString('pt-BR') : 'R$ 0'; }
@@ -259,9 +259,12 @@
     setTimeout(function(){ try{ document.getElementById('lkNome').focus(); }catch(e){} }, 40);
   }
   function fecharGerarLink(){ document.getElementById('linkScrim').style.display='none'; document.getElementById('linkModal').style.display='none'; }
+  var gerandoConvite=false;
   async function gerarLink(){
+    if(gerandoConvite)return;
     var sb=_sbc(); var st=document.getElementById('lkStatus');
     if(!sb){ st.textContent='⚠️ Disponível só no app publicado (não no preview local).'; return; }
+    gerandoConvite=true;document.getElementById('lkGenBtn').disabled=true;
     st.textContent='Gerando…';
     try{
       var prof = window.__camberProfile || {};
@@ -273,12 +276,14 @@
       document.getElementById('lkCopyBtn').style.display='';
       st.textContent='✅ Link criado — copie e envie ao fornecedor. Sem resposta, será excluído após 20 dias.';
       carregarConvites();
-    }catch(e){ st.textContent='Erro ao gerar o link.'; }
+    }catch(e){ st.textContent='Erro ao gerar o link.'; }finally{gerandoConvite=false;document.getElementById('lkGenBtn').disabled=false;}
   }
-  function copiarLink(){
+  async function copiarLink(){
     var i=document.getElementById('lkUrl'); i.select();
-    try{ document.execCommand('copy'); }catch(e){}
-    try{ navigator.clipboard && navigator.clipboard.writeText(i.value); }catch(e){}
+    var ok=false;
+    try{if(navigator.clipboard){await navigator.clipboard.writeText(i.value);ok=true;}}catch(e){}
+    if(!ok){try{ok=document.execCommand('copy');}catch(e){}}
+    if(!ok){document.getElementById('lkStatus').textContent='Selecione o link e copie manualmente.';return;}
     var b=document.getElementById('lkCopyBtn'); var t=b.textContent; b.textContent='Copiado!'; setTimeout(function(){ b.textContent=t; },1400);
   }
   function textoConvite(v){ var el=document.createElement('span'); el.textContent=v||'—'; return el.innerHTML; }

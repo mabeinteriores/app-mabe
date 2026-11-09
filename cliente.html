@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <script src="camber-brand.js?v=brand1"></script>
-<script src="cloud.js?v=brand1"></script>
+<script src="cloud.js?v=convites2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de cliente · Gestão Camber</title>
@@ -102,7 +102,7 @@
     </div>
   </div>
 </div>
-<script src="projects-data.js?v=remuneracao1"></script>
+<script src="projects-data.js?v=convites2"></script>
 <script src="shell.js?v=brand1"></script>
 <script>
   // PF/PJ alterna rótulos
@@ -123,8 +123,8 @@
   function buscaCnpj(){
     if(((document.querySelector('#tipoPessoa .opt.on')||{}).dataset||{}).t !== 'pj') return;
     var inp = document.getElementById('doc'); var hint = document.getElementById('docHint');
-    var d = (inp.value||'').replace(/\D/g,'');
-    if(d.length !== 14){ return; }
+    var d = (inp.value||'').toUpperCase().replace(/[.\/\s-]/g,'');
+    if(!/^[0-9]{14}$/.test(d)){ return; }
     inp.value = d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5');
     hint.textContent = 'buscando dados do CNPJ…'; hint.style.color = 'var(--ink-3)';
     fetch('https://brasilapi.com.br/api/cnpj/v1/' + d).then(function(r){
@@ -368,7 +368,7 @@
     }
     salvandoCliente=true;
     try{
-      if(window.CamberCloud) await CamberCloud.flush();
+      if(window.CamberCloud && !(await CamberCloud.flush()))throw Error('Cadastro não sincronizado.');
       if(conviteToken){
         var vinculacao=await CamberCloud.client().rpc('vincular_anexos_cliente',{p_token:conviteToken,p_cliente_id:String(editId)});
         if(vinculacao.error)throw vinculacao.error;
