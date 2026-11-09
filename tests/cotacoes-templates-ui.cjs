@@ -10,6 +10,19 @@ const next=()=>page.locator('[data-next]').click(),phase=()=>page.locator('[data
 async function open(service,mode,newOpportunity=true){await page.evaluate(newOpportunity=>CamberQuotes.wizard({projectId:'p',opportunityId:newOpportunity?'':'o',newOpportunity,lockContext:true}),newOpportunity);assert.equal(await page.locator('[name="project"]').isDisabled(),true);if(newOpportunity)await page.selectOption('[name="service"]',service);assert.equal(await page.locator('[name="mode"]').inputValue(),'');await page.selectOption('[name="mode"]',mode);await next();if(newOpportunity){assert.equal(await phase(),'Fornecedores');await page.check('[data-supplier="s"]');await next();assert.equal(await phase(),'Pedido');}}
 async function capture(){await next();if(await phase()==='Fornecedores'){await page.check('[data-supplier="s"]');await next();}assert.match(await phase(),/Revis/);await next();await page.waitForFunction(()=>document.querySelector('.cq-error').textContent.includes('QA: pedido capturado'));return page.evaluate(()=>qa.payloads.at(-1));}
 async function close(){await page.locator('[data-close]').click();await page.waitForSelector('dialog',{state:'detached'});}
+// Screenshot regression: custom joinery, only the project PDF, no rooms/items.
+const pdf={name:'Projeto de teste.pdf',mimeType:'application/pdf',buffer:Buffer.from('PDF fictício para teste')};
+await open('Marcenaria','custom');await field('[data-remove-room]').click();await page.setInputFiles('[name="files"]',pdf);
+await next();assert.equal(await phase(),'Revisão','PDF sem cômodos deve avançar à revisão: '+await page.locator('.cq-error').innerText());
+assert.match(await page.locator('[data-review]').innerText(),/preço total/i);
+await page.locator('[data-prev]').click();assert.equal(await phase(),'Pedido');assert.equal(await page.locator('[data-remove-attachment]').count(),1);
+await page.locator('[data-remove-attachment]').click();await next();assert.equal(await phase(),'Pedido');assert.match(await page.locator('.cq-error').innerText(),/anex/i);
+await page.setInputFiles('[name="files"]',pdf);const globalQuote=await capture();
+assert.deepEqual(globalQuote.payload.specification.items,[{id:'projeto-anexo',room:'',title:'Marcenaria conforme projeto anexo',quantity:1,unit:'serviço'}]);await close();
+// The untouched default row does not force invented data; a partially filled one must be completed.
+await open('Marcenaria','custom');await page.setInputFiles('[name="files"]',pdf);await field('[data-room]').fill('Cozinha');
+await next();assert.equal(await phase(),'Pedido');assert.equal(await field('[data-title]').getAttribute('aria-invalid'),'true');
+await field('[data-room]').fill('');const untouched=await capture();assert.deepEqual(untouched.payload.specification.items,globalQuote.payload.specification.items);await close();
 await page.evaluate(()=>CamberQuotes.wizard({projectId:'p',newOpportunity:true,lockContext:true}));await page.selectOption('[name="service"]','Aquecedor');await next();assert.match(await page.locator('.cq-error').innerText(),/como definir o pedido/);await close();
 await open('Aquecedor','custom');assert.equal(await field('[data-room]').count(),0);assert.equal(await field('[data-add-room]').isVisible(),false);await page.setInputFiles('[name="files"]',{name:'projeto-teste.pdf',mimeType:'application/pdf',buffer:Buffer.from('arquivo fictício de teste')});assert.equal(await page.locator('[name="files"]').getAttribute('multiple'),null);
 for(let i=2;i<=10;i++)await page.setInputFiles('[name="files"]',{name:'anexo-'+i+'.pdf',mimeType:'application/pdf',buffer:Buffer.from('arquivo '+i)});
@@ -31,5 +44,19 @@ await page.setViewportSize({width:1280,height:960});
 await page.evaluate(()=>{const original=CamberQuotes.api;qa.calls=[];CamberQuotes.api=async(action,payload,file)=>{qa.calls.push({action,payload,file:file?.name});if(action==='create_opportunity'){qa.payloads.push({action,payload});return {quotationId:payload.quotationId};}if(action==='detail')return {requests:[{id:'r-test',supplier_name:'Fornecedor fictício'}]};if(action==='upload')return {ok:true};if(action==='workflow')throw Error('QA: criada aguardando envio');return original(action,payload,file);};});
 await open('Aquecedor','standard');await page.setInputFiles('[name="files"]',{name:'primeiro.pdf',mimeType:'application/pdf',buffer:Buffer.from('primeiro')});await page.setInputFiles('[name="files"]',{name:'segundo.pdf',mimeType:'application/pdf',buffer:Buffer.from('segundo')});await next();assert.match(await page.locator('[data-next]').innerText(),/Criar oportunidade e cotação/);assert.match(await page.locator('[data-review]').innerText(),/2 anexos/);await next();await page.waitForFunction(()=>document.querySelector('.cq-error').textContent.includes('QA: criada aguardando envio'));
 const calls=await page.evaluate(()=>qa.calls);assert.deepEqual(calls.filter(c=>c.action==='upload').map(c=>c.file),['primeiro.pdf','segundo.pdf']);assert.equal(calls.filter(c=>c.action==='create_opportunity').length,1);assert.equal(calls.at(-1).action,'workflow');assert.equal(calls.at(-1).payload.state,'AWAITING_SEND');assert(!calls.some(c=>/email|send/.test(c.action)));await close();
-assert.deepEqual(errors,[]);const {specification}=await import(require('node:url').pathToFileURL(repo+'/supabase/cotacoes/validation.mjs').href);for(const captured of await page.evaluate(()=>qa.payloads))specification(captured.payload.specification);
-await browser.close();console.log('PASS: escolha explícita, modelo específico, personalizado sem cômodos, Marcenaria custom/padrão, preservação de rascunhos, troca de serviço limpa fornecedores, desconhecido, payload/validação real, sequência Kanban/existente, itens/quantidades e celular.');})().catch(e=>{console.error(e);process.exit(1);});
+await page.evaluate(()=>{qa.calls=[];});
+await open('Marcenaria','custom');
+await field('[data-remove-room]').click();
+await page.setInputFiles('[name="files"]',pdf);
+await next();
+await next();
+await page.waitForFunction(()=>document.querySelector('.cq-error').textContent.includes('QA: criada aguardando envio'));
+const projectCalls=await page.evaluate(()=>qa.calls);
+assert.deepEqual(projectCalls.filter(c=>c.action==='upload').map(c=>[c.payload.id,c.file]),[['r-test',pdf.name]]);
+assert.deepEqual(projectCalls.find(c=>c.action==='create_opportunity').payload.specification.items,globalQuote.payload.specification.items);
+assert.equal(projectCalls.at(-1).payload.state,'AWAITING_SEND');
+await close();
+assert.deepEqual(errors,[]);const {specification,responseFor}=await import(require('node:url').pathToFileURL(repo+'/supabase/cotacoes/validation.mjs').href);for(const captured of await page.evaluate(()=>qa.payloads))specification(captured.payload.specification);
+const priced=responseFor(specification(globalQuote.payload.specification),{version:1,values:[3850],validity:'2026-12-31',agree:true});
+assert.equal(priced.items.length,1);assert.equal(priced.total,3850);
+await browser.close();console.log('PASS: projeto anexo sem itens, revisão, upload por participante e preço total, escolha explícita, modelo específico, personalizado sem cômodos, Marcenaria custom/padrão, preservação de rascunhos, troca de serviço limpa fornecedores, desconhecido, payload/validação real, sequência Kanban/existente, itens/quantidades e celular.');})().catch(e=>{console.error(e);process.exit(1);});
