@@ -7,18 +7,26 @@ const screen=`<!doctype html><meta charset="utf-8"><meta name="viewport" content
 <link rel="stylesheet" href="cotacoes-list.css"><div id="app" data-page="cotacoes"><main id="cq-main"></main></div>
 <script src="cotacoes-model.js"></script><script src="cotacoes-clients-model.js"></script>
 <script src="cotacoes-shared.js"></script><script src="cotacoes-clients.js"></script><script src="cotacoes-list.js"></script>
-<script src="cotacoes-wizard.js"></script><script src="cotacoes-control.js"></script>
+<script src="cotacoes-templates.js"></script><script src="cotacoes-wizard.js"></script><script src="cotacoes-control.js"></script>
 <script>
 const Q=CamberQuotes;
 Q.avatar=()=>'';Q.ready=async()=>{};
-const projects=[{id:'p1',cliente:'Ana'},{id:'p2',cliente:'Bia'},{id:'p3',cliente:'Carol'}];
+const projects=[{id:'p1',cliente:'Ana',statusCls:'prop'},{id:'p2',cliente:'Bia',statusCls:'negoc'},
+ {id:'p3',cliente:'Carol',statusCls:'prospec'},{id:'p4',cliente:'Ana',nome:'Projeto entregue',statusCls:'done'},
+ {id:'p5',cliente:'Cliente antigo',statusCls:'win'}];
 const quotes=['CLOSED','CANCELED','ARCHIVED','CLOSED','READY'].map((status,i)=>({
  project_id:i===3?'p2':'p1',id:String(i),code:'COT-'+i,status,state:status==='READY'?'OPEN':'CLOSED',
  suppliers:[],project_name:'Projeto '+i,created_at:'2026-11-01',expires_at:'2026-12-01',service:'Marcenaria',invited:1,received:1,awaiting:0
 }));
+quotes.push({...quotes[0],id:'inativa',project_id:'p4'},{...quotes[0],id:'excluida',project_id:'p99'});
 Q.loadClientSnapshot=async()=>CamberQuoteClients.build(projects,[],quotes);
+Q.quoteAside=()=>'';Q.stepper=()=>'';
+const catalog={projects,opportunities:[],suppliers:[],responsibles:[]};
+Q.loadClientCatalog=async()=>({catalog,clients:[]});
 Q.api=async(action,p)=>{
+ if(action==='catalog')return structuredClone(catalog);
  const q=quotes.find(q=>q.id===p.quotationId);
+ if(action==='detail')return {quotation:{...q,specification:{title:'Pedido histórico',description:''}},requests:[]};
  if(action!=='workflow'||!q||p.expectedVersion!==(q.control_version||0))throw Error('Operação inválida no teste');
  if(p.state==='TRASH'){q.previous=q.status;q.workflow=q.status='TRASH';}
  else if(p.state==='RESTORE')q.workflow=q.status=q.previous;
@@ -46,6 +54,12 @@ Q.api=async(action,p)=>{
     throw Error(error.message+' · '+errors.join(', ')+' · '+await page.locator('main').innerText());
    });
    assert.equal(await page.getByRole('link',{name:'Fechado · 0 · Carol',exact:true}).count(),1);
+   assert.equal(await page.locator('.cq-client-card').count(),3);
+   assert.doesNotMatch(await page.locator('[data-clients]').innerText(),/Cliente não informado|Cliente antigo|Projeto entregue/);
+   await page.getByRole('button',{name:'+ Nova cotação'}).click();
+   const options=await page.locator('dialog [name="project"] option').evaluateAll(opts=>opts.map(o=>o.value));
+   assert.deepEqual(options,['','p1','p2','p3']);
+   await page.getByRole('button',{name:'Fechar',exact:true}).click();
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
    await closed.click();
    const visibleRow=page.locator('[data-row]:visible');
@@ -76,6 +90,9 @@ Q.api=async(action,p)=>{
    await visibleRow.first().waitFor();
    assert.match(await visibleRow.innerText(),/COT-0/);
   }
+  await page.goto('https://camber.test/cotacoes.html?id=excluida');
+  await page.getByText('Pedido histórico').waitFor();
+  assert.equal(await page.locator('.crumb a[href*="?client="]').count(),0);
   assert.deepEqual(errors,[]);
   console.log('PASS: cartão Fechado, menu Ações, confirmação, cancelamento, exclusão e restauração da cotação no computador e celular.');
  }finally{await browser.close();}

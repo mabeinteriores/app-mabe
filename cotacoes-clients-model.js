@@ -2,6 +2,11 @@
 'use strict';
 const M=typeof module==='object'?require('./cotacoes-model.js'):root.CamberQuoteModel;
 const nameKey=x=>String(x||'').trim().toLowerCase();
+function activeProject(project){
+ const code=M.norm(project?.statusCls);
+ if(code)return ['prospec','negoc','prop'].includes(code);
+ return ['prospeccao','ativo','fechando'].includes(M.norm(project?.statusLabel));
+}
 function identity(project,clients){
  const id=String(project.clienteId||''),name=String(project.cliente||'').trim();
  const matches=clients.filter(c=>id?String(c.id)===id:name&&nameKey(c.nome)===nameKey(name));
@@ -10,10 +15,9 @@ function identity(project,clients){
 }
 function build(projects,clients,rows,now=new Date()){
  const byProject=new Map(),groups=new Map();
- function add(project){const c=identity(project,clients);byProject.set(String(project.id),c);if(!groups.has(c.client_key))groups.set(c.client_key,{...c,projects:[],total:0,open:0,awaiting:0,ready:0,closed:0,late:0,value:0});const g=groups.get(c.client_key);if(!g.projects.some(p=>p.id===String(project.id)))g.projects.push({id:String(project.id),name:project.nome||'Projeto indisponível'});}
- projects.forEach(add);
- const quotes=rows.map(q=>{
-  if(!byProject.has(String(q.project_id)))add({id:q.project_id,nome:q.project_name});
+ function add(project){const c=identity(project,clients);byProject.set(String(project.id),c);if(!groups.has(c.client_key))groups.set(c.client_key,{...c,projects:[],total:0,open:0,awaiting:0,ready:0,closed:0,late:0,value:0});const g=groups.get(c.client_key);if(!g.projects.some(p=>p.id===String(project.id)))g.projects.push({id:String(project.id),name:project.nome||'Projeto sem nome'});}
+ projects.filter(activeProject).forEach(add);
+ const quotes=rows.filter(q=>byProject.has(String(q.project_id))).map(q=>{
   const c=byProject.get(String(q.project_id)),g=groups.get(c.client_key);g.total++;
   if(M.quick(q,'closed',now))g.closed++;
   if(M.open(q)){g.open++;g.value+=Number(q.estimated_value)||0;if(q.awaiting>0)g.awaiting++;if(q.status==='READY')g.ready++;if(M.quick(q,'late',now))g.late++;}
@@ -44,5 +48,5 @@ function quotesPage(snapshot,clientKey,p={},now=new Date()){
  all.sort((a,b)=>{const av=value(a),bv=value(b),diff=typeof av==='string'?av.localeCompare(bv,'pt-BR'):av-bv;return diff*(p.sort==='attention'||p.direction!=='desc'?1:-1)||Date.parse(b.created_at)-Date.parse(a.created_at)||a.id.localeCompare(b.id)});
  return {...paginate(all,p.page,p.pageSize),facets,kpis:M.kpis(base,now)};
 }
-const model={identity,build,clientsPage,quotesPage};root.CamberQuoteClients=model;if(typeof module==='object')module.exports=model;
+const model={identity,activeProject,build,clientsPage,quotesPage};root.CamberQuoteClients=model;if(typeof module==='object')module.exports=model;
 })(typeof window==='object'?window:globalThis);

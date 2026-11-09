@@ -11,7 +11,7 @@ assert(M.controlActions({...quote,workflow:'DRAFT',received:0}).includes('TRASH'
 assert.deepEqual(M.controlActions({...quote,workflow:'TRASH',selected_request_id:'chosen'}),['RESTORE']);
 const statuses=['PAUSED','CANCELED','ARCHIVED','TRASH','CLOSED','DRAFT'];
 const rows=statuses.map(status=>({...quote,id:status,state:'CLOSED',workflow:status,status}));
-const snapshot=C.build([{id:'p',clienteId:'c',nome:'Projeto'}],[{id:'c',nome:'Cliente'}],rows);
+const snapshot=C.build([{id:'p',clienteId:'c',nome:'Projeto',statusCls:'negoc'}],[{id:'c',nome:'Cliente'}],rows);
 for(const [quick,status] of [['paused','PAUSED'],['canceled','CANCELED'],['archived','ARCHIVED'],['trash','TRASH'],['closed','CLOSED'],['open','DRAFT']])assert.deepEqual(C.quotesPage(snapshot,'client:c',{quick}).rows.map(q=>q.id),[status]);
 assert.equal(C.quotesPage(snapshot,'client:c',{quick:'all'}).total,4);
 assert.equal(M.kpis(rows).value,0);

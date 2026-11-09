@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 const C=require('../cotacoes-clients-model.js');
 const now=new Date('2026-10-01T12:00:00Z');
 const clients=[{id:'a',nome:'Mesmo nome'},{id:'b',nome:'Mesmo nome'},{id:'c',nome:'Único'}];
-const projects=[{id:'p1',clienteId:'a',cliente:'Nome antigo',nome:'Apartamento'},{id:'p2',clienteId:'a',cliente:'Outra grafia',nome:'Casa'},{id:'p3',clienteId:'b',nome:'Escritório'},{id:'p4',cliente:'único',nome:'Loja'},{id:'p5',cliente:'Mesmo nome',nome:'Legado ambíguo'},{id:'p6',cliente:'Sem cotação',nome:'Obra nova'}];
+const projects=[{id:'p1',clienteId:'a',cliente:'Nome antigo',nome:'Apartamento'},{id:'p2',clienteId:'a',cliente:'Outra grafia',nome:'Casa'},{id:'p3',clienteId:'b',nome:'Escritório'},{id:'p4',cliente:'único',nome:'Loja'},{id:'p5',cliente:'Mesmo nome',nome:'Legado ambíguo'},{id:'p6',cliente:'Sem cotação',nome:'Obra nova'}].map(p=>({...p,statusCls:'negoc'}));
 const quote={project_id:'p1',project_name:'Apartamento',client_name:'Nome antigo',service:'Marcenaria',responsible:'Rafael',state:'OPEN',status:'PARTIAL',awaiting:1,invited:2,received:1,unviewed:0,estimated_value:10,expires_at:'2026-09-30T23:59:59-03:00',created_at:'2026-10-01T10:00:00Z',suppliers:[{id:'s1',name:'Fornecedor Um'}]};
 const rows=Array.from({length:105},(_,i)=>({...quote,id:'a-'+i,code:'COT-'+i,awaiting:i===0?1:0,status:i===0?'PARTIAL':'READY'}));
 rows.push({...quote,id:'a-casa',code:'CASA',project_id:'p2',project_name:'Casa',status:'READY',awaiting:0,estimated_value:20},
@@ -38,6 +38,23 @@ assert.equal(C.quotesPage(snapshot,'client:a',{quick:'ready'},now).total,105);
 assert.equal(C.quotesPage(snapshot,'client:a',{quick:'open',sort:'value',direction:'desc'},now).rows[0].id,'a-casa');
 assert.equal(C.quotesPage(snapshot,'unknown',{quick:'all'},now).total,0);
 assert.equal(rows[0].client_key,undefined,'Não deve alterar dados originais');
+const catalog=[
+ {id:1,cliente:'Camber',nome:'Novo',statusCls:'prospec'},
+ {id:2,cliente:'Camber',nome:'Ativo',statusCls:'negoc'},
+ {id:3,cliente:'Camber',nome:'Fechando',statusLabel:'Fechando'},
+ {id:4,cliente:'Camber',nome:'Concluído',statusCls:'win',statusLabel:'Ativo'},
+ {id:5,cliente:'Só histórico',statusCls:'lost'},
+ {id:6,cliente:'Entregue',statusCls:'done'},
+ {id:7,cliente:'Sem status'}
+];
+const filtered=C.build(catalog,[],[2,3,4,5,6,7,99].map(id=>({...quote,id:String(id),project_id:String(id)})),now);
+assert.deepEqual(filtered.clients.map(c=>c.client_name),['Camber']);
+assert.deepEqual(filtered.clients[0].projects.map(p=>p.name),['Novo','Ativo','Fechando']);
+assert.deepEqual(filtered.quotes.map(q=>q.id),['2','3']);
+assert.equal(filtered.clients[0].value,20);
+assert.deepEqual(C.clientsPage(filtered).totals,{clients:1,open:2,late:2});
+assert.equal(C.clientsPage(filtered,{search:'Concluído'}).total,0);
+assert.equal(C.build([],[],rows).clients.length,0);
 console.log('30 verificações aprovadas: clientes, homônimos, legado, 110 cotações, paginação, filtros, KPIs e histórico.');
 const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 async function loaderTest(mode){
