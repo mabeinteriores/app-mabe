@@ -90,11 +90,14 @@
   function inicial(s){ return ((s||'?').trim().charAt(0) || '?').toUpperCase(); }
   function esc(s){ var d=document.createElement('div'); d.textContent = s==null?'':String(s); return d.innerHTML; }
 
+  // Mantido em sincronia com a navegação (shell.js). "Usuários" fica de fora:
+  // é área exclusiva de admin, não se concede a usuário comum.
   var TABS = [
     { id:'painel', t:'Painel' }, { id:'precificacao', t:'Precificação' },
-    { id:'projetos', t:'Projetos' }, { id:'clientes', t:'Clientes' },
-    { id:'fornecedores', t:'Fornecedores' }, { id:'indicacoes', t:'Indicações' }, { id:'lead', t:'Lead' },
-    { id:'config', t:'Configuração' }
+    { id:'projetos', t:'Projetos' }, { id:'cotacoes', t:'Cotações' },
+    { id:'fornecedores', t:'Fornecedores' }, { id:'compras', t:'Compras' },
+    { id:'clientes', t:'Clientes' }, { id:'indicacoes', t:'Indicações' },
+    { id:'lead', t:'Lead' }, { id:'config', t:'Configuração' }
   ];
   function setAbas(user_id, abas){
     return invokeAdmin({ action:'set_abas', user_id:user_id, abas:abas });
