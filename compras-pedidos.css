@@ -1,0 +1,10 @@
+@media(max-width:720px){
+ [data-orders] .cq-table table{display:block;min-width:0}
+ [data-orders] thead{display:none}
+ [data-orders] tbody{display:grid;gap:12px}
+ [data-orders] tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:10px;border:1px solid var(--line,#ded6c9);border-radius:10px}
+ [data-orders] td{display:block;padding:6px;border:0;white-space:normal;overflow-wrap:anywhere}
+ [data-orders] td[data-label]::before{display:block;content:attr(data-label);font-size:11px;color:var(--ink-3,#666)}
+ [data-orders] td:last-child{grid-column:1/-1}
+ [data-orders] .cq-actions{flex-wrap:wrap}
+}

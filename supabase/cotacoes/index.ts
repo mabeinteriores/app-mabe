@@ -1,5 +1,7 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import {specification,responseFor} from './validation.mjs';
+import {normalizePayment} from './payment.mjs';
+import {purchaseContent} from './purchase-content.mjs';
 const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store'};
 const json=(x:unknown,status=200)=>new Response(JSON.stringify(x),{status,headers:{...cors,'Content-Type':'application/json'}});
 Deno.serve(async req=>{
@@ -9,9 +11,23 @@ Deno.serve(async req=>{
   let body:any,file:File|null=null;
   if(req.headers.get('content-type')?.startsWith('multipart/form-data')){const f=await req.formData();body=JSON.parse(String(f.get('payload')));file=f.get('file') as File;}else{const raw=await req.text();if(raw.length>150000)return json({error:'Pedido muito grande.'},413);body=JSON.parse(raw);}
   const {action}=body;let payload=body.payload||{},actor:string|null=null;
-  if(!['lookup','submit','create','list','revoke','upload','files','create_opportunity','add_participants','bundle','versions','quotation_state','draft','revise','decline','disqualify','supplier_upload','dashboard','catalog','detail','new_quotation','negotiate','select_supplier','purchase','purchases','deadline','workflow','reviewed','opportunity_delete_preview','opportunity_delete','remove_supplier','remuneration_read','remuneration_save','proposal_quotation'].includes(action))return json({error:'Operação inválida.'},400);
+  if(!['lookup','submit','create','list','revoke','upload','files','create_opportunity','add_participants','bundle','versions','quotation_state','draft','revise','decline','disqualify','supplier_upload','dashboard','catalog','detail','new_quotation','negotiate','select_supplier','purchase','purchases','purchase_change','deadline','workflow','reviewed','opportunity_delete_preview','opportunity_delete','remove_supplier','remuneration_read','remuneration_save','proposal_quotation'].includes(action))return json({error:'Operação inválida.'},400);
   if(!['lookup','submit','draft','revise','decline','supplier_upload'].includes(action)){const {data,error}=await sb.auth.getUser((req.headers.get('authorization')||'').replace(/^Bearer /i,''));if(error||!data.user)return json({error:'Entre no sistema novamente.'},401);actor=data.user.id;}
   const rpc=async(a:string,p:any)=>{const {data,error}=await sb.rpc('camber_quotes_api',{action:a,payload:p,actor});if(error)throw Error(error.code==='P0001'||error.code==='42501'?error.message:'Não foi possível concluir a operação.');return data;};
+  if(action==='purchases'){
+   const orders=await rpc('purchases',payload);
+   return json(payload.scope==='all'?orders:orders.filter((order:any)=>!order.deleted_at));
+  }
+  if(action==='purchase_change'){
+   if(payload.operation==='edit'){
+    if(payload.paymentTerms!=null)payload.paymentTerms=normalizePayment(payload.paymentTerms);
+    payload.content=purchaseContent(payload.content,payload.expectedDelivery);
+    if((payload.total??payload.content.total)<=0)throw Error('O total do pedido deve ser maior que zero.');
+   }
+   const {data,error}=await sb.rpc('camber_purchase_change',{payload,actor});
+   if(error)throw Error(error.code==='P0001'||error.code==='42501'?error.message:'Não foi possível alterar o pedido de compra.');
+   return json(data);
+  }
   if(action==='proposal_quotation'){const {data,error}=await sb.rpc('camber_proposal_quotation',{payload,actor});if(error)throw Error(error.code==='P0001'||error.code==='42501'?error.message:'Não foi possível criar a cotação.');return json(data);}
   if(action==='opportunity_delete_preview'||action==='opportunity_delete'){const {data,error}=await sb.rpc('camber_opportunity_delete',{action:action==='opportunity_delete_preview'?'preview':'delete',payload,actor});if(error)throw Error(error.code==='P0001'||error.code==='42501'?error.message:'Não foi possível excluir a oportunidade.');return json(data);}
   if(action==='remove_supplier'){const {data,error}=await sb.rpc('camber_remove_supplier',{payload,actor});if(error)throw Error(error.code==='P0001'||error.code==='42501'?error.message:'Não foi possível remover o fornecedor.');return json(data);}
