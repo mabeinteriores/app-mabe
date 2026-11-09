@@ -195,7 +195,11 @@
     hide.textContent = '#app{opacity:0!important}';
     (document.head || document.documentElement).appendChild(hide);
   }
-  function revealApp() { var h = document.getElementById('camberHide'); if (h) h.remove(); }
+  function revealApp() {
+    var h = document.getElementById('camberHide');
+    if (h) h.remove();
+    window.dispatchEvent(new Event('camber-app-visivel'));
+  }
 
   // ---------- 3) login ----------
   function showLogin(msg) {
@@ -596,7 +600,7 @@
 
   // garante overlay assim que o body existir
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { if (!ready && !isChild) overlay(); });
+    document.addEventListener('DOMContentLoaded', function () { if (!ready && !isChild && document.getElementById('camberHide')) overlay(); });
   }
 
   if (LOCAL_ONLY) {

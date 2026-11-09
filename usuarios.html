@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <script src="camber-brand.js?v=brand1"></script>
-<script src="cloud.js?v=brand1"></script>
+<script src="cloud.js?v=usuarios1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Usuários · Gestão Camber</title>
@@ -72,13 +72,19 @@
   function sb(){ return window.CamberCloud && window.CamberCloud.client && window.CamberCloud.client(); }
   // chama a função admin; se der erro de sessão/permissão transitório, renova e tenta 1x
   async function invokeAdmin(body){
-    var r = await sb().functions.invoke('aprovar-admin', { body: body });
-    var err = r.error ? r.error.message : (r.data && r.data.error);
-    if (err && /restrito|autenticad|jwt|token|sess/i.test(err)) {
-      try { await sb().auth.refreshSession(); } catch(e){}
-      r = await sb().functions.invoke('aprovar-admin', { body: body });
+    try {
+      var client = sb();
+      var r = await client.functions.invoke('aprovar-admin', { body: body });
+      var err = r.error ? r.error.message : (r.data && r.data.error);
+      if (r.error?.context?.status === 401 || (err && /restrito|autenticad|jwt|token|sess/i.test(err))) {
+        var refreshed = await client.auth.refreshSession();
+        if (refreshed.error) return {error:refreshed.error};
+        r = await client.functions.invoke('aprovar-admin', { body: body });
+      }
+      return r;
+    } catch(error) {
+      return {error:error};
     }
-    return r;
   }
   function call(action, user_id){ return invokeAdmin({ action: action, user_id: user_id }); }
   function inicial(s){ return ((s||'?').trim().charAt(0) || '?').toUpperCase(); }
@@ -179,18 +185,41 @@
     });
   }
 
-  function load(){
-    if(!sb()){ setTimeout(load, 400); return; }
-    call('list').then(function(r){
-      if(r.error){ listEl.innerHTML = '<div class="u-muted">Não foi possível carregar.</div>'; return; }
-      if(r.data && r.data.error){ listEl.innerHTML = '<div class="u-muted">'+esc(r.data.error)+'</div>'; noteEl.innerHTML=''; return; }
-      render((r.data && r.data.users) || [], r.data && r.data.me);
-    });
+  function problem(message, retry){
+    noteEl.textContent = '';
+    listEl.innerHTML = '<div class="u-muted" role="status">'+esc(message)+(retry?' <button type="button" class="u-save">Tentar novamente</button>':'')+'</div>';
+    if(retry) listEl.querySelector('button').onclick = retry;
   }
-
-  // espera o cloud.js?v=brand1'camberCloudOv') && tries++ < 80){ setTimeout(wait, 400); return; }
-    load();
-  })();
+  async function load(){
+    if(!sb()){
+      if(location.protocol==='file:' || ['localhost','127.0.0.1','[::1]','0.0.0.0'].includes(location.hostname)){
+        problem('Para consultar os usuários, abra o aplicativo online e entre como administrador.');
+        var link = document.createElement('a');
+        link.href='https://app.camberinteriores.com.br/usuarios.html';
+        link.textContent='Abrir Usuários no Camber';
+        listEl.firstElementChild.append(' ',link);
+      }else{
+        problem('Não foi possível conectar ao serviço de usuários.', function(){location.reload()});
+      }
+      return;
+    }
+    var profile = window.__camberProfile;
+    if(!profile || !profile.aprovado || profile.papel!=='admin'){
+      problem('Somente administradores aprovados podem consultar os usuários.');
+      return;
+    }
+    listEl.innerHTML = '<div class="u-muted" role="status">Carregando usuários…</div>';
+    try{
+      var r = await call('list');
+      if(r.error)throw Error('Não foi possível carregar os usuários. Verifique a conexão e a sessão.');
+      if(r.data && r.data.error)throw Error(r.data.error);
+      if(!Array.isArray(r.data?.users))throw Error('O serviço não retornou a lista de usuários.');
+      render(r.data.users,r.data.me);
+    }catch(error){problem(error.message,load);}
+  }
+  if(document.getElementById('camberHide')){
+    window.addEventListener('camber-app-visivel',load,{once:true});
+  }else{load();}
 })();
 </script>
 </body>
