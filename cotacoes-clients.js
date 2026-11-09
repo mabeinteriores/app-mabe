@@ -14,6 +14,17 @@ Q.loadClientSnapshot=async function(){
  if(new Set(rows.map(q=>q.id)).size!==first.total)throw Error('A lista de cotações mudou durante a consulta. Clique em Atualizar.');
  return CamberQuoteClients.build(catalog.projects,clients,rows);
 };
+function clientCard(c){
+ const href='cotacoes.html?client='+encodeURIComponent(c.client_key);
+ const metrics=[['open','Em aberto',c.open],['awaiting','Aguardando resposta',c.awaiting],['ready','Para comparar',c.ready],['closed','Fechado',c.closed]];
+ return `<article class="cq-client-card">
+  <div class="cq-client-title">${Q.avatar(c.client_name)}<h2><a class="cq-client-main" href="${href}" aria-label="Abrir cotações de ${E(c.client_name)}">${E(c.client_name)}</a></h2><span aria-hidden="true">→</span></div>
+  <p class="cq-client-projects">${c.projects.map(p=>E(p.name)).join(' · ')}</p>
+  <div class="cq-client-metrics">${metrics.map(([key,label,count])=>`<a href="${href}&amp;quick=${key}" aria-label="${label} · ${count} · ${E(c.client_name)}"><strong>${count}</strong><small>${label}</small></a>`).join('')}</div>
+  ${c.late?'<p class="cq-client-late">● '+c.late+' cotação(ões) atrasada(s)</p>':'<p class="cq-muted">'+(c.open?'Nenhuma cotação atrasada':'Nenhuma cotação em aberto')+'</p>'}
+  <footer><span>Valor em cotação<strong>${Q.money(c.value)}</strong></span><b>Ver cotações →</b></footer>
+ </article>`;
+}
 Q.ClientDirectory=class {
  constructor(root){
   this.root=root;this.page=1;this.sequence=0;this.snapshot=null;
@@ -34,7 +45,7 @@ Q.ClientDirectory=class {
    if(seq!==this.sequence)return;this.page=data.page;
    r.querySelector('[data-client-totals]').innerHTML='<span><b>'+data.totals.clients+'</b> clientes</span><span><b>'+data.totals.open+'</b> cotações em aberto</span><span class="'+(data.totals.late?'cq-client-late':'')+'"><b>'+data.totals.late+'</b> atrasadas</span>';
    r.querySelector('[data-count]').textContent=data.total+(data.total===1?' cliente encontrado':' clientes encontrados');
-   r.querySelector('[data-clients]').innerHTML=data.clients.map(c=>'<a class="cq-client-card" href="cotacoes.html?client='+encodeURIComponent(c.client_key)+'" aria-label="Abrir cotações de '+E(c.client_name)+'"><div class="cq-client-title">'+Q.avatar(c.client_name)+'<h2>'+E(c.client_name)+'</h2><span aria-hidden="true">→</span></div><p class="cq-client-projects">'+c.projects.map(p=>E(p.name)).join(' · ')+'</p><div class="cq-client-metrics"><div><strong>'+c.open+'</strong><small>Em aberto</small></div><div><strong>'+c.awaiting+'</strong><small>Aguardando resposta</small></div><div><strong>'+c.ready+'</strong><small>Para comparar</small></div></div>'+(c.late?'<p class="cq-client-late">● '+c.late+' cotação(ões) atrasada(s)</p>':'<p class="cq-muted">'+(c.open?'Nenhuma cotação atrasada':'Nenhuma cotação em aberto')+'</p>')+'<footer><span>Valor em cotação<strong>'+Q.money(c.value)+'</strong></span><b>Ver cotações →</b></footer></a>').join('')||'<div class="cq-empty"><h2>Nenhum cliente encontrado</h2><p>Confira a busca ou vincule um cliente a um projeto.</p></div>';
+   r.querySelector('[data-clients]').innerHTML=data.clients.map(clientCard).join('')||'<div class="cq-empty"><h2>Nenhum cliente encontrado</h2><p>Confira a busca ou vincule um cliente a um projeto.</p></div>';
    const pages=Math.max(1,Math.ceil(data.total/data.pageSize));r.querySelector('[data-page-label]').textContent='Página '+data.page+' de '+pages;r.querySelector('[data-client-prev]').disabled=data.page<=1;r.querySelector('[data-client-next]').disabled=data.page>=pages;r.querySelector('[data-status]').textContent='';
   }catch(e){if(seq!==this.sequence)return;r.querySelector('[data-clients]').innerHTML='';r.querySelector('[data-count]').textContent='Não foi possível carregar os clientes. Use Atualizar para tentar novamente.';r.querySelector('[data-status]').textContent=e.message}
   finally{if(seq===this.sequence)r.querySelector('[data-clients]').removeAttribute('aria-busy')}

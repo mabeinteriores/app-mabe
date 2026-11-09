@@ -13,6 +13,10 @@ rows.push({...quote,id:'a-casa',code:'CASA',project_id:'p2',project_name:'Casa',
 const snapshot=C.build(projects,clients,rows,now),a=snapshot.clients.find(c=>c.client_key==='client:a');
 assert.equal(a.client_name,'Mesmo nome');assert.equal(a.projects.length,2);assert.equal(a.open,106);assert.equal(a.total,108);assert.equal(a.value,1070);assert.equal(a.late,1);
 assert.equal(snapshot.clients.find(c=>c.client_key==='client:b').open,1);
+assert.equal(a.closed,1);
+assert.equal(snapshot.clients.find(c=>c.client_key==='client:b').closed,0);
+assert.equal(snapshot.clients.find(c=>c.client_key==='name:sem cotação').closed,0);
+assert.deepEqual(C.quotesPage(snapshot,'client:a',{quick:'closed'},now).rows.map(q=>q.id),['a-closed']);
 assert.equal(C.identity(projects[3],clients).client_key,'client:c');
 assert.equal(C.identity(projects[4],clients).client_key,'project:p5');
 assert.equal(C.clientsPage(snapshot,{clientKey:'name:sem cotação'}).clients[0].open,0);
