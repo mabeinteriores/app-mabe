@@ -11,11 +11,10 @@ const cssText=v=>String(v??'').replace(/[^a-zA-Z0-9 -]/g,c=>'\\'+c.codePointAt(0
 const text=v=>esc(v||'Não informado'),status=r=>root.CamberQuoteModel?.labels?.[r.status]||({SUBMITTED:'Proposta recebida',SELECTED:'Selecionado',NOT_SELECTED:'Não selecionado',INVITED:'Convidado',VIEWED:'Visualizou',IN_PROGRESS:'Preenchendo',DISQUALIFIED:'Desclassificado',DECLINED:'Não participará',DRAFT:'Link cancelado',EXPIRED:'Prazo encerrado'}[r.status]||r.status||'Aguardando proposta');
 function current(r){return Comparison.currentResponse(r);}
 function model(detail,options={}){
- const internal=!!options.internal&&Array.isArray(detail.financial)&&detail.financial.length>0,financial=detail.financial||[],prices=detail.clientPrices||[];
- const price=r=>{const f=financial.find(f=>String(f.proposalId)===String(r.proposal_id));return f&&F?F.calculate(f,r.response).client:prices.find(p=>String(p.proposalId)===String(r.proposal_id))?.value??r.response?.total;};
+ const internal=!!options.internal&&Array.isArray(detail.financial)&&detail.financial.length>0,financial=detail.financial||[];
  const requests=(detail.requests||[]).filter(r=>!options.requestIds||options.requestIds.map(String).includes(String(r.id)));
- const valid=requests.filter(current),values=valid.map(r=>amount(price(r))).filter(v=>v!==null&&v>=0),days=valid.map(r=>amount(r.response.days)).filter(v=>v!==null&&v>0);
- return {q:detail.quotation,requests,price,internal,financialData:financial,min:values.length?Math.min(...values):null,max:values.length?Math.max(...values):null,priceCount:values.length,minDays:days.length?Math.min(...days):null,valid,financial:options.internal&&Array.isArray(detail.financial)&&detail.financial.length?detail.financial:null};
+ const valid=requests.filter(current),days=valid.map(r=>amount(r.response.days)).filter(v=>v!==null&&v>0);
+ return {q:detail.quotation,requests,...Comparison.comparisonPrices(detail,requests,F),internal,financialData:financial,minDays:days.length?Math.min(...days):null,valid,financial:internal?financial:null};
 }
 function difference(r,m){const s=Comparison.savings(m.price(r),m.max);if(!current(r)||!s)return 'Não comparável';if(m.priceCount<2)return 'Aguardando outra proposta';if(m.min===m.max)return 'Sem diferença';if(!s.amount)return 'Maior valor · referência';return money(s.amount)+' / '+s.percent.toLocaleString('pt-BR',{maximumFractionDigits:2})+'% de economia';}
 function commission(r,m){const f=m.financial?.find(f=>String(f.proposalId)===String(r.proposal_id));if(!f)return 'Não cadastrada';return money(F?F.calculate(f,r.response).earned:f.rtTipo==='brl'?f.rt:amount(r.response?.total)===null?null:amount(r.response.total)*Number(f.rt||0)/100);}

@@ -33,6 +33,21 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim
 function eligible(f,service){return f.ativo!==false&&norm(f.status)!=='inativo'&&(Array.isArray(f.categorias)&&f.categorias.length?f.categorias:[f.categoria]).some(c=>norm(c)===norm(service));}
 function delta(first,last){return {amount:last-first,percent:first>0?(last-first)/first*100:null};}
 function currentResponse(r){return r.active!==false&&!!r.response&&Number(r.response.version||1)===Number(r.revision||1)&&!['DISQUALIFIED','DECLINED','DRAFT','EXPIRED'].includes(r.status);}
+function comparisonPrices(detail,requests,remuneration=root.CamberRemuneration){
+ const prices=detail.clientPrices||[],financial=detail.financial||[];
+ const amount=value=>value==null||value===''||!Number.isFinite(Number(value))||Number(value)<0?null:Number(value);
+ function price(r){
+  if(amount(r.response?.total)===null)return null;
+  const byRequest=prices.find(p=>p.requestId!=null&&String(p.requestId)===String(r.id));
+  if(byRequest)return amount(byRequest.value);
+  const f=financial.find(p=>String(p.proposalId)===String(r.proposal_id));
+  if(f&&remuneration)return amount(remuneration.calculate(f,r.response).client);
+  const previous=prices.find(p=>p.requestId==null&&String(p.proposalId)===String(r.proposal_id));
+  return amount(previous?previous.value:r.response.total);
+ }
+ const valid=requests.filter(currentResponse).map(price).filter(v=>v!==null);
+ return {price,priceCount:valid.length,min:valid.length?Math.min(...valid):null,max:valid.length?Math.max(...valid):null};
+}
 function savings(value,reference){
  if(value===null||value===undefined||value===''||reference===null||reference===undefined||reference==='')return null;
  value=Number(value);reference=Number(reference);
@@ -40,5 +55,5 @@ function savings(value,reference){
  const amount=Math.round((reference-value)*100)/100;
  return {amount,percent:reference>0?amount/reference*100:null};
 }
-const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta,currentResponse,savings,controlActions};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
+const model={labels,day,open,quick,kpis,notice,forOpportunity,counts,norm,eligible,delta,currentResponse,savings,comparisonPrices,controlActions};root.CamberQuoteModel=model;if(typeof module==='object')module.exports=model;
 })(typeof window==='object'?window:globalThis);

@@ -17,6 +17,17 @@ function apply(input,action,payload){const o=normalize(input);let p;
  }else if(action==='metadata'){if(!payload.serv?.trim())throw Error('Informe o serviço.');o.serv=payload.serv.trim();o.titulo=payload.titulo.trim();o.resp=payload.resp;o.prazo=payload.prazo;o.obs=payload.obs;dates(payload);for(const key of ['deliveryDate','assemblyStart','assemblyEnd'])o[key]=payload[key]||'';
  }else throw Error('Ação inválida.');return project(o);
 }
-function analyze(list){const prices=list.filter(p=>Number.isFinite(p.value)&&p.value>0),deadlines=list.filter(p=>Number.isInteger(p.days)&&p.days>0);const minPrice=prices.length?Math.min(...prices.map(p=>p.value)):null,minDays=deadlines.length?Math.min(...deadlines.map(p=>p.days)):null,maxPrice=prices.length?Math.max(...prices.map(p=>p.value)):null;return {minPrice,maxPrice,priceCount:prices.length,minDays,cheap:prices.filter(p=>p.value===minPrice),fast:deadlines.filter(p=>p.days===minDays),missingPrice:list.filter(p=>!(p.value>0)),missingDays:list.filter(p=>!(p.days>0))};}
+function analyze(list){
+ const finance=root.CamberRemuneration||(typeof module==='object'?require('./remuneracao-model.js'):null);
+ const prices=new Map();
+ for(const p of list){
+  if(Number(p.quoteResponse?.total??p.value)>0)prices.set(p,finance.calculate(p).client);
+ }
+ const price=p=>prices.get(p)??null,values=[...prices.values()];
+ const minPrice=values.length?Math.min(...values):null,maxPrice=values.length?Math.max(...values):null;
+ const deadlines=list.filter(p=>Number.isInteger(p.days)&&p.days>0);
+ const minDays=deadlines.length?Math.min(...deadlines.map(p=>p.days)):null;
+ return {price,minPrice,maxPrice,priceCount:prices.size,minDays,cheap:list.filter(p=>prices.has(p)&&price(p)===minPrice),fast:deadlines.filter(p=>p.days===minDays),missingPrice:list.filter(p=>!prices.has(p)),missingDays:list.filter(p=>!(p.days>0))};
+}
 const api={eligible,dates,normalize,reference,project,commission,validate,apply,analyze};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.CamberProposals=api;
 })(typeof window!=='undefined'?window:globalThis);

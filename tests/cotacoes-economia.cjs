@@ -3,7 +3,8 @@ const M=require('../cotacoes-model.js'),P=require('../cotacoes-impressao.js'),Le
 const {detail,request}=require('./cotacoes-impressao-fixture.cjs');
 const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const Q={esc:s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money};
-vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../cotacoes-layout.js'),'utf8'),{CamberQuotes:Q,window:{CamberQuoteModel:M},document:{createElement:()=>({}),body:{append(){}}}});
+const F=require('../remuneracao-model.js');
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../cotacoes-layout.js'),'utf8'),{CamberQuotes:Q,CamberRemuneration:F,window:{CamberQuoteModel:M,CamberRemuneration:F},document:{createElement:()=>({}),body:{append(){}}}});
 const clone=x=>JSON.parse(JSON.stringify(x));
 const data={...clone(detail),financial:null,requests:[request('a','MARMORARIA CARVALHO LTDA',5000,40),request('b','BDC COMERCIO E INDUSTRIA DE PEDRAS LTDA',6000,60)]};
 data.quotation.service='Marmoraria';data.quotation.code='TESTE LOCAL';
@@ -29,6 +30,19 @@ for(const change of [{active:false},{status:'DISQUALIFIED'},{status:'DECLINED'},
 c=cells({...data,requests:[...data.requests,request('x','Sem preço',null,1)]});assert.equal(c[2],'Não comparável');
 for(const layout of ['table','summary','detailed']){const html=P.documentHTML(data,{layout});assert(html.includes('1.000,00 / 16,67% de economia'));assert(html.includes('Maior valor · referência'));assert(!html.includes('20%'));assert(!html.includes('NaN'));assert(!html.includes('Infinity'));}
 const adjusted={...data,clientPrices:[{proposalId:'p-a',value:5500},{proposalId:'p-b',value:6000}]};assert(P.documentHTML(adjusted).includes('500,00 / 8,33% de economia'));
+assert(cells(adjusted)[0].includes('500,00'));assert(cells(adjusted)[0].includes('8,33%'));
+const reforma={...data,requests:[{...request('a','RB',64000,30),status:'SELECTED'},{...request('b','Lacerda',112000,60),status:'NOT_SELECTED'}],
+ financial:[{proposalId:'p-a',remuneration:{mode:'markup',markup:15000,markupType:'brl'}},{proposalId:'p-b',rt:10,rtTipo:'pct'}]};
+for(const sample of [reforma,{...reforma,financial:null,clientPrices:[{proposalId:'p-a',requestId:'a',value:79000},{proposalId:'p-b',requestId:'b',value:112000}]}]){
+ const html=Q.comparisonHTML(sample),final=html.match(/class="cq-final-row"[^]*?<\/tr>/)[0];
+ assert(final.includes('79.000,00'));assert(final.includes('112.000,00'));
+ assert(cells(sample)[0].includes('33.000,00'));assert(cells(sample)[0].includes('29,46%'));assert.equal(cells(sample)[1],'Maior valor · referência');
+ for(const layout of ['table','summary','detailed'])assert(P.documentHTML(sample,{layout}).includes('33.000,00 / 29,46% de economia'));
+}
+const inverted={...reforma,financial:null,clientPrices:[{requestId:'a',proposalId:'p-a',value:132000},{requestId:'b',proposalId:'p-b',value:112000}]};
+assert.equal(cells(inverted)[0],'Maior valor · referência');assert(cells(inverted)[1].includes('20.000,00'));
+const opportunity=Legacy.analyze([{value:64000,remuneration:{mode:'markup',markup:15000}},{value:112000,rt:10}]);
+assert.equal(opportunity.minPrice,79000);assert.equal(opportunity.maxPrice,112000);
 const legacy=Legacy.analyze([{value:5000,days:10},{value:6000,days:15},{value:0,days:null}]);assert.equal(legacy.maxPrice,6000);assert.equal(legacy.priceCount,2);
 assert.equal(JSON.stringify(data),before);
 console.log('PASS: economia na coluna mais barata, ordem inversa, 3 fornecedores, empate, zero, ausentes, versões antigas, excluídos, impressão e preço ao cliente.');
