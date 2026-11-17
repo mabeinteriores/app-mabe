@@ -647,6 +647,11 @@ textarea { resize:vertical; min-height:70px; }
           <input type="text" id="cCargo" placeholder="Ex: Corretor Sênior">
         </div>
         <div class="field span2">
+          <label>Unidade / Equipe</label>
+          <input type="text" id="cUnidade" placeholder="Ex: Unidade Batel · Equipe Centro">
+          <div style="font-size:11px;color:var(--warm-gray);margin-top:4px">Permite controlar as indicações por unidade de quem indicou.</div>
+        </div>
+        <div class="field span2">
           <label>Observações</label>
           <textarea id="cObs" placeholder="Informações relevantes sobre este parceiro..."></textarea>
         </div>
@@ -1255,6 +1260,7 @@ function editarCorretor(id) {
   document.getElementById('cEndereco').value = c.endereco||'';
   document.getElementById('cCreci').value    = c.creci||'';
   document.getElementById('cCargo').value    = c.cargo||'';
+  document.getElementById('cUnidade').value  = c.unidade||'';
   document.getElementById('cObs').value      = c.obs||'';
   populateCorretorSelects();
   document.getElementById('cImobSelect').value = c.imobId||'';
@@ -1290,6 +1296,7 @@ function salvarCorretor() {
     imobId:imobId||null,
     creci:document.getElementById('cCreci').value,
     cargo:document.getElementById('cCargo').value,
+    unidade:document.getElementById('cUnidade').value.trim(),
     obs:document.getElementById('cObs').value,
   };
   if(editingCorrId) {
@@ -1300,7 +1307,7 @@ function salvarCorretor() {
     state.corretores.push({ id:ReferralRules.id(), dataCad:today(), ...dados });
   }
   save(); closeModal('modalCorretor');
-  ['cNome','cTel','cEmail','cEndereco','cImobManual','cCreci','cCargo','cObs'].forEach(id=>document.getElementById(id).value='');
+  ['cNome','cTel','cEmail','cEndereco','cImobManual','cCreci','cCargo','cUnidade','cObs'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('cImobSelect').value='';
   renderCorretores(); renderImobiliarias(); populateCorretorSelects();
 }
