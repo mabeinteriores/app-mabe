@@ -1989,6 +1989,15 @@ document.getElementById('topbarDate').textContent =
 
 populateCorretorSelects();
 renderDashboard();
+
+// Deep-link quando embutido no painel (abas Cadastros / Nova indicação)
+function _indHash(){
+  var h=(location.hash||'').replace(/^#/,'');
+  if(h==='nova'){ try{ goPage('indicacoes'); openModal('modalIndicacao'); }catch(e){} }
+  else if(h==='cadastros'){ try{ goPage('corretores'); }catch(e){} }
+}
+_indHash();
+window.addEventListener('hashchange', _indHash);
 </script>
 </body>
 </html>
