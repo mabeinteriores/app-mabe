@@ -299,6 +299,9 @@ textarea { resize:vertical; min-height:70px; }
       <span class="nav-icon">◷</span> Controle Trimestral
     </div>
     <div class="nav-section">Parceiros</div>
+    <div class="nav-item" onclick="goPage('corretores')">
+      <span class="nav-icon">◉</span> Corretores
+    </div>
     <div class="nav-item" onclick="goPage('imobiliarias')">
       <span class="nav-icon">⬡</span> Imobiliárias
     </div>
@@ -929,7 +932,7 @@ function goPage(id) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelector(`[onclick="goPage('${id}')"]`).classList.add('active');
+  document.querySelector(`[onclick="goPage('${id}')"]`)?.classList.add('active');
   document.getElementById('topbarTitle').textContent = PAGE_TITLES[id];
   const renders = { dashboard:renderDashboard, indicacoes:renderIndicacoes,
     trimestre:renderTrimestre, imobiliarias:renderImobiliarias,
