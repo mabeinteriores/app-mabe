@@ -300,7 +300,7 @@ textarea { resize:vertical; min-height:70px; }
     </div>
     <div class="nav-section">Parceiros</div>
     <div class="nav-item" onclick="goPage('corretores')">
-      <span class="nav-icon">◉</span> Corretores
+      <span class="nav-icon">◉</span> Parceiros
     </div>
     <div class="nav-item" onclick="goPage('imobiliarias')">
       <span class="nav-icon">⬡</span> Imobiliárias
@@ -343,7 +343,7 @@ textarea { resize:vertical; min-height:70px; }
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Cliente</th><th>Corretor</th><th>Status</th>
+            <th>Cliente</th><th>Parceiro</th><th>Status</th>
             <th>Dias no Status</th><th>Projeto</th><th>Ações</th>
           </tr></thead>
           <tbody id="tbodyDash"></tbody>
@@ -360,7 +360,7 @@ textarea { resize:vertical; min-height:70px; }
         <div class="table-header">
           <h3>Todas as Indicações</h3>
           <div class="filter-row">
-            <input class="search-input" id="searchInd" placeholder="Buscar cliente ou corretor..." oninput="renderIndicacoes()">
+            <input class="search-input" id="searchInd" placeholder="Buscar cliente ou parceiro..." oninput="renderIndicacoes()">
             <select class="filter-select" id="filterStatus" onchange="renderIndicacoes()">
               <option value="">Todos os status</option>
               <option value="Novo Lead">Novo Lead</option>
@@ -371,13 +371,13 @@ textarea { resize:vertical; min-height:70px; }
               <option value="Perdido">Perdido</option>
             </select>
             <select class="filter-select" id="filterCorretor" onchange="renderIndicacoes()">
-              <option value="">Todos os corretores</option>
+              <option value="">Todos os parceiros</option>
             </select>
           </div>
         </div>
         <table>
           <thead><tr>
-            <th>Data Registro</th><th>Cliente</th><th>Corretor</th>
+            <th>Data Registro</th><th>Cliente</th><th>Parceiro</th>
             <th>Tipo de Imóvel</th><th>Status</th><th>Dias no Status</th>
             <th>Valor Projeto</th><th>Ações</th>
           </tr></thead>
@@ -402,7 +402,7 @@ textarea { resize:vertical; min-height:70px; }
     <!-- ═══════════════ CORRETORES ═══════════════ -->
     <div class="page" id="page-corretores">
       <div class="topbar-actions" style="margin-bottom:20px;justify-content:flex-end;display:flex">
-        <button class="btn btn-primary" onclick="openModal('modalCorretor')">+ Cadastrar Corretor</button>
+        <button class="btn btn-primary" onclick="openModal('modalCorretor')">+ Cadastrar Parceiro</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -497,7 +497,7 @@ textarea { resize:vertical; min-height:70px; }
           <input type="text" id="fValorEstimado" placeholder="R$ 0,00">
         </div>
         <div class="field span2">
-          <label>Como o corretor abordou o cliente</label>
+          <label>Como o parceiro abordou o cliente</label>
           <textarea id="fContexto" placeholder="Ex: Após assinatura de contrato de apartamento no Residencial X. Cliente demonstrou interesse em reformar cozinha e sala..."></textarea>
         </div>
         <div class="field span2">
@@ -563,7 +563,7 @@ textarea { resize:vertical; min-height:70px; }
 <div class="modal-bg" id="modalCorretorImob">
   <div class="modal">
     <div class="modal-head">
-      <h2 id="modalCorretorImobTitle">Adicionar Corretor</h2>
+      <h2 id="modalCorretorImobTitle">Adicionar Parceiro</h2>
       <button class="modal-close" onclick="closeModal('modalCorretorImob')">✕</button>
     </div>
     <div class="modal-body">
@@ -571,7 +571,7 @@ textarea { resize:vertical; min-height:70px; }
       <div class="form-grid">
         <div class="field span2">
           <label>Nome Completo *</label>
-          <input type="text" id="ciNome" placeholder="Nome do corretor">
+          <input type="text" id="ciNome" placeholder="Nome do parceiro">
         </div>
         <div class="field">
           <label>Telefone / WhatsApp *</label>
@@ -579,11 +579,11 @@ textarea { resize:vertical; min-height:70px; }
         </div>
         <div class="field">
           <label>E-mail</label>
-          <input type="email" id="ciEmail" placeholder="corretor@email.com">
+          <input type="email" id="ciEmail" placeholder="parceiro@email.com">
         </div>
         <div class="field span2">
           <label>Endereço</label>
-          <input type="text" id="ciEndereco" placeholder="Endereço do corretor (opcional)">
+          <input type="text" id="ciEndereco" placeholder="Endereço do parceiro (opcional)">
         </div>
         <div class="field">
           <label>CRECI</label>
@@ -591,7 +591,7 @@ textarea { resize:vertical; min-height:70px; }
         </div>
         <div class="field">
           <label>Cargo / Função</label>
-          <input type="text" id="ciCargo" placeholder="Ex: Corretor Sênior">
+          <input type="text" id="ciCargo" placeholder="Ex: Consultor Sênior">
         </div>
         <div class="field span2">
           <label>Observações</label>
@@ -601,7 +601,7 @@ textarea { resize:vertical; min-height:70px; }
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline" onclick="closeModal('modalCorretorImob')">Cancelar</button>
-      <button class="btn btn-gold" onclick="salvarCorretorImob()">Adicionar Corretor</button>
+      <button class="btn btn-gold" onclick="salvarCorretorImob()">Adicionar Parceiro</button>
     </div>
   </div>
 </div>
@@ -610,14 +610,14 @@ textarea { resize:vertical; min-height:70px; }
 <div class="modal-bg" id="modalCorretor">
   <div class="modal">
     <div class="modal-head">
-      <h2>Cadastrar Corretor Parceiro</h2>
+      <h2>Cadastrar Parceiro</h2>
       <button class="modal-close" onclick="closeModal('modalCorretor')">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
         <div class="field span2">
           <label>Nome Completo *</label>
-          <input type="text" id="cNome" placeholder="Nome do corretor">
+          <input type="text" id="cNome" placeholder="Nome do parceiro">
         </div>
         <div class="field">
           <label>Telefone / WhatsApp *</label>
@@ -647,7 +647,7 @@ textarea { resize:vertical; min-height:70px; }
         </div>
         <div class="field">
           <label>Cargo / Função</label>
-          <input type="text" id="cCargo" placeholder="Ex: Corretor Sênior">
+          <input type="text" id="cCargo" placeholder="Ex: Consultor Sênior">
         </div>
         <div class="field span2">
           <label>Unidade / Equipe</label>
@@ -908,7 +908,7 @@ const getCorretor = id => state.corretores.find(c=>c.id===id)
   || (state.construtoras||[]).find(c=>c.id===id);
 // todos os parceiros (corretores + influenciadores + construtoras) com rótulo de tipo
 const allParceiros = () => [].concat(
-  state.corretores.map(c=>Object.assign({_tipo:'Corretor'},c)),
+  state.corretores.map(c=>Object.assign({_tipo:'Parceiro'},c)),
   (state.influenciadores||[]).map(c=>Object.assign({_tipo:'Influenciador'},c)),
   (state.construtoras||[]).map(c=>Object.assign({_tipo:'Construtora'},c))
 );
@@ -925,7 +925,7 @@ function diasChip(dias, label='') {
 const PAGE_TITLES = {
   dashboard:'Dashboard', indicacoes:'Todas as Indicações',
   trimestre:'Controle Trimestral', imobiliarias:'Imobiliárias Parceiras',
-  corretores:'Corretores Parceiros', influenciadores:'Influenciadores',
+  corretores:'Parceiros', influenciadores:'Influenciadores',
   construtoras:'Construtoras', comissoes:'Comissões e Bônus'
 };
 function goPage(id) {
@@ -1013,7 +1013,7 @@ function closeModal(id) {
   if(id==='modalImob') { editingImobEditId=null; _limparImob(); }
   if(id==='modalCorretor') {
     editingCorrId=null;
-    document.querySelector('#modalCorretor .modal-head h2').textContent='Cadastrar Corretor Parceiro';
+    document.querySelector('#modalCorretor .modal-head h2').textContent='Cadastrar Parceiro';
     document.querySelector('#modalCorretor .modal-foot .btn-primary').textContent='Cadastrar Parceiro';
   }
 }
@@ -1095,10 +1095,10 @@ function abrirCorretorImob(imobId) {
   editingImobId = imobId;
   editingCorrImobId = null;
   const imob=state.imobiliarias.find(i=>i.id===imobId);
-  document.getElementById('modalCorretorImobTitle').textContent=`Adicionar Corretor — ${imob.nome}`;
+  document.getElementById('modalCorretorImobTitle').textContent=`Adicionar Parceiro — ${imob.nome}`;
   document.getElementById('modalCorretorImobImobInfo').innerHTML=
     `<span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--warm-gray)">Imobiliária</span><br><b>${imob.nome}</b>${imob.endereco?'<br><span style="color:var(--warm-gray);font-size:12px">'+imob.endereco+'</span>':''}`;
-  document.querySelector('#modalCorretorImob .modal-foot .btn-gold').textContent='Adicionar Corretor';
+  document.querySelector('#modalCorretorImob .modal-foot .btn-gold').textContent='Adicionar Parceiro';
   ['ciNome','ciTel','ciEmail','ciEndereco','ciCreci','ciCargo','ciObs'].forEach(id=>document.getElementById(id).value='');
   openModal('modalCorretorImob');
 }
@@ -1186,7 +1186,7 @@ function renderImobiliarias() {
         <!-- Métricas + ações -->
         <div style="display:flex;align-items:flex-start;gap:20px;flex-shrink:0">
           <div style="display:flex;gap:24px;text-align:center">
-            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${corrs.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Corretores</div></div>
+            <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${corrs.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Parceiros</div></div>
             <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${indsImob.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Indicações</div></div>
             <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold)">${fechadosImob.length}</div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warm-gray)">Fechados</div></div>
           </div>
@@ -1204,8 +1204,8 @@ function renderImobiliarias() {
       <!-- Corretores -->
       <div>
         <div style="padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--cream-dk)">
-          <span style="font-size:11px;font-weight:500;color:var(--brown-lt);letter-spacing:1px;text-transform:uppercase">Corretores desta imobiliária</span>
-          <button class="btn btn-outline btn-sm" onclick="abrirCorretorImob(${imob.id})">+ Adicionar Corretor</button>
+          <span style="font-size:11px;font-weight:500;color:var(--brown-lt);letter-spacing:1px;text-transform:uppercase">Parceiros desta imobiliária</span>
+          <button class="btn btn-outline btn-sm" onclick="abrirCorretorImob(${imob.id})">+ Adicionar Parceiro</button>
         </div>
         ${corrs.length?`
         <table>
@@ -1363,7 +1363,7 @@ function renderCorretores() {
   const tbody=document.getElementById('tbodyCorr');
   if(!tbody)return;
   if(!state.corretores.length){
-    tbody.innerHTML='<tr><td colspan="10"><div class="empty"><div class="empty-icon">◉</div><p>Nenhum corretor cadastrado ainda.</p></div></td></tr>';return;
+    tbody.innerHTML='<tr><td colspan="10"><div class="empty"><div class="empty-icon">◉</div><p>Nenhum parceiro cadastrado ainda.</p></div></td></tr>';return;
   }
   tbody.innerHTML=state.corretores.map(c=>{
     const inds=state.indicacoes.filter(i=>i.corretorId===c.id);
@@ -1907,7 +1907,7 @@ function renderComissoes() {
     <div class="section-title">Comissões por Contrato</div>
     <div class="table-wrap">
       <table><thead><tr>
-        <th>Cliente</th><th>Corretor</th><th>Data Fechamento</th>
+        <th>Cliente</th><th>Parceiro</th><th>Data Fechamento</th>
         <th>Valor Contrato</th><th>Taxa %</th><th>Comissão</th><th>Status</th><th>Ações</th>
       </tr></thead><tbody>${
     fechados.length?fechados.map(i=>{
